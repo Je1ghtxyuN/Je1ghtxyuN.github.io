@@ -154,4 +154,32 @@ document.addEventListener('DOMContentLoaded', function () {
     audio.addEventListener('pause', function () {
         songTitle.textContent = "已暂停";
     });
+
+
+    // 照片墙点击放大效果
+    document.querySelectorAll('.photo-item').forEach(item => {
+        item.addEventListener('click', function () {
+            const imgSrc = this.querySelector('img').src;
+            const overlay = document.createElement('div');
+            overlay.className = 'photo-overlay';
+            overlay.innerHTML = `
+            <div class="photo-modal">
+                <img src="${imgSrc}" alt="放大图片">
+                <button class="close-btn">&times;</button>
+            </div>
+        `;
+
+            document.body.appendChild(overlay);
+
+            overlay.querySelector('.close-btn').addEventListener('click', function () {
+                overlay.remove();
+            });
+
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+        });
+    });
 });

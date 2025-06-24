@@ -19,6 +19,22 @@
     </header>
 
     <main>
+
+        <section class="photo-wall animate__animated animate__fadeInUp">
+            <div class="gallery">
+                <div class="photo-item">
+                    <img src="images/gallery/photo1.jpg" alt="照片1">
+                </div>
+                <div class="photo-item">
+                    <img src="images/gallery/photo2.jpg" alt="照片2">
+                </div>
+                <div class="photo-item">
+                    <img src="images/gallery/photo3.jpg" alt="照片3">
+                </div>
+
+            </div>
+        </section>
+
         <section class="about-me animate__animated animate__fadeInUp">
             <h2>关于窝 / プロフィール <i class="fas fa-heart" style="color: pink;"></i></h2>
             <div class="profile">
@@ -35,6 +51,18 @@
             </div>
         </section>
 
+        <!-- 音乐播放器 -->
+        <div class="music-player animate__animated animate__fadeInUp">
+            <h3>窝喜欢的歌 / お気に入りの歌 <i class="fas fa-music"></i></h3>
+            <audio id="myAudio" controls>
+                <source src="music/あたらよ - 夏霞.mp3" type="audio/mpeg">
+                你的浏览器不支持音频播放哦(´･ω･`)
+            </audio>
+            <div class="player-controls">
+                <span id="songTitle">正在播放: あたらよ - 夏霞</span>
+            </div>
+        </div>
+
         <section class="ask-me animate__animated animate__fadeInUp">
             <h2>给窝留言 / メッセージ <i class="fas fa-envelope" style="color: #a777e3;"></i></h2>
             <div class="question-form">
@@ -49,17 +77,7 @@
         </section>
     </main>
 
-    <!-- 音乐播放器 -->
-    <div class="music-player animate__animated animate__fadeInUp">
-        <h3>窝喜欢的歌 / お気に入りの歌 <i class="fas fa-music"></i></h3>
-        <audio id="myAudio" controls>
-            <source src="music/あたらよ - 夏霞.mp3" type="audio/mpeg">
-            你的浏览器不支持音频播放哦(´･ω･`)
-        </audio>
-        <div class="player-controls">
-            <span id="songTitle">正在播放: あたらよ - 夏霞</span>
-        </div>
-    </div>
+
 
     <footer>
         <div class="social-links">
