@@ -1,4 +1,4 @@
-/* 基础样式 */
+_/* 基础样式 */
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
@@ -63,7 +63,7 @@ section {
 }
 
 textarea {
-    width: 100%;
+    width: 95%;
     min-height: 150px;
     padding: 1rem;
     border: 2px solid #ddd;
