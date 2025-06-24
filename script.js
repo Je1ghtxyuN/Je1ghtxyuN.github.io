@@ -140,4 +140,42 @@ document.addEventListener('DOMContentLoaded', function() {
             paw.remove();
         }, 1300);
     });
+
+
+    // 音乐播放器控制
+const audio = document.getElementById('myAudio');
+const playBtn = document.getElementById('playBtn');
+const volumeBtn = document.getElementById('volumeBtn');
+const songTitle = document.getElementById('songTitle');
+
+// 自定义播放按钮
+playBtn.addEventListener('click', function() {
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    } else {
+        audio.pause();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    }
+});
+
+// 音量控制
+volumeBtn.addEventListener('click', function() {
+    if (audio.muted) {
+        audio.muted = false;
+        volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+    } else {
+        audio.muted = true;
+        volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+    }
+});
+
+// 歌曲信息更新
+audio.addEventListener('play', function() {
+    songTitle.textContent = "正在播放: あたらよ - 夏霞";
+});
+
+audio.addEventListener('pause', function() {
+    songTitle.textContent = "已暂停";
+});
 });
