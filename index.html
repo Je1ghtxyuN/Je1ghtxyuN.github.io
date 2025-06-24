@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎来到我的网站</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 添加Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 添加Animate.css动画库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <header class="animate__animated animate__fadeIn">
+        <h1>欢迎来到我的世界</h1>
+        <p>这里是我的个人空间，你可以了解我，也可以向我提问</p>
+    </header>
+    
+    <main>
+        <section class="about-me animate__animated animate__fadeInUp">
+            <h2>关于我</h2>
+            <div class="profile">
+                <img src="images/profile.jpg" alt="我的头像" class="profile-img">
+                <p>一个可爱的小女生</p>
+            </div>
+        </section>
+        
+        <section class="ask-me animate__animated animate__fadeInUp">
+            <h2>向我提问</h2>
+            <div class="question-form">
+                <form id="questionForm" action="https://formspree.io/f/mkgbpnbb" method="POST">
+                    <textarea name="question" placeholder="在这里输入你的问题..." required></textarea>
+                    <input type="hidden" name="_subject" value="新问题提交">
+                    <input type="text" name="_gotcha" style="display:none">
+                    <button type="submit" class="submit-btn">匿名提问</button>
+                </form>
+                <p class="privacy-note"><i class="fas fa-lock"></i> 所有提问将匿名处理，不会收集您的个人信息</p>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="social-links">
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p>© 2025 Je1ghtxyuN</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
