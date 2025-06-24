@@ -76,4 +76,65 @@ document.addEventListener('DOMContentLoaded', function() {
     // 添加滚动事件监听
     window.addEventListener('scroll', checkScroll);
     checkScroll(); // 初始检查
+
+    let lastX = 0, lastY = 0;
+    
+    document.addEventListener('mousemove', function(e) {
+        if (Math.sqrt(Math.pow(e.pageX - lastX, 2) + Math.pow(e.pageY - lastY, 2)) < 30) return;
+        
+        lastX = e.pageX;
+        lastY = e.pageY;
+        
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.style.position = 'fixed';
+        heart.style.left = e.pageX + 'px';
+        heart.style.top = e.pageY + 'px';
+        heart.style.fontSize = Math.random() * 10 + 10 + 'px';
+        heart.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+        heart.style.pointerEvents = 'none';
+        heart.style.zIndex = '9999';
+        heart.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
+        heart.style.opacity = '0.7';
+        heart.style.transition = 'opacity 1s ease';
+        
+        document.body.appendChild(heart);
+        
+        // 淡出效果
+        setTimeout(() => {
+            heart.style.opacity = '0';
+        }, 300);
+        
+        // 移除元素
+        setTimeout(() => {
+            heart.remove();
+        }, 1300);
+    });
+
+    const pawprints = ['🐾', 'ฅ^•ﻌ•^ฅ', '=^･ω･^=', '≽^•⩊•^≼'];
+    
+    document.addEventListener('click', function(e) {
+        const paw = document.createElement('div');
+        paw.textContent = pawprints[Math.floor(Math.random() * pawprints.length)];
+        paw.style.position = 'fixed';
+        paw.style.left = (e.pageX - 15) + 'px';
+        paw.style.top = (e.pageY - 15) + 'px';
+        paw.style.fontSize = '20px';
+        paw.style.pointerEvents = 'none';
+        paw.style.zIndex = '9999';
+        paw.style.opacity = '1';
+        paw.style.transition = 'opacity 1s ease';
+        
+        document.body.appendChild(paw);
+        
+        // 淡出效果
+        setTimeout(() => {
+            paw.style.opacity = '0';
+        }, 300);
+        
+        // 移除元素
+        setTimeout(() => {
+            paw.remove();
+        }, 1300);
+    });
 });
