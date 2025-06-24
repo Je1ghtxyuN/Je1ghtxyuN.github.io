@@ -77,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', checkScroll);
     checkScroll(); // 初始检查
 
+    //鼠标特效逻辑
     let lastX = 0, lastY = 0;
     
     document.addEventListener('mousemove', function(e) {
@@ -88,8 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const heart = document.createElement('div');
         heart.innerHTML = '❤️';
         heart.style.position = 'fixed';
-        heart.style.left = e.pageX + 'px';
-        heart.style.top = e.pageY + 'px';
+        // 使用 clientX/clientY 代替 pageX/pageY 来修复滚动问题
+        heart.style.left = e.clientX + 'px';
+        heart.style.top = e.clientY + 'px';
         heart.style.fontSize = Math.random() * 10 + 10 + 'px';
         heart.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
         heart.style.pointerEvents = 'none';
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 淡出效果
         setTimeout(() => {
-            heart.style.opacity = '0';
+            heart.style.opacity = '0';  
         }, 300);
         
         // 移除元素
@@ -117,8 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const paw = document.createElement('div');
         paw.textContent = pawprints[Math.floor(Math.random() * pawprints.length)];
         paw.style.position = 'fixed';
-        paw.style.left = (e.pageX - 15) + 'px';
-        paw.style.top = (e.pageY - 15) + 'px';
+        // 使用 clientX/clientY 代替 pageX/pageY 来修复滚动问题
+        paw.style.left = (e.clientX - 15) + 'px';
+        paw.style.top = (e.clientY - 15) + 'px';
         paw.style.fontSize = '20px';
         paw.style.pointerEvents = 'none';
         paw.style.zIndex = '9999';
