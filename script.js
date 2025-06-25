@@ -177,29 +177,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // 照片墙点击放大效果
-    document.querySelectorAll('.photo-item').forEach(item => {
-        item.addEventListener('click', function () {
-            const imgSrc = this.querySelector('img').src;
+    function setupPhotoWall() {
+        // 使用事件委托处理动态加载的照片
+        document.addEventListener('click', function (e) {
+            // 检查点击的是否是照片或照片容器
+            const photoItem = e.target.closest('.photo-item');
+            if (photoItem) {
+                e.preventDefault();
+                const img = photoItem.querySelector('img');
+                if (img) {
+                    openPhotoModal(img.src);
+                }
+            }
+
+            // 检查点击的是否是关闭按钮
+            if (e.target.classList.contains('close-btn')) {
+                closePhotoModal();
+            }
+        });
+
+        // 打开模态框
+        function openPhotoModal(imgSrc) {
+            // 关闭已打开的模态框
+            closePhotoModal();
+
+            // 创建新模态框
             const overlay = document.createElement('div');
             overlay.className = 'photo-overlay';
-            overlay.innerHTML = `
-            <div class="photo-modal">
-                <img src="${imgSrc}" alt="放大图片">
-                <button class="close-btn">&times;</button>
-            </div>
-        `;
 
+            const modal = document.createElement('div');
+            modal.className = 'photo-modal';
+
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = '放大图片';
+
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '&times;';
+
+            modal.appendChild(img);
+            modal.appendChild(closeBtn);
+            overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            overlay.querySelector('.close-btn').addEventListener('click', function () {
-                overlay.remove();
-            });
+            // 强制重绘
+            void overlay.offsetWidth;
 
-            overlay.addEventListener('click', function (e) {
-                if (e.target === overlay) {
+            // 激活动画
+            overlay.classList.add('active');
+
+            // 禁用滚动
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭模态框
+        function closePhotoModal() {
+            const overlay = document.querySelector('.photo-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+                setTimeout(() => {
                     overlay.remove();
-                }
-            });
-        });
-    });
+                    document.body.style.overflow = '';
+                }, 500);
+            }
+        }
+    }
+
+    // 初始化照片墙
+    setupPhotoWall();
 });
