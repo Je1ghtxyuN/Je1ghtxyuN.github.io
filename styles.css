@@ -34,7 +34,7 @@ body {
     overflow-x: hidden;
 }
 
-/* 头部样式 - 梦幻粉色 */
+/* 头部样式 - 稳定不闪烁版本 */
 header {
     background: linear-gradient(135deg, var(--pink-primary), var(--pink-secondary));
     color: white;
@@ -44,22 +44,10 @@ header {
     position: relative;
     box-shadow: 0 10px 30px rgba(255, 105, 158, 0.4);
     clip-path: polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%);
-    animation: gradientBG 15s ease infinite;
-    background-size: 200% 200%;
-}
-
-@keyframes gradientBG {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
+    z-index: 1;
+    /* 性能优化 */
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 header::before {
@@ -81,6 +69,21 @@ header h1 {
     text-shadow: 2px 2px 4px rgba(210, 54, 105, 0.5);
     position: relative;
     display: inline-block;
+    animation: fadeInDown 1s ease forwards;
+    opacity: 0;
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 header h1::after {
@@ -101,26 +104,33 @@ header p {
     margin: 0 auto;
     text-shadow: 1px 1px 2px rgba(210, 54, 105, 0.5);
     position: relative;
+    animation: fadeIn 1s ease forwards;
+    opacity: 0;
+    animation-delay: 0.6s;
 }
 
-/* 心形漂浮动画 */
-.heart-float {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* 心形装饰（稳定版） */
+header::after {
+    content: "❤";
     position: absolute;
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.7);
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0) rotate(0deg);
-    }
-
-    50% {
-        transform: translateY(-20px) rotate(10deg);
-    }
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    color: var(--pink-secondary);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    will-change: transform;
 }
 
 /* 主内容区 */
