@@ -141,18 +141,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 1300);
     });
 
-
-    // 音乐播放器控制
+    // 悬浮音乐播放器控制
+    const floatingPlayer = document.querySelector('.floating-music-player');
+    const minimizedBtn = document.querySelector('.player-minimized');
+    const minimizeBtn = document.querySelector('.minimize-btn');
     const audio = document.getElementById('myAudio');
-    const songTitle = document.getElementById('songTitle');
+
+    // 点击迷你播放器展开
+    minimizedBtn.addEventListener('click', function () {
+        floatingPlayer.classList.add('expanded');
+    });
+
+    // 点击关闭按钮收起
+    minimizeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        floatingPlayer.classList.remove('expanded');
+    });
+
+    // 点击播放器外部区域收起
+    document.addEventListener('click', function (e) {
+        if (!floatingPlayer.contains(e.target) &&
+            !e.target.classList.contains('player-minimized')) {
+            floatingPlayer.classList.remove('expanded');
+        }
+    });
 
     // 歌曲信息更新
     audio.addEventListener('play', function () {
-        songTitle.textContent = "正在播放: あたらよ - 夏霞";
+        document.querySelector('.song-info').textContent = "正在播放: あたらよ - 夏霞";
     });
 
     audio.addEventListener('pause', function () {
-        songTitle.textContent = "已暂停";
+        document.querySelector('.song-info').textContent = "已暂停: あたらよ - 夏霞";
     });
 
 
