@@ -11,6 +11,34 @@
     <!-- 添加Animate.css动画库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        /* 基础变量 */
+        :root {
+            --pink-primary: #ff6b9e;
+            --pink-secondary: #ff3d7f;
+            --pink-accent: #ff1493;
+            --pink-pale: #ffdfeb;
+            --pink-dark: #d23669;
+            --text-color: #5a3d5a;
+            --cubic-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        }
+
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: #fff0f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* 导航栏样式 */
         .main-nav {
             position: fixed;
@@ -70,6 +98,7 @@
             max-width: 1000px;
             margin: 5rem auto 3rem;
             padding: 0 2rem;
+            flex: 1;
         }
 
         /* 作品展示区域 */
@@ -351,6 +380,33 @@
             margin: 0 auto;
         }
 
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--pink-dark), #8a1242);
+            color: white;
+            margin-top: auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.8rem;
+            transition: all 0.5s var(--cubic-bounce);
+        }
+
+        .social-links a:hover {
+            color: var(--pink-pale);
+            transform: translateY(-5px);
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-links {
@@ -376,6 +432,10 @@
             .indicator {
                 width: 8px;
                 height: 8px;
+            }
+
+            .social-links {
+                gap: 1.5rem;
             }
         }
     </style>
@@ -419,7 +479,6 @@
                                         allowfullscreen="true"></iframe>
                                 </div>
                             </div>
-
                             <div class="carousel-item">
                                 <div class="video-container">
                                     <iframe src="videos/GSSJdemo1.mp4" scrolling="no" frameborder="no"
@@ -433,6 +492,7 @@
                         <!-- 轮播指示器 -->
                         <div class="carousel-indicators">
                             <span class="indicator active"></span>
+                            <span class="indicator"></span>
                             <span class="indicator"></span>
                             <span class="indicator"></span>
                         </div>
@@ -516,7 +576,6 @@
         <p>© 2025 橘京花(Je1ghtxyuN) - すべての内容は京花ちゃんの宝物です(♡˙︶˙♡)</p>
     </footer>
 
-    <script src="script.js"></script>
     <script>
         // 高亮当前页面导航
         document.addEventListener('DOMContentLoaded', function () {
@@ -542,6 +601,14 @@
                     let currentIndex = 0;
 
                     function showItem(index) {
+                        // 停止所有视频播放
+                        items.forEach(item => {
+                            const iframe = item.querySelector('iframe');
+                            if (iframe) {
+                                iframe.src = iframe.src; // 重置iframe以停止播放
+                            }
+                        });
+
                         items.forEach(item => item.classList.remove('active'));
                         indicators.forEach(ind => ind.classList.remove('active'));
 
@@ -687,16 +754,6 @@
                         mediaContent = `
                             <div class="work-media">
                                 <img src="${work.url}" alt="${work.title}" style="width:100%;height:100%;object-fit:cover;">
-                            </div>
-                        `;
-                    } else if (work.type === 'web') {
-                        mediaContent = `
-                            <div class="work-media">
-                                <a href="${work.url}" target="_blank">
-                                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #ff6b9e, #ff3d7f);color:white;">
-                                        <i class="fas fa-external-link-alt" style="font-size:2rem;"></i>
-                                    </div>
-                                </a>
                             </div>
                         `;
                     }
