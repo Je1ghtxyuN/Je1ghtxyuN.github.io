@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/icon.png">
     <title>作品集 - 橘京花の小窝</title>
     <link rel="stylesheet" href="styles.css">
     <!-- 添加Font Awesome图标库 -->
@@ -96,9 +97,10 @@
         /* 作品集专用样式 */
         .works-container {
             max-width: 1000px;
-            margin: 5rem auto 3rem;
+            margin: 5rem auto 0;
             padding: 0 2rem;
             flex: 1;
+            width: 100%;
         }
 
         /* 作品展示区域 */
@@ -106,7 +108,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            margin: 2rem 0;
+            width: 100%;
         }
 
         .work-item {
@@ -120,6 +123,7 @@
             transition: all 0.5s var(--cubic-bounce);
             display: flex;
             flex-direction: column;
+            width: 100%;
         }
 
         .work-item:hover {
@@ -133,11 +137,30 @@
             width: 100%;
             height: 0;
             padding-bottom: 56.25%;
-            /* 16:9 比例 */
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 1rem;
             background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* B站视频专用容器 */
+        .bilibili-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .bilibili-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform: scale(1.02);
         }
 
         /* 轮播容器 */
@@ -387,6 +410,7 @@
             background: linear-gradient(135deg, var(--pink-dark), #8a1242);
             color: white;
             margin-top: auto;
+            width: 100%;
         }
 
         .social-links {
@@ -418,8 +442,17 @@
                 padding: 0.4rem 0.8rem;
             }
 
+            .works-container {
+                padding: 0 1rem;
+            }
+
             .works-gallery {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .work-item {
+                padding: 1.2rem;
             }
 
             .carousel-prev,
@@ -564,6 +597,23 @@
             </div>
         </main>
     </div>
+    <!-- 悬浮音乐播放器 -->
+    <div class="floating-music-player">
+        <div class="player-minimized">
+            <i class="fas fa-music"></i>
+        </div>
+        <div class="player-expanded">
+            <div class="player-header">
+                <span>窝喜欢的歌 / お気に入りの歌</span>
+                <button class="minimize-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <audio id="myAudio" controls>
+                <source src="music/あたらよ - 夏霞.mp3" type="audio/mpeg">
+            </audio>
+            <div class="song-info">あたらよ - 夏霞</div>
+        </div>
+    </div>
+
 
     <footer>
         <div class="social-links">
@@ -698,16 +748,18 @@
                     if (work.type === 'bilibili') {
                         mediaContent = `
                             <div class="work-media">
-                                <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
-                                    scrolling="no" frameborder="no" 
-                                    allowfullscreen="true">
-                                </iframe>
+                                <div class="bilibili-container">
+                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
+                                        scrolling="no" frameborder="no" 
+                                        allowfullscreen="true">
+                                    </iframe>
+                                </div>
                             </div>
                         `;
                     } else if (work.type === 'image') {
                         mediaContent = `
                             <div class="work-media">
-                                <img src="${work.url}" alt="${work.title}" style="width:100%;height:100%;object-fit:cover;">
+                                <img src="${work.url}" alt="${work.title}">
                             </div>
                         `;
                     }
@@ -744,16 +796,18 @@
                     if (work.type === 'bilibili') {
                         mediaContent = `
                             <div class="work-media">
-                                <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
-                                    scrolling="no" frameborder="no" 
-                                    allowfullscreen="true">
-                                </iframe>
+                                <div class="bilibili-container">
+                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
+                                        scrolling="no" frameborder="no" 
+                                        allowfullscreen="true">
+                                    </iframe>
+                                </div>
                             </div>
                         `;
                     } else if (work.type === 'image') {
                         mediaContent = `
                             <div class="work-media">
-                                <img src="${work.url}" alt="${work.title}" style="width:100%;height:100%;object-fit:cover;">
+                                <img src="${work.url}" alt="${work.title}">
                             </div>
                         `;
                     }

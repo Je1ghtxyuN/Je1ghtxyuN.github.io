@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/icon.png">
     <title>留言板 - 橘京花の小窝</title>
     <link rel="stylesheet" href="styles.css">
     <!-- 添加Font Awesome图标库 -->
@@ -11,6 +12,28 @@
     <!-- 添加Animate.css动画库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: #fff0f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
         /* 导航栏样式 */
         .main-nav {
             position: fixed;
@@ -60,19 +83,24 @@
             box-shadow: 0 4px 15px rgba(255, 61, 127, 0.3);
         }
 
+        /* 调整header位置避免被导航栏遮挡 */
+        header {
+            margin-top: 70px;
+        }
+
         /* 留言板专用样式 */
         .contact-container {
             max-width: 800px;
-            margin: 5rem auto 3rem;
+            margin: 5rem auto;
             padding: 0 2rem;
+            flex: 1;
+            width: 100%;
         }
 
         /* 留言表单样式 - 修改为白色半透明磨砂效果 */
         .ask-me {
             background: rgba(255, 255, 255, 0.85);
-            /* 白色半透明背景 */
             backdrop-filter: blur(8px);
-            /* 磨砂效果 */
             -webkit-backdrop-filter: blur(8px);
             border-radius: 20px;
             padding: 3rem;
@@ -132,7 +160,6 @@
             display: flex;
             justify-content: center;
             margin-top: 2rem;
-            /* 增加与上方输入框的距离 */
         }
 
         .submit-btn {
@@ -186,6 +213,34 @@
             color: var(--pink-accent);
         }
 
+        /* 页脚样式 */
+        footer {
+            background: linear-gradient(135deg, var(--pink-dark), #8a1242);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.8rem;
+            transition: all 0.5s var(--cubic-bounce);
+        }
+
+        .social-links a:hover {
+            color: var(--pink-pale);
+            transform: translateY(-5px);
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 gap: 1rem;
@@ -202,6 +257,10 @@
 
             .submit-container {
                 margin-top: 1.5rem;
+            }
+
+            .social-links {
+                gap: 1.5rem;
             }
         }
     </style>
@@ -256,6 +315,22 @@
                 </div>
             </section>
         </main>
+    </div>
+    <!-- 悬浮音乐播放器 -->
+    <div class="floating-music-player">
+        <div class="player-minimized">
+            <i class="fas fa-music"></i>
+        </div>
+        <div class="player-expanded">
+            <div class="player-header">
+                <span>窝喜欢的歌 / お気に入りの歌</span>
+                <button class="minimize-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <audio id="myAudio" controls>
+                <source src="music/あたらよ - 夏霞.mp3" type="audio/mpeg">
+            </audio>
+            <div class="song-info">あたらよ - 夏霞</div>
+        </div>
     </div>
 
     <footer>
