@@ -10,16 +10,96 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- 添加Animate.css动画库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* 新增导航栏样式 */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(255, 105, 158, 0.1);
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #ff6b9e;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 107, 158, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link i {
+            font-size: 1rem;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #ff6b9e, #ff3d7f);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 61, 127, 0.3);
+        }
+
+        /* 调整header位置避免被导航栏遮挡 */
+        header {
+            margin-top: 70px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- 新增导航栏 -->
+    <nav class="main-nav animate__animated animate__fadeInDown">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">
+                <i class="fas fa-home"></i> 主页
+            </a>
+            <a href="works.html" class="nav-link">
+                <i class="fas fa-code"></i> 作品
+            </a>
+            <a href="contact.html" class="nav-link">
+                <i class="fas fa-envelope"></i> 留言板
+            </a>
+        </div>
+    </nav>
+
     <header class="animate__animated animate__fadeIn">
-        <h1>いらっしゃいませ～☆</h1>
-        <p>ここは京花ちゃんの个人空间ですよ～泥可以了解窝，也可以给窝留言呢(◕‿◕✿)</p>
+        <h1>欢迎来到我的空间～☆</h1>
+        <p>橘京花の个人空间desuwa～泥可以了解窝，也可以给窝留言呢(◕‿◕✿)</p>
     </header>
 
     <main>
-
         <section class="photo-wall animate__animated animate__fadeInUp">
             <div class="gallery">
                 <div class="photo-item">
@@ -34,7 +114,6 @@
                 <div class="photo-item">
                     <img src="images/gallery/photo4.jpg" alt="照片4">
                 </div>
-
             </div>
         </section>
 
@@ -44,10 +123,10 @@
                 <img src="images/profile.jpg" alt="京花ちゃんの头像" class="profile-img">
                 <p>
                     窝系一只敲可爱的CS专业小透明(⁄ ⁄•⁄ω⁄•⁄ ⁄) <br><br>
-                    东南大学在读程序媛~コードもアニメも大好き！(๑•̀ㅂ•́)و✧ <br><br>
+                    东南大学在读~コードもアニメも大好き！(๑•̀ㅂ•́)و✧ <br><br>
                     本命是V家歌姬们！初音ミク世界一可爱い！♪(^∇^*) <br><br>
                     同时还是提督桑~镇守府の日常超治愈的说(´▽`ʃ♡ƪ) <br><br>
-                    最近在玩鸣潮/星穹铁道~一緒にプレイしない？(๑¯◡¯๑) <br><br>
+                    最近在玩鸣潮/OW/CS~一緒にプレイしない？(๑¯◡¯๑) <br><br>
                     梦想是成为会写代码的魔法少女！マジカル☆プログラマーになりたい！(ノ◕ヮ◕)ノ*:･ﾟ✧ <br><br>
                     今日のわくわく：Reactの魔法を勉強中です～✨
                 </p>
@@ -70,28 +149,13 @@
                 <div class="song-info">あたらよ - 夏霞</div>
             </div>
         </div>
-
-        <section class="ask-me animate__animated animate__fadeInUp">
-            <h2>给窝留言 / メッセージ <i class="fas fa-envelope" style="color: #a777e3;"></i></h2>
-            <div class="question-form">
-                <form id="questionForm" action="https://formspree.io/f/mkgbpnbb" method="POST">
-                    <textarea name="question" placeholder="ここにメッセージを書いてね～(´･ω･｀)" required></textarea>
-                    <input type="hidden" name="_subject" value="【个人网站】新的留言">
-                    <input type="text" name="_gotcha" style="display:none">
-                    <button type="submit" class="submit-btn">匿名で送信 <i class="fas fa-paper-plane"></i></button>
-                </form>
-                <p class="privacy-note"><i class="fas fa-lock"></i> すべてのメッセージは匿名で処理されます～プライバシーは完璧ですよ！(｀・ω・´)</p>
-            </div>
-        </section>
     </main>
-
-
 
     <footer>
         <div class="social-links">
             <a href="https://github.com/Je1ghtxyuN" aria-label="GitHub" title="Githubでフォローしてね～"><i
                     class="fab fa-github"></i></a>
-            <a href="https://x.com/橘京花" aria-label="x" title="xでお話しましょう～"><i class="fab fa-x"></i></a>
+            <a href="https://x.com/Je1ghtxyuN" aria-label="x" title="xでお話しましょう～"><i class="fab fa-x"></i></a>
             <a href="https://instagram.com/Je1ghtxyuN" aria-label="Instagram" title="Instagramも見てみて～"><i
                     class="fab fa-instagram"></i></a>
         </div>
@@ -99,6 +163,22 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // 高亮当前页面导航
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            navLinks.forEach(link => {
+                const linkPage = link.getAttribute('href');
+                if (currentPage === linkPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
