@@ -246,4 +246,103 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 初始化照片墙
     setupPhotoWall();
+
+    // 轮播功能
+    function setupCarousels() {
+        document.querySelectorAll('.media-carousel').forEach(carousel => {
+            const items = carousel.querySelectorAll('.carousel-item');
+            const prevBtn = carousel.parentElement.querySelector('.carousel-prev');
+            const nextBtn = carousel.parentElement.querySelector('.carousel-next');
+            const indicators = carousel.parentElement.querySelectorAll('.indicator');
+            let currentIndex = 0;
+
+            function showItem(index) {
+                // 隐藏所有项目
+                items.forEach(item => item.classList.remove('active'));
+                indicators.forEach(ind => ind.classList.remove('active'));
+
+                // 显示指定项目
+                items[index].classList.add('active');
+                indicators[index].classList.add('active');
+                currentIndex = index;
+            }
+
+            // 下一张
+            nextBtn.addEventListener('click', () => {
+                const nextIndex = (currentIndex + 1) % items.length;
+                showItem(nextIndex);
+            });
+
+            // 上一张
+            prevBtn.addEventListener('click', () => {
+                const prevIndex = (currentIndex - 1 + items.length) % items.length;
+                showItem(prevIndex);
+            });
+
+            // 指示器点击
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    showItem(index);
+                });
+            });
+
+            // 自动播放(可选)
+            let autoplay = setInterval(() => {
+                const nextIndex = (currentIndex + 1) % items.length;
+                showItem(nextIndex);
+            }, 5000);
+
+            // 鼠标悬停暂停自动播放
+            carousel.addEventListener('mouseenter', () => {
+                clearInterval(autoplay);
+            });
+
+            carousel.addEventListener('mouseleave', () => {
+                autoplay = setInterval(() => {
+                    const nextIndex = (currentIndex + 1) % items.length;
+                    showItem(nextIndex);
+                }, 5000);
+            });
+
+            // 初始化显示第一个项目
+            showItem(0);
+        });
+    }
+
+    // 页面加载完成后初始化轮播
+    document.addEventListener('DOMContentLoaded', setupCarousels);
+
+    // 原声带功能
+    function setupSoundtracks() {
+        // 切换原声带显示/隐藏
+        document.querySelectorAll('.soundtrack-title').forEach(title => {
+            title.addEventListener('click', function () {
+                this.classList.toggle('active');
+            });
+        });
+
+        // 原声带选择播放
+        document.querySelectorAll('.soundtrack-select').forEach(select => {
+            const player = select.nextElementSibling;
+
+            select.addEventListener('change', function () {
+                if (this.value) {
+                    player.src = this.value;
+                    player.load();
+                    player.play().catch(e => console.log("自动播放被阻止:", e));
+                } else {
+                    player.src = '';
+                    player.load();
+                }
+            });
+        });
+    }
+
+    // 在DOM加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function () {
+        setupSoundtracks();
+        // 其他初始化代码...
+    });
 });
+
+
