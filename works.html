@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="images/icon.png">
     <title>作品集 - 橘京花の小窝</title>
     <link rel="stylesheet" href="styles.css">
     <!-- 添加Font Awesome图标库 -->
@@ -500,22 +499,22 @@
                         <div class="media-carousel">
                             <!-- 图片项 -->
                             <div class="carousel-item active">
-                                <img src="images/works/GSSJ1.jpeg" alt="游戏截图1">
+                                <img src="images/works/GSSJ2.jpeg" alt="游戏截图1">
                             </div>
                             <div class="carousel-item">
-                                <img src="images/works/GSSJ2.jpeg" alt="游戏截图2">
+                                <img src="images/works/GSSJ1.jpeg" alt="游戏截图2">
                             </div>
-                            <!-- 视频项 -->
+                            <!-- 视频项 - 修改为不自动播放 -->
                             <div class="carousel-item">
                                 <div class="video-container">
                                     <iframe src="videos/GSSJdemo2.mp4" scrolling="no" frameborder="no"
-                                        allowfullscreen="true"></iframe>
+                                        allowfullscreen="true" allow="autoplay"></iframe>
                                 </div>
                             </div>
                             <div class="carousel-item">
                                 <div class="video-container">
                                     <iframe src="videos/GSSJdemo1.mp4" scrolling="no" frameborder="no"
-                                        allowfullscreen="true"></iframe>
+                                        allowfullscreen="true" allow="autoplay"></iframe>
                                 </div>
                             </div>
                         </div>
@@ -597,23 +596,6 @@
             </div>
         </main>
     </div>
-    <!-- 悬浮音乐播放器 -->
-    <div class="floating-music-player">
-        <div class="player-minimized">
-            <i class="fas fa-music"></i>
-        </div>
-        <div class="player-expanded">
-            <div class="player-header">
-                <span>窝喜欢的歌 / お気に入りの歌</span>
-                <button class="minimize-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <audio id="myAudio" controls>
-                <source src="music/あたらよ - 夏霞.mp3" type="audio/mpeg">
-            </audio>
-            <div class="song-info">あたらよ - 夏霞</div>
-        </div>
-    </div>
-
 
     <footer>
         <div class="social-links">
@@ -655,7 +637,10 @@
                         items.forEach(item => {
                             const iframe = item.querySelector('iframe');
                             if (iframe) {
-                                iframe.src = iframe.src; // 重置iframe以停止播放
+                                // 重置iframe以停止播放
+                                const src = iframe.src;
+                                iframe.src = '';
+                                iframe.src = src;
                             }
                         });
 
@@ -751,7 +736,7 @@
                                 <div class="bilibili-container">
                                     <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
                                         scrolling="no" frameborder="no" 
-                                        allowfullscreen="true">
+                                        allowfullscreen="true" allow="autoplay">
                                     </iframe>
                                 </div>
                             </div>
@@ -799,7 +784,7 @@
                                 <div class="bilibili-container">
                                     <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
                                         scrolling="no" frameborder="no" 
-                                        allowfullscreen="true">
+                                        allowfullscreen="true" allow="autoplay">
                                     </iframe>
                                 </div>
                             </div>
