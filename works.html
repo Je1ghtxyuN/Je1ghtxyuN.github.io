@@ -694,6 +694,11 @@
                                 iframe.src = '';
                                 iframe.src = src;
                             }
+
+                            const video = item.querySelector('video');
+                            if (video) {
+                                video.pause();
+                            }
                         });
 
                         items.forEach(item => item.classList.remove('active'));
@@ -884,8 +889,9 @@
                                 carouselItems += `
                                     <div class="carousel-item ${index === 0 ? 'active' : ''}">
                                         <div class="video-container">
-                                            <iframe src="${media.url}" scrolling="no" frameborder="no"
-                                                allowfullscreen="true" allow="autoplay" muted></iframe>
+                                            <video controls style="width:100%;height:100%;object-fit:contain;" onloadedmetadata="this.pause()">
+                                                <source src="${media.url}" type="video/mp4">
+                                            </video>
                                         </div>
                                     </div>
                                 `;
@@ -993,8 +999,9 @@
                                 carouselItems += `
                                     <div class="carousel-item ${index === 0 ? 'active' : ''}">
                                         <div class="video-container">
-                                            <iframe src="${media.url}" scrolling="no" frameborder="no"
-                                                allowfullscreen="true" allow="autoplay" muted></iframe>
+                                            <video controls style="width:100%;height:100%;object-fit:contain;" onloadedmetadata="this.pause()">
+                                                <source src="${media.url}" type="video/mp4">
+                                            </video>
                                         </div>
                                     </div>
                                 `;
