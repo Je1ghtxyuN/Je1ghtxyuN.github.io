@@ -619,100 +619,8 @@
     <div class="works-container">
         <main>
             <!-- 作品展示区域 -->
-            <div class="works-gallery animate__animated animate__fadeInUp">
-                <!-- 晷枢双界 - 带轮播效果 -->
-                <div class="work-item">
-                    <div class="work-media">
-                        <div class="media-carousel">
-                            <!-- 图片项 -->
-                            <div class="carousel-item active">
-                                <img src="images/works/GSSJ2.jpeg" alt="游戏截图1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="images/works/GSSJ1.jpeg" alt="游戏截图2">
-                            </div>
-                            <!-- 视频项 - 修改为静音 -->
-                            <div class="carousel-item">
-                                <div class="video-container">
-                                    <iframe src="videos/GSSJdemo2.mp4" scrolling="no" frameborder="no"
-                                        allowfullscreen="true" allow="autoplay" muted></iframe>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <div class="video-container">
-                                    <iframe src="videos/GSSJdemo1.mp4" scrolling="no" frameborder="no"
-                                        allowfullscreen="true" allow="autoplay" muted></iframe>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 轮播控制按钮 -->
-                        <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
-                        <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
-                        <!-- 轮播指示器 -->
-                        <div class="carousel-indicators">
-                            <span class="indicator active"></span>
-                            <span class="indicator"></span>
-                            <span class="indicator"></span>
-                            <span class="indicator"></span>
-                        </div>
-                    </div>
-
-                    <div class="work-info">
-                        <h3 class="work-title">晷枢双界</h3>
-                        <p class="work-desc">VR游戏<br>
-                            下载链接：https://pan.baidu.com/s/13K01ShJFkVY_qt-vLBZxYw?pwd=f3f4</p>
-                        <p class="work-date">2025-5-20</p>
-                    </div>
-                </div>
-
-                <!-- REBORN - 带轮播效果 -->
-                <div class="work-item">
-                    <div class="work-media">
-                        <div class="media-carousel">
-                            <!-- 图片项 -->
-                            <div class="carousel-item active">
-                                <img src="images/works/REBORN1.jpg" alt="游戏截图1">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="images/works/REBORN2.jpg" alt="游戏截图2">
-                            </div>
-                        </div>
-                        <!-- 轮播控制按钮 -->
-                        <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
-                        <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
-                        <!-- 轮播指示器 -->
-                        <div class="carousel-indicators">
-                            <span class="indicator active"></span>
-                            <span class="indicator"></span>
-                        </div>
-                    </div>
-
-                    <!-- 原声带部分 -->
-                    <div class="soundtrack-section">
-                        <h4 class="soundtrack-title">
-                            <i class="fas fa-music"></i> 游戏原声带OST
-                            <span class="toggle-soundtrack"><i class="fas fa-chevron-down"></i></span>
-                        </h4>
-                        <div class="soundtrack-content">
-                            <select class="soundtrack-select">
-                                <option value="">选择原声带...</option>
-                                <option value="music/主题.mp3">主题曲</option>
-                                <option value="music/doctordie.mp3">博士人物曲</option>
-                                <option value="music/公园舒缓配乐.mp3">公园配乐</option>
-                                <option value="music/科技lo-fi.mp3">未来场景配乐</option>
-                                <option value="music/实验室（悬疑）.mp3">实验室配乐</option>
-                            </select>
-                            <audio class="soundtrack-player" controls></audio>
-                        </div>
-                    </div>
-
-                    <div class="work-info">
-                        <h3 class="work-title">REBORN</h3>
-                        <p class="work-desc">2024腾讯gamejam参赛作品 最佳叙事奖<br>
-                            下载链接：https://pan.baidu.com/s/1U7zXOhj8M6a3jmKk08DzEA?pwd=ypf5</p>
-                        <p class="work-date">2024-12-2</p>
-                    </div>
-                </div>
+            <div class="works-gallery animate__animated animate__fadeInUp" id="worksGallery">
+                <!-- 作品将通过JavaScript动态加载 -->
             </div>
 
             <!-- 暂无作品时的提示 -->
@@ -881,8 +789,47 @@
             setupSoundtracks();
             setupMusicPlayer();
 
-            // 作品数据
+            // 作品数据 - 所有作品统一放在这里并按日期排序
             const worksData = [
+                {
+                    type: "carousel",
+                    title: "晷枢双界",
+                    desc: "Pico VR解谜游戏<br>下载链接：https://pan.baidu.com/s/13K01ShJFkVY_qt-vLBZxYw?pwd=f3f4",
+                    date: "2025-05-20",
+                    media: [
+                        { type: "image", url: "images/works/GSSJ2.jpeg", alt: "游戏截图1" },
+                        { type: "image", url: "images/works/GSSJ1.jpeg", alt: "游戏截图2" },
+                        { type: "video", url: "videos/GSSJdemo2.mp4" },
+                        { type: "video", url: "videos/GSSJdemo1.mp4" }
+                    ]
+                },
+                {
+                    type: "carousel",
+                    title: "REBORN",
+                    desc: "2024腾讯gamejam参赛作品 最佳叙事奖<br>下载链接：https://pan.baidu.com/s/1U7zXOhj8M6a3jmKk08DzEA?pwd=ypf5",
+                    date: "2024-12-02",
+                    media: [
+                        { type: "image", url: "images/works/REBORN1.jpg", alt: "游戏截图1" },
+                        { type: "image", url: "images/works/REBORN2.jpg", alt: "游戏截图2" }
+                    ],
+                    soundtrack: {
+                        title: "游戏原声带OST",
+                        tracks: [
+                            { name: "主题曲", url: "music/主题.mp3" },
+                            { name: "博士人物曲", url: "music/doctordie.mp3" },
+                            { name: "公园配乐", url: "music/公园舒缓配乐.mp3" },
+                            { name: "未来场景配乐", url: "music/科技lo-fi.mp3" },
+                            { name: "实验室配乐", url: "music/实验室（悬疑）.mp3" }
+                        ]
+                    }
+                },
+                {
+                    type: "bilibili",
+                    id: "BV1PgN7eZEGX",
+                    title: "小孩姐要考东南大学",
+                    desc: "招生减章",
+                    date: "2025-02-09"
+                },
                 {
                     type: "bilibili",
                     id: "BV1z64y1c7Tk",
@@ -892,8 +839,11 @@
                 }
             ];
 
+            // 按日期降序排序
+            worksData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
             // 渲染作品
-            const worksGallery = document.querySelector('.works-gallery');
+            const worksGallery = document.getElementById('worksGallery');
             const emptyWorks = document.getElementById('emptyWorks');
 
             if (worksData.length > 0) {
@@ -904,28 +854,86 @@
                     workItem.className = 'work-item animate__animated animate__fadeInUp';
 
                     let mediaContent = '';
+                    let soundtrackContent = '';
 
                     if (work.type === 'bilibili') {
+                        // B站视频 - 添加autoplay=0参数禁止自动播放
                         mediaContent = `
                             <div class="work-media">
                                 <div class="bilibili-container">
-                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
+                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1&autoplay=0" 
                                         scrolling="no" frameborder="no" 
-                                        allowfullscreen="true" allow="autoplay">
+                                        allowfullscreen="true">
                                     </iframe>
                                 </div>
                             </div>
                         `;
-                    } else if (work.type === 'image') {
+                    } else if (work.type === 'carousel') {
+                        // 轮播图/视频
+                        let carouselItems = '';
+                        let indicators = '';
+
+                        work.media.forEach((media, index) => {
+                            if (media.type === 'image') {
+                                carouselItems += `
+                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                        <img src="${media.url}" alt="${media.alt}">
+                                    </div>
+                                `;
+                            } else if (media.type === 'video') {
+                                carouselItems += `
+                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                        <div class="video-container">
+                                            <iframe src="${media.url}" scrolling="no" frameborder="no"
+                                                allowfullscreen="true" allow="autoplay" muted></iframe>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                            indicators += `<span class="indicator ${index === 0 ? 'active' : ''}"></span>`;
+                        });
+
                         mediaContent = `
                             <div class="work-media">
-                                <img src="${work.url}" alt="${work.title}">
+                                <div class="media-carousel">
+                                    ${carouselItems}
+                                </div>
+                                <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
+                                <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
+                                <div class="carousel-indicators">
+                                    ${indicators}
+                                </div>
                             </div>
                         `;
+
+                        // 如果有原声带
+                        if (work.soundtrack) {
+                            let soundtrackOptions = '<option value="">选择原声带...</option>';
+                            work.soundtrack.tracks.forEach(track => {
+                                soundtrackOptions += `<option value="${track.url}">${track.name}</option>`;
+                            });
+
+                            soundtrackContent = `
+                                <div class="soundtrack-section">
+                                    <h4 class="soundtrack-title">
+                                        <i class="fas fa-music"></i> ${work.soundtrack.title}
+                                        <span class="toggle-soundtrack"><i class="fas fa-chevron-down"></i></span>
+                                    </h4>
+                                    <div class="soundtrack-content">
+                                        <select class="soundtrack-select">
+                                            ${soundtrackOptions}
+                                        </select>
+                                        <audio class="soundtrack-player" controls></audio>
+                                    </div>
+                                </div>
+                            `;
+                        }
                     }
 
                     workItem.innerHTML = `
                         ${mediaContent}
+                        ${soundtrackContent}
                         <div class="work-info">
                             <h3 class="work-title">${work.title}</h3>
                             <p class="work-desc">${work.desc}</p>
@@ -935,11 +943,16 @@
 
                     worksGallery.appendChild(workItem);
                 });
+
+                // 初始化轮播和原声带功能
+                setupCarousels();
+                setupSoundtracks();
             }
 
             // 添加新作品的方法
             window.addWork = function (work) {
                 worksData.push(work);
+                worksData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
                 // 清空现有作品
                 while (worksGallery.firstChild) {
@@ -952,28 +965,83 @@
                     workItem.className = 'work-item animate__animated animate__fadeInUp';
 
                     let mediaContent = '';
+                    let soundtrackContent = '';
 
                     if (work.type === 'bilibili') {
                         mediaContent = `
                             <div class="work-media">
                                 <div class="bilibili-container">
-                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1" 
+                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1&autoplay=0" 
                                         scrolling="no" frameborder="no" 
-                                        allowfullscreen="true" allow="autoplay">
+                                        allowfullscreen="true">
                                     </iframe>
                                 </div>
                             </div>
                         `;
-                    } else if (work.type === 'image') {
+                    } else if (work.type === 'carousel') {
+                        let carouselItems = '';
+                        let indicators = '';
+
+                        work.media.forEach((media, index) => {
+                            if (media.type === 'image') {
+                                carouselItems += `
+                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                        <img src="${media.url}" alt="${media.alt}">
+                                    </div>
+                                `;
+                            } else if (media.type === 'video') {
+                                carouselItems += `
+                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                        <div class="video-container">
+                                            <iframe src="${media.url}" scrolling="no" frameborder="no"
+                                                allowfullscreen="true" allow="autoplay" muted></iframe>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                            indicators += `<span class="indicator ${index === 0 ? 'active' : ''}"></span>`;
+                        });
+
                         mediaContent = `
                             <div class="work-media">
-                                <img src="${work.url}" alt="${work.title}">
+                                <div class="media-carousel">
+                                    ${carouselItems}
+                                </div>
+                                <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
+                                <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
+                                <div class="carousel-indicators">
+                                    ${indicators}
+                                </div>
                             </div>
                         `;
+
+                        if (work.soundtrack) {
+                            let soundtrackOptions = '<option value="">选择原声带...</option>';
+                            work.soundtrack.tracks.forEach(track => {
+                                soundtrackOptions += `<option value="${track.url}">${track.name}</option>`;
+                            });
+
+                            soundtrackContent = `
+                                <div class="soundtrack-section">
+                                    <h4 class="soundtrack-title">
+                                        <i class="fas fa-music"></i> ${work.soundtrack.title}
+                                        <span class="toggle-soundtrack"><i class="fas fa-chevron-down"></i></span>
+                                    </h4>
+                                    <div class="soundtrack-content">
+                                        <select class="soundtrack-select">
+                                            ${soundtrackOptions}
+                                        </select>
+                                        <audio class="soundtrack-player" controls></audio>
+                                    </div>
+                                </div>
+                            `;
+                        }
                     }
 
                     workItem.innerHTML = `
                         ${mediaContent}
+                        ${soundtrackContent}
                         <div class="work-info">
                             <h3 class="work-title">${work.title}</h3>
                             <p class="work-desc">${work.desc}</p>
@@ -987,6 +1055,10 @@
                 if (worksData.length > 0) {
                     emptyWorks.style.display = 'none';
                 }
+
+                // 重新初始化轮播和原声带功能
+                setupCarousels();
+                setupSoundtracks();
             };
         });
     </script>
