@@ -454,6 +454,7 @@ footer::before {
     opacity: 0;
     transition: all 0.7s var(--cubic-bounce);
     border: 1px solid rgba(255, 255, 255, 0.5);
+    z-index: 10000 !important;
 }
 
 .floating-music-player.expanded .player-expanded {

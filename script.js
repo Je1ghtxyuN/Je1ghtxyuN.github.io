@@ -1,85 +1,88 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // 表单提交处理
+    // ==================== 表单提交处理 ====================
     const form = document.getElementById('questionForm');
-    const submitBtn = form.querySelector('.submit-btn');
+    if (form) {
+        const submitBtn = form.querySelector('.submit-btn');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+            try {
+                // 更新按钮状态
+                submitBtn.disabled = true;
+                submitBtn.textContent = '发送中...';
+                submitBtn.style.background = 'linear-gradient(to right, #4facfe, #00f2fe)';
 
-        try {
-            // 更新按钮状态
-            submitBtn.disabled = true;
-            submitBtn.textContent = '发送中...';
-            submitBtn.style.background = 'linear-gradient(to right, #4facfe, #00f2fe)';
+                // 发送表单数据
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
 
-            // 发送表单数据
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: { 'Accept': 'application/json' }
-            });
+                if (response.ok) {
+                    // 成功反馈
+                    submitBtn.textContent = '✓ 已发送';
+                    submitBtn.style.background = 'linear-gradient(to right, #4cd964, #5ac8fa)';
+                    form.reset();
 
-            if (response.ok) {
-                // 成功反馈
-                submitBtn.textContent = '✓ 已发送';
-                submitBtn.style.background = 'linear-gradient(to right, #4cd964, #5ac8fa)';
-                form.reset();
+                    // 3秒后恢复按钮状态
+                    setTimeout(() => {
+                        submitBtn.textContent = '匿名提问';
+                        submitBtn.style.background = 'linear-gradient(to right, #6e8efb, #a777e3)';
+                        submitBtn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error('提交失败');
+                }
+            } catch (error) {
+                // 错误处理
+                submitBtn.textContent = '✗ 发送失败';
+                submitBtn.style.background = 'linear-gradient(to right, #ff5e57, #ff2d55)';
 
-                // 3秒后恢复按钮状态
                 setTimeout(() => {
                     submitBtn.textContent = '匿名提问';
                     submitBtn.style.background = 'linear-gradient(to right, #6e8efb, #a777e3)';
                     submitBtn.disabled = false;
                 }, 2000);
-            } else {
-                throw new Error('提交失败');
-            }
-        } catch (error) {
-            // 错误处理
-            submitBtn.textContent = '✗ 发送失败';
-            submitBtn.style.background = 'linear-gradient(to right, #ff5e57, #ff2d55)';
-
-            setTimeout(() => {
-                submitBtn.textContent = '匿名提问';
-                submitBtn.style.background = 'linear-gradient(to right, #6e8efb, #a777e3)';
-                submitBtn.disabled = false;
-            }, 2000);
-        }
-    });
-
-    // 滚动动画
-    const sections = document.querySelectorAll('section');
-
-    const checkScroll = () => {
-        sections.forEach(section => {
-            const sectionTop = section.getBoundingClientRect().top;
-            if (sectionTop < window.innerHeight - 100) {
-                section.style.opacity = '1';
-                section.style.transform = 'translateY(0)';
             }
         });
-    };
+    }
 
-    // 初始化部分动画
-    sections.forEach(section => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(20px)';
-        section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    });
+    // ==================== 滚动动画 ====================
+    const sections = document.querySelectorAll('section');
+    if (sections.length > 0) {
+        const checkScroll = () => {
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop < window.innerHeight - 100) {
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }
+            });
+        };
 
-    // 触发初始动画
-    setTimeout(() => {
-        sections[0].style.opacity = '1';
-        sections[0].style.transform = 'translateY(0)';
-    }, 300);
+        // 初始化部分动画
+        sections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
 
-    // 添加滚动事件监听
-    window.addEventListener('scroll', checkScroll);
-    checkScroll(); // 初始检查
+        // 触发初始动画
+        setTimeout(() => {
+            if (sections[0]) {
+                sections[0].style.opacity = '1';
+                sections[0].style.transform = 'translateY(0)';
+            }
+        }, 300);
 
-    //鼠标特效逻辑
+        // 添加滚动事件监听
+        window.addEventListener('scroll', checkScroll);
+        checkScroll(); // 初始检查
+    }
+
+    // ==================== 鼠标特效 ====================
     let lastX = 0, lastY = 0;
-
     document.addEventListener('mousemove', function (e) {
         if (Math.sqrt(Math.pow(e.pageX - lastX, 2) + Math.pow(e.pageY - lastY, 2)) < 30) return;
 
@@ -89,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const heart = document.createElement('div');
         heart.innerHTML = '❤️';
         heart.style.position = 'fixed';
-        // 使用 clientX/clientY 代替 pageX/pageY 来修复滚动问题
         heart.style.left = e.clientX + 'px';
         heart.style.top = e.clientY + 'px';
         heart.style.fontSize = Math.random() * 10 + 10 + 'px';
@@ -114,12 +116,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const pawprints = ['🐾', 'ฅ^•ﻌ•^ฅ', '=^･ω･^=', '≽^•⩊•^≼'];
-
     document.addEventListener('click', function (e) {
         const paw = document.createElement('div');
         paw.textContent = pawprints[Math.floor(Math.random() * pawprints.length)];
         paw.style.position = 'fixed';
-        // 使用 clientX/clientY 代替 pageX/pageY 来修复滚动问题
         paw.style.left = (e.clientX - 15) + 'px';
         paw.style.top = (e.clientY - 15) + 'px';
         paw.style.fontSize = '20px';
@@ -141,44 +141,59 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 1300);
     });
 
-    // 悬浮音乐播放器控制
-    const floatingPlayer = document.querySelector('.floating-music-player');
-    const minimizedBtn = document.querySelector('.player-minimized');
-    const minimizeBtn = document.querySelector('.minimize-btn');
-    const audio = document.getElementById('myAudio');
+    // ==================== 悬浮音乐播放器 ====================
+    const players = document.querySelectorAll('.floating-music-player');
+    if (players.length > 0) {
+        players.forEach(floatingPlayer => {
+            const minimizedBtn = floatingPlayer.querySelector('.player-minimized');
+            const minimizeBtn = floatingPlayer.querySelector('.minimize-btn');
+            const audio = floatingPlayer.querySelector('audio');
+            const songInfo = floatingPlayer.querySelector('.song-info');
 
-    // 点击迷你播放器展开
-    minimizedBtn.addEventListener('click', function () {
-        floatingPlayer.classList.add('expanded');
-    });
+            // 确保元素存在
+            if (!minimizedBtn || !minimizeBtn) return;
 
-    // 点击关闭按钮收起
-    minimizeBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        floatingPlayer.classList.remove('expanded');
-    });
+            // 点击迷你播放器展开
+            minimizedBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                floatingPlayer.classList.add('expanded');
+                floatingPlayer.style.zIndex = '10000';
+            });
 
-    // 点击播放器外部区域收起
-    document.addEventListener('click', function (e) {
-        if (!floatingPlayer.contains(e.target) &&
-            !e.target.classList.contains('player-minimized')) {
-            floatingPlayer.classList.remove('expanded');
-        }
-    });
+            // 点击关闭按钮收起
+            minimizeBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                floatingPlayer.classList.remove('expanded');
+                floatingPlayer.style.zIndex = '1000';
+            });
 
-    // 歌曲信息更新
-    audio.addEventListener('play', function () {
-        document.querySelector('.song-info').textContent = "正在播放: あたらよ - 夏霞";
-    });
+            // 歌曲信息更新
+            if (audio && songInfo) {
+                audio.addEventListener('play', function () {
+                    songInfo.textContent = "正在播放: あたらよ - 夏霞";
+                });
 
-    audio.addEventListener('pause', function () {
-        document.querySelector('.song-info').textContent = "已暂停: あたらよ - 夏霞";
-    });
+                audio.addEventListener('pause', function () {
+                    songInfo.textContent = "已暂停: あたらよ - 夏霞";
+                });
+            }
+        });
 
+        // 全局点击收起处理
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.floating-music-player') &&
+                !e.target.classList.contains('player-minimized')) {
+                players.forEach(player => {
+                    player.classList.remove('expanded');
+                    player.style.zIndex = '1000';
+                });
+            }
+        });
+    }
 
-    // 照片墙点击放大效果
-    function setupPhotoWall() {
-        // 使用事件委托处理动态加载的照片
+    // ==================== 照片墙 ====================
+    const photoItems = document.querySelectorAll('.photo-item');
+    if (photoItems.length > 0) {
         document.addEventListener('click', function (e) {
             // 检查点击的是否是照片或照片容器
             const photoItem = e.target.closest('.photo-item');
@@ -196,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // 打开模态框
         function openPhotoModal(imgSrc) {
             // 关闭已打开的模态框
             closePhotoModal();
@@ -231,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.style.overflow = 'hidden';
         }
 
-        // 关闭模态框
         function closePhotoModal() {
             const overlay = document.querySelector('.photo-overlay');
             if (overlay) {
@@ -244,12 +257,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 初始化照片墙
-    setupPhotoWall();
-
-    // 轮播功能
-    function setupCarousels() {
-        document.querySelectorAll('.media-carousel').forEach(carousel => {
+    // ==================== 轮播功能 ====================
+    const carousels = document.querySelectorAll('.media-carousel');
+    if (carousels.length > 0) {
+        carousels.forEach(carousel => {
             const items = carousel.querySelectorAll('.carousel-item');
             const prevBtn = carousel.parentElement.querySelector('.carousel-prev');
             const nextBtn = carousel.parentElement.querySelector('.carousel-next');
@@ -268,16 +279,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // 下一张
-            nextBtn.addEventListener('click', () => {
-                const nextIndex = (currentIndex + 1) % items.length;
-                showItem(nextIndex);
-            });
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const nextIndex = (currentIndex + 1) % items.length;
+                    showItem(nextIndex);
+                });
+            }
 
             // 上一张
-            prevBtn.addEventListener('click', () => {
-                const prevIndex = (currentIndex - 1 + items.length) % items.length;
-                showItem(prevIndex);
-            });
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    const prevIndex = (currentIndex - 1 + items.length) % items.length;
+                    showItem(prevIndex);
+                });
+            }
 
             // 指示器点击
             indicators.forEach((indicator, index) => {
@@ -286,63 +301,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
 
-            // 自动播放(可选)
-            let autoplay = setInterval(() => {
-                const nextIndex = (currentIndex + 1) % items.length;
-                showItem(nextIndex);
-            }, 5000);
-
-            // 鼠标悬停暂停自动播放
-            carousel.addEventListener('mouseenter', () => {
-                clearInterval(autoplay);
-            });
-
-            carousel.addEventListener('mouseleave', () => {
-                autoplay = setInterval(() => {
-                    const nextIndex = (currentIndex + 1) % items.length;
-                    showItem(nextIndex);
-                }, 5000);
-            });
-
             // 初始化显示第一个项目
-            showItem(0);
+            if (items.length > 0) {
+                showItem(0);
+            }
         });
     }
 
-    // 页面加载完成后初始化轮播
-    document.addEventListener('DOMContentLoaded', setupCarousels);
-
-    // 原声带功能
-    function setupSoundtracks() {
-        // 切换原声带显示/隐藏
-        document.querySelectorAll('.soundtrack-title').forEach(title => {
+    // ==================== 原声带功能 ====================
+    const soundtracks = document.querySelectorAll('.soundtrack-title');
+    if (soundtracks.length > 0) {
+        soundtracks.forEach(title => {
             title.addEventListener('click', function () {
                 this.classList.toggle('active');
             });
         });
 
-        // 原声带选择播放
         document.querySelectorAll('.soundtrack-select').forEach(select => {
             const player = select.nextElementSibling;
-
-            select.addEventListener('change', function () {
-                if (this.value) {
-                    player.src = this.value;
-                    player.load();
-                    player.play().catch(e => console.log("自动播放被阻止:", e));
-                } else {
-                    player.src = '';
-                    player.load();
-                }
-            });
+            if (player) {
+                select.addEventListener('change', function () {
+                    if (this.value) {
+                        player.src = this.value;
+                        player.load();
+                        player.play().catch(e => console.log("自动播放被阻止:", e));
+                    } else {
+                        player.src = '';
+                        player.load();
+                    }
+                });
+            }
         });
     }
-
-    // 在DOM加载完成后初始化
-    document.addEventListener('DOMContentLoaded', function () {
-        setupSoundtracks();
-        // 其他初始化代码...
-    });
 });
-
-

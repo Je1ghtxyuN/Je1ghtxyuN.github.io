@@ -372,6 +372,11 @@
             background: linear-gradient(to right, var(--pink-primary), var(--pink-accent));
         }
 
+        .soundtrack-player::-webkit-media-controls-play-button,
+        .soundtrack-player::-webkit-media-controls-mute-button {
+            filter: brightness(0) invert(1);
+        }
+
         /* 暂无作品提示 */
         .empty-works {
             text-align: center;
@@ -428,6 +433,128 @@
         .social-links a:hover {
             color: var(--pink-pale);
             transform: translateY(-5px);
+        }
+
+        /* 悬浮音乐播放器样式 */
+        .floating-music-player {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            z-index: 1000;
+            transition: all 0.6s var(--cubic-bounce);
+        }
+
+        .player-minimized {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 105, 158, 0.5);
+            transition: all 0.6s var(--cubic-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-minimized::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 T90,50 Q70,70 50,50 T10,50" fill="none" stroke="white" stroke-width="2"/></svg>');
+            background-size: 60%;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.6;
+        }
+
+        .player-minimized:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 12px 35px rgba(255, 61, 127, 0.7);
+        }
+
+        .player-expanded {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 15px 50px rgba(255, 105, 158, 0.3),
+                0 8px 25px rgba(255, 105, 158, 0.2),
+                inset 0 0 30px rgba(255, 255, 255, 0.8);
+            display: none;
+            transform: translateY(30px) scale(0.9);
+            opacity: 0;
+            transition: all 0.7s var(--cubic-bounce);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 10000 !important;
+        }
+
+        .floating-music-player.expanded .player-expanded {
+            display: block;
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .floating-music-player.expanded .player-minimized {
+            display: none;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--pink-accent);
+            font-weight: bold;
+            font-size: 1.1rem;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .minimize-btn {
+            background: none;
+            border: none;
+            color: var(--pink-primary);
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.5s var(--cubic-bounce);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .minimize-btn:hover {
+            color: var(--pink-dark);
+            transform: rotate(180deg) scale(1.2);
+            background: rgba(255, 107, 158, 0.1);
+        }
+
+        audio {
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 50px;
+        }
+
+        .song-info {
+            font-size: 0.95rem;
+            color: var(--pink-dark);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+            padding: 8px 0;
+            border-radius: 8px;
+            background: rgba(255, 107, 158, 0.08);
         }
 
         /* 响应式设计 */
@@ -504,17 +631,17 @@
                             <div class="carousel-item">
                                 <img src="images/works/GSSJ1.jpeg" alt="游戏截图2">
                             </div>
-                            <!-- 视频项 - 修改为不自动播放 -->
+                            <!-- 视频项 - 修改为静音 -->
                             <div class="carousel-item">
                                 <div class="video-container">
                                     <iframe src="videos/GSSJdemo2.mp4" scrolling="no" frameborder="no"
-                                        allowfullscreen="true" allow="autoplay"></iframe>
+                                        allowfullscreen="true" allow="autoplay" muted></iframe>
                                 </div>
                             </div>
                             <div class="carousel-item">
                                 <div class="video-container">
                                     <iframe src="videos/GSSJdemo1.mp4" scrolling="no" frameborder="no"
-                                        allowfullscreen="true" allow="autoplay"></iframe>
+                                        allowfullscreen="true" allow="autoplay" muted></iframe>
                                 </div>
                             </div>
                         </div>
@@ -596,6 +723,7 @@
             </div>
         </main>
     </div>
+
     <!-- 悬浮音乐播放器 -->
     <div class="floating-music-player">
         <div class="player-minimized">
@@ -612,6 +740,7 @@
             <div class="song-info">あたらよ - 夏霞</div>
         </div>
     </div>
+
     <footer>
         <div class="social-links">
             <a href="https://github.com/Je1ghtxyuN" aria-label="GitHub" title="Githubでフォローしてね～"><i
@@ -620,7 +749,7 @@
             <a href="https://instagram.com/Je1ghtxyuN" aria-label="Instagram" title="Instagramも見てみて～"><i
                     class="fab fa-instagram"></i></a>
         </div>
-        <p>© 2025 橘京花(Je1ghtxyuN) - すべての内容は京花ちゃんの宝物です(♡˙︶˙♡)</p>
+        <p>© 2025 橘京花(Je1ghtxyuN)</p>
     </footer>
 
     <script>
@@ -717,9 +846,40 @@
                 });
             }
 
+            // 悬浮音乐播放器功能
+            function setupMusicPlayer() {
+                const floatingPlayer = document.querySelector('.floating-music-player');
+                const minimizedBtn = floatingPlayer.querySelector('.player-minimized');
+                const minimizeBtn = floatingPlayer.querySelector('.minimize-btn');
+
+                // 点击迷你播放器展开
+                minimizedBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    floatingPlayer.classList.add('expanded');
+                    floatingPlayer.style.zIndex = '10000';
+                });
+
+                // 点击关闭按钮收起
+                minimizeBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    floatingPlayer.classList.remove('expanded');
+                    floatingPlayer.style.zIndex = '1000';
+                });
+
+                // 全局点击收起处理
+                document.addEventListener('click', function (e) {
+                    if (!e.target.closest('.floating-music-player') &&
+                        !e.target.classList.contains('player-minimized')) {
+                        floatingPlayer.classList.remove('expanded');
+                        floatingPlayer.style.zIndex = '1000';
+                    }
+                });
+            }
+
             // 初始化功能
             setupCarousels();
             setupSoundtracks();
+            setupMusicPlayer();
 
             // 作品数据
             const worksData = [
