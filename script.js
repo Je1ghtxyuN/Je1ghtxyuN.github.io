@@ -43,7 +43,7 @@ function initRuntimeCounter() {
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        const runtimeText = `${days}D${hours}H${minutes}M${seconds}S`;
+        const runtimeText = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
         const runtimeElement = document.getElementById('runtime');
 
         if (runtimeElement) {
