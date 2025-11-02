@@ -6,131 +6,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作品集 - 橘京花の小窝</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- 添加Font Awesome图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 添加Animate.css动画库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* 基础变量 */
-        :root {
-            --pink-primary: #ff6b9e;
-            --pink-secondary: #ff3d7f;
-            --pink-accent: #ff1493;
-            --pink-pale: #ffdfeb;
-            --pink-dark: #d23669;
-            --text-color: #5a3d5a;
-            --cubic-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
-        }
-
-        /* 基础样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.7;
-            color: var(--text-color);
-            background-color: #fff0f5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 导航栏样式 */
-        .main-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 15px rgba(255, 105, 158, 0.1);
-            display: flex;
-            justify-content: center;
-            padding: 1rem 0;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            color: #ff6b9e;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 107, 158, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .nav-link i {
-            font-size: 1rem;
-        }
-
-        .nav-link.active {
-            background: linear-gradient(135deg, #ff6b9e, #ff3d7f);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 61, 127, 0.3);
-        }
-
-        /* 调整header位置避免被导航栏遮挡 */
-        header {
-            margin-top: 70px;
-        }
-
         /* 作品集专用样式 */
         .works-container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 5rem auto 0;
             padding: 0 2rem;
             flex: 1;
             width: 100%;
         }
 
-        /* 作品展示区域 */
         .works-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
             width: 100%;
         }
 
         .work-item {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(255, 105, 158, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(255, 105, 158, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             transition: all 0.5s var(--cubic-bounce);
             display: flex;
             flex-direction: column;
             width: 100%;
+            position: relative;
+            overflow: hidden;
         }
 
         .work-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(255, 61, 127, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(255, 61, 127, 0.25);
         }
 
-        /* 媒体容器样式 */
+        .work-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--pink-primary), var(--pink-accent));
+            opacity: 0.8;
+        }
+
         .work-media {
             position: relative;
             width: 100%;
@@ -138,11 +65,11 @@
             padding-bottom: 56.25%;
             border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             background: rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* B站视频专用容器 */
         .bilibili-container {
             position: absolute;
             top: 0;
@@ -150,6 +77,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            border-radius: 12px;
         }
 
         .bilibili-container iframe {
@@ -159,19 +87,18 @@
             width: 100%;
             height: 100%;
             border: none;
-            transform: scale(1.02);
+            border-radius: 12px;
         }
 
-        /* 轮播容器 */
         .media-carousel {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            border-radius: 12px;
         }
 
-        /* 轮播项 */
         .carousel-item {
             position: absolute;
             top: 0;
@@ -184,65 +111,70 @@
             justify-content: center;
             align-items: center;
             background: #f8f8f8;
+            border-radius: 12px;
         }
 
         .carousel-item.active {
             opacity: 1;
         }
 
-        /* 图片样式 */
         .carousel-item img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            border-radius: 12px;
         }
 
-        /* 视频容器 */
         .video-container {
             position: relative;
             width: 100%;
             height: 100%;
+            border-radius: 12px;
         }
 
-        .carousel-item iframe {
+        .carousel-item video {
             width: 100%;
             height: 100%;
-            border: none;
+            object-fit: contain;
+            border-radius: 12px;
         }
 
-        /* 轮播控制按钮 */
-        .carousel-prev,
-        .carousel-next {
+        .carousel-controls {
             position: absolute;
             top: 50%;
+            left: 0;
+            right: 0;
             transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+            z-index: 10;
+        }
+
+        .carousel-prev,
+        .carousel-next {
             width: 40px;
             height: 40px;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 50%;
             color: var(--pink-primary);
             font-size: 1.2rem;
             cursor: pointer;
-            z-index: 10;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .carousel-prev:hover,
         .carousel-next:hover {
             background: white;
-            transform: translateY(-50%) scale(1.1);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .carousel-prev {
-            left: 15px;
-        }
-
-        .carousel-next {
-            right: 15px;
-        }
-
-        /* 轮播指示器 */
         .carousel-indicators {
             position: absolute;
             bottom: 15px;
@@ -258,17 +190,18 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .indicator.active {
             background: white;
             transform: scale(1.2);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
 
-        /* 作品信息 */
         .work-info {
             flex: 1;
             display: flex;
@@ -276,46 +209,68 @@
         }
 
         .work-title {
-            font-size: 1.3rem;
-            font-weight: 600;
+            font-size: 1.4rem;
+            font-weight: 700;
             color: var(--pink-dark);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+            font-family: 'Comic Neue', cursive;
         }
 
         .work-desc {
             color: var(--text-color);
-            font-size: 0.95rem;
+            font-size: 1rem;
             line-height: 1.6;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             flex: 1;
         }
 
         .work-date {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #888;
             text-align: right;
+            font-weight: 500;
         }
 
-        /* 原声带部分 */
+        .download-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            color: var(--pink-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .download-link:hover {
+            color: var(--pink-accent);
+            text-decoration: underline;
+            transform: translateX(5px);
+        }
+
         .soundtrack-section {
             margin: 1.5rem 0 0;
             border-radius: 12px;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 10px rgba(255, 105, 158, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .soundtrack-title {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.8rem 1.2rem;
-            background: linear-gradient(135deg, rgba(255, 107, 158, 0.1), rgba(255, 20, 147, 0.05));
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 107, 158, 0.15), rgba(255, 20, 147, 0.1));
             color: var(--pink-dark);
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             margin: 0;
+            transition: all 0.3s ease;
+        }
+
+        .soundtrack-title:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 158, 0.2), rgba(255, 20, 147, 0.15));
         }
 
         .soundtrack-title i {
@@ -332,28 +287,31 @@
         }
 
         .soundtrack-content {
-            padding: 1rem;
+            padding: 1.5rem;
             display: none;
+            background: rgba(255, 255, 255, 0.8);
         }
 
         .soundtrack-title.active+.soundtrack-content {
             display: block;
+            animation: fadeIn 0.5s ease;
         }
 
         .soundtrack-select {
             width: 100%;
-            padding: 0.8rem;
+            padding: 1rem;
             border: 2px solid var(--pink-pale);
             border-radius: 8px;
             background: white;
             font-family: inherit;
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin-bottom: 1rem;
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff6b9e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
-            background-position: right 0.7rem center;
-            background-size: 1rem;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+            transition: all 0.3s ease;
         }
 
         .soundtrack-select:focus {
@@ -366,6 +324,7 @@
             width: 100%;
             border-radius: 8px;
             margin-top: 0.5rem;
+            background: linear-gradient(to right, var(--pink-primary), var(--pink-accent));
         }
 
         .soundtrack-player::-webkit-media-controls-panel {
@@ -377,27 +336,29 @@
             filter: brightness(0) invert(1);
         }
 
-        /* 暂无作品提示 */
         .empty-works {
             text-align: center;
-            padding: 3rem;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(255, 105, 158, 0.1);
+            box-shadow: 0 8px 32px rgba(255, 105, 158, 0.1);
+            margin: 2rem 0;
         }
 
         .empty-works i {
-            font-size: 3rem;
+            font-size: 4rem;
             color: var(--pink-primary);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.7;
         }
 
         .empty-works h2 {
             color: var(--pink-dark);
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 1rem;
+            font-family: 'Comic Neue', cursive;
         }
 
         .empty-works p {
@@ -405,169 +366,30 @@
             font-size: 1.1rem;
             max-width: 500px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
-        /* 页脚样式 */
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            background: linear-gradient(135deg, var(--pink-dark), #8a1242);
-            color: white;
-            margin-top: auto;
-            width: 100%;
-        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
 
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 1.8rem;
-            transition: all 0.5s var(--cubic-bounce);
-        }
-
-        .social-links a:hover {
-            color: var(--pink-pale);
-            transform: translateY(-5px);
-        }
-
-        /* 悬浮音乐播放器样式 */
-        .floating-music-player {
-            position: fixed;
-            right: 25px;
-            bottom: 25px;
-            z-index: 1000;
-            transition: all 0.6s var(--cubic-bounce);
-        }
-
-        .player-minimized {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--pink-primary), var(--pink-accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(255, 105, 158, 0.5);
-            transition: all 0.6s var(--cubic-bounce);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .player-minimized::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,50 Q50,30 70,50 T90,50 Q70,70 50,50 T10,50" fill="none" stroke="white" stroke-width="2"/></svg>');
-            background-size: 60%;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0.6;
-        }
-
-        .player-minimized:hover {
-            transform: scale(1.15) rotate(15deg);
-            box-shadow: 0 12px 35px rgba(255, 61, 127, 0.7);
-        }
-
-        .player-expanded {
-            width: 320px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 15px 50px rgba(255, 105, 158, 0.3),
-                0 8px 25px rgba(255, 105, 158, 0.2),
-                inset 0 0 30px rgba(255, 255, 255, 0.8);
-            display: none;
-            transform: translateY(30px) scale(0.9);
-            opacity: 0;
-            transition: all 0.7s var(--cubic-bounce);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            z-index: 10000 !important;
-        }
-
-        .floating-music-player.expanded .player-expanded {
-            display: block;
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
-        .floating-music-player.expanded .player-minimized {
-            display: none;
-        }
-
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            color: var(--pink-accent);
-            font-weight: bold;
-            font-size: 1.1rem;
-            font-family: 'Comic Neue', cursive;
-        }
-
-        .minimize-btn {
-            background: none;
-            border: none;
-            color: var(--pink-primary);
-            cursor: pointer;
-            font-size: 1.3rem;
-            transition: all 0.5s var(--cubic-bounce);
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .minimize-btn:hover {
-            color: var(--pink-dark);
-            transform: rotate(180deg) scale(1.2);
-            background: rgba(255, 107, 158, 0.1);
-        }
-
-        audio {
-            width: 100%;
-            margin-bottom: 15px;
-            border-radius: 50px;
-        }
-
-        .song-info {
-            font-size: 0.95rem;
-            color: var(--pink-dark);
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-weight: 500;
-            padding: 8px 0;
-            border-radius: 8px;
-            background: rgba(255, 107, 158, 0.08);
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .works-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-                padding: 0.4rem 0.8rem;
-            }
-
             .works-container {
                 padding: 0 1rem;
             }
@@ -578,23 +400,53 @@
             }
 
             .work-item {
-                padding: 1.2rem;
+                padding: 1.5rem;
+            }
+
+            .work-title {
+                font-size: 1.2rem;
             }
 
             .carousel-prev,
             .carousel-next {
-                width: 30px;
-                height: 30px;
+                width: 35px;
+                height: 35px;
                 font-size: 1rem;
             }
 
-            .indicator {
-                width: 8px;
-                height: 8px;
+            .soundtrack-title {
+                padding: 0.8rem 1.2rem;
+                font-size: 1rem;
             }
 
-            .social-links {
-                gap: 1.5rem;
+            .empty-works {
+                padding: 3rem 1.5rem;
+            }
+
+            .empty-works i {
+                font-size: 3rem;
+            }
+
+            .empty-works h2 {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .work-media {
+                margin-bottom: 1rem;
+            }
+
+            .work-info {
+                gap: 0.5rem;
+            }
+
+            .work-title {
+                font-size: 1.1rem;
+            }
+
+            .work-desc {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -624,10 +476,10 @@
             </div>
 
             <!-- 暂无作品时的提示 -->
-            <div class="empty-works animate__animated animate__fadeIn" id="emptyWorks">
+            <div class="empty-works animate__animated animate__fadeIn" id="emptyWorks" style="display: none;">
                 <i class="fas fa-code-branch"></i>
                 <h2>まだ作品がありません～</h2>
-                <p>现在还没有其他作品展示呢，京花ちゃん正在努力创作中，敬请期待哦！(´･ω･｀)</p>
+                <p>现在还没有其他作品展示呢，京花ちゃん正在努力创作中，敬请期待哦！(´･ω･｀｀)</p>
             </div>
         </main>
     </div>
@@ -651,423 +503,257 @@
 
     <footer>
         <div class="social-links">
-            <a href="https://github.com/Je1ghtxyuN" aria-label="GitHub" title="Githubでフォローしてね～"><i
-                    class="fab fa-github"></i></a>
-            <a href="https://x.com/Je1ghtxyuN" aria-label="x" title="xでお话しましょう～"><i class="fab fa-x"></i></a>
-            <a href="https://instagram.com/Je1ghtxyuN" aria-label="Instagram" title="Instagramも見てみて～"><i
-                    class="fab fa-instagram"></i></a>
+            <a href="https://github.com/Je1ghtxyuN" aria-label="GitHub" title="Githubでフォローしてね～">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://x.com/Je1ghtxyuN" aria-label="x" title="xでお话しましょう～">
+                <i class="fab fa-x"></i>
+            </a>
+            <a href="https://instagram.com/Je1ghtxyuN" aria-label="Instagram" title="Instagramも見てみて～">
+                <i class="fab fa-instagram"></i>
+            </a>
         </div>
         <p>© 2025 橘京花(Je1ghtxyuN)</p>
+        <!-- 网站运行时间 -->
+        <div class="site-runtime">
+            <span class="runtime-text"> 网站已存在: <span id="runtime"></span></span>
+        </div>
     </footer>
 
+    <script src="script.js"></script>
     <script>
-        // 高亮当前页面导航
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            navLinks.forEach(link => {
-                const linkPage = link.getAttribute('href');
-                if (currentPage === linkPage) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-
-            // 轮播功能
-            function setupCarousels() {
-                document.querySelectorAll('.media-carousel').forEach(carousel => {
-                    const items = carousel.querySelectorAll('.carousel-item');
-                    const prevBtn = carousel.parentElement.querySelector('.carousel-prev');
-                    const nextBtn = carousel.parentElement.querySelector('.carousel-next');
-                    const indicators = carousel.parentElement.querySelectorAll('.indicator');
-                    let currentIndex = 0;
-
-                    function showItem(index) {
-                        // 停止所有视频播放
-                        items.forEach(item => {
-                            const iframe = item.querySelector('iframe');
-                            if (iframe) {
-                                // 重置iframe以停止播放
-                                const src = iframe.src;
-                                iframe.src = '';
-                                iframe.src = src;
-                            }
-
-                            const video = item.querySelector('video');
-                            if (video) {
-                                video.pause();
-                            }
-                        });
-
-                        items.forEach(item => item.classList.remove('active'));
-                        indicators.forEach(ind => ind.classList.remove('active'));
-
-                        items[index].classList.add('active');
-                        indicators[index].classList.add('active');
-                        currentIndex = index;
-                    }
-
-                    // 下一张
-                    nextBtn.addEventListener('click', () => {
-                        const nextIndex = (currentIndex + 1) % items.length;
-                        showItem(nextIndex);
-                    });
-
-                    // 上一张
-                    prevBtn.addEventListener('click', () => {
-                        const prevIndex = (currentIndex - 1 + items.length) % items.length;
-                        showItem(prevIndex);
-                    });
-
-                    // 指示器点击
-                    indicators.forEach((indicator, index) => {
-                        indicator.addEventListener('click', () => {
-                            showItem(index);
-                        });
-                    });
-
-                    // 初始化显示第一个项目
-                    showItem(0);
-                });
-            }
-
-            // 原声带功能
-            function setupSoundtracks() {
-                // 切换原声带显示/隐藏
-                document.querySelectorAll('.soundtrack-title').forEach(title => {
-                    title.addEventListener('click', function () {
-                        this.classList.toggle('active');
-                    });
-                });
-
-                // 原声带选择播放
-                document.querySelectorAll('.soundtrack-select').forEach(select => {
-                    const player = select.nextElementSibling;
-
-                    select.addEventListener('change', function () {
-                        if (this.value) {
-                            player.src = this.value;
-                            player.load();
-                            player.play().catch(e => console.log("自动播放被阻止:", e));
-                        } else {
-                            player.src = '';
-                            player.load();
-                        }
-                    });
-                });
-            }
-
-            // 悬浮音乐播放器功能
-            function setupMusicPlayer() {
-                const floatingPlayer = document.querySelector('.floating-music-player');
-                const minimizedBtn = floatingPlayer.querySelector('.player-minimized');
-                const minimizeBtn = floatingPlayer.querySelector('.minimize-btn');
-
-                // 点击迷你播放器展开
-                minimizedBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    floatingPlayer.classList.add('expanded');
-                    floatingPlayer.style.zIndex = '10000';
-                });
-
-                // 点击关闭按钮收起
-                minimizeBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    floatingPlayer.classList.remove('expanded');
-                    floatingPlayer.style.zIndex = '1000';
-                });
-
-                // 全局点击收起处理
-                document.addEventListener('click', function (e) {
-                    if (!e.target.closest('.floating-music-player') &&
-                        !e.target.classList.contains('player-minimized')) {
-                        floatingPlayer.classList.remove('expanded');
-                        floatingPlayer.style.zIndex = '1000';
-                    }
-                });
-            }
-
-            // 初始化功能
-            setupCarousels();
-            setupSoundtracks();
-            setupMusicPlayer();
-
-            // 作品数据 - 所有作品统一放在这里并按日期排序
-            const worksData = [
-                {
-                    type: "carousel",
-                    title: "晷枢双界",
-                    desc: "Pico VR解谜游戏<br>下载链接：https://pan.baidu.com/s/13K01ShJFkVY_qt-vLBZxYw?pwd=f3f4",
-                    date: "2025-05-20",
-                    media: [
-                        { type: "image", url: "images/works/GSSJ2.jpeg", alt: "游戏截图1" },
-                        { type: "image", url: "images/works/GSSJ1.jpeg", alt: "游戏截图2" },
-                        { type: "video", url: "videos/GSSJdemo2.mp4" },
-                        { type: "video", url: "videos/GSSJdemo1.mp4" }
+        // 作品数据
+        const worksData = [
+            {
+                type: "carousel",
+                title: "晷晷枢双界",
+                desc: "Pico VR解谜游戏<br><a href='https://pan.baidu.com/s/13K01ShJFkVY_qt-vLBZxYw?pwd=f3f4' class='download-link' target='_blank'>📥 下载链接</a>",
+                date: "2025-05-20",
+                media: [
+                    { type: "image", url: "images/works/GSSJ2.jpeg", alt: "游戏截图1" },
+                    { type: "image", url: "images/works/GSSJ1.jpeg", alt: "游戏截图2" },
+                    { type: "video", url: "videos/GSSJdemo2.mp4" },
+                    { type: "video", url: "videos/GSSJdemo1.mp4" }
+                ]
+            },
+            {
+                type: "carousel",
+                title: "REBORN",
+                desc: "2024腾讯gamejam参赛作品 最佳叙事奖<br><a href='https://pan.baidu.com/s/1U7zXOhj8M6a3jmKk08DzEA?pwd=ypf5' class='download-link' target='_blank'>📥 下载链接</a>",
+                date: "2024-12-02",
+                media: [
+                    { type: "image", url: "images/works/REBORN1.jpg", alt: "游戏截图1" },
+                    { type: "image", url: "images/works/REBORN2.jpg", alt: "游戏截图2" }
+                ],
+                soundtrack: {
+                    title: "游戏原声带OST",
+                    tracks: [
+                        { name: "主题曲", url: "music/主题.mp3" },
+                        { name: "博士人物曲", url: "music/doctordie.mp3" },
+                        { name: "公园配乐", url: "music/公园舒缓配乐.mp3" },
+                        { name: "未来场景配乐", url: "music/科技lo-fi.mp3" },
+                        { name: "实验室配乐", url: "music/实验室（悬疑）.mp3" }
                     ]
-                },
-                {
-                    type: "carousel",
-                    title: "REBORN",
-                    desc: "2024腾讯gamejam参赛作品 最佳叙事奖<br>下载链接：https://pan.baidu.com/s/1U7zXOhj8M6a3jmKk08DzEA?pwd=ypf5",
-                    date: "2024-12-02",
-                    media: [
-                        { type: "image", url: "images/works/REBORN1.jpg", alt: "游戏截图1" },
-                        { type: "image", url: "images/works/REBORN2.jpg", alt: "游戏截图2" }
-                    ],
-                    soundtrack: {
-                        title: "游戏原声带OST",
-                        tracks: [
-                            { name: "主题曲", url: "music/主题.mp3" },
-                            { name: "博士人物曲", url: "music/doctordie.mp3" },
-                            { name: "公园配乐", url: "music/公园舒缓配乐.mp3" },
-                            { name: "未来场景配乐", url: "music/科技lo-fi.mp3" },
-                            { name: "实验室配乐", url: "music/实验室（悬疑）.mp3" }
-                        ]
-                    }
-                },
-                {
-                    type: "bilibili",
-                    id: "BV1PgN7eZEGX",
-                    title: "小孩姐要考东南大学",
-                    desc: "招生减章",
-                    date: "2025-02-09"
-                },
-                {
-                    type: "bilibili",
-                    id: "BV1z64y1c7Tk",
-                    title: "【4k/MAD】不管晴天还是雨天，我只是想和你相遇",
-                    desc: "初中暑假剪的",
-                    date: "2020-08-19"
                 }
-            ];
+            },
+            {
+                type: "bilibili",
+                id: "BV1PgN7eZEGX",
+                title: "小孩姐要考东南大学",
+                desc: "招生减章视频作品",
+                date: "2025-02-09"
+            },
+            {
+                type: "bilibili",
+                id: "BV1z64y1c7Tk",
+                title: "【4k/MAD】不管晴天还是雨天，我只是想和你相遇",
+                desc: "初中暑假剪的MAD作品",
+                date: "2020-08-19"
+            }
+        ];
 
-            // 按日期降序排序
-            worksData.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            // 渲染作品
+        // 渲染作品
+        function renderWorks() {
             const worksGallery = document.getElementById('worksGallery');
             const emptyWorks = document.getElementById('emptyWorks');
 
-            if (worksData.length > 0) {
-                emptyWorks.style.display = 'none';
+            if (!worksGallery) return;
 
-                worksData.forEach(work => {
-                    const workItem = document.createElement('div');
-                    workItem.className = 'work-item animate__animated animate__fadeInUp';
+            // 清空现有内容
+            worksGallery.innerHTML = '';
 
-                    let mediaContent = '';
-                    let soundtrackContent = '';
-
-                    if (work.type === 'bilibili') {
-                        // B站视频 - 添加autoplay=0参数禁止自动播放
-                        mediaContent = `
-                            <div class="work-media">
-                                <div class="bilibili-container">
-                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1&autoplay=0" 
-                                        scrolling="no" frameborder="no" 
-                                        allowfullscreen="true">
-                                    </iframe>
-                                </div>
-                            </div>
-                        `;
-                    } else if (work.type === 'carousel') {
-                        // 轮播图/视频
-                        let carouselItems = '';
-                        let indicators = '';
-
-                        work.media.forEach((media, index) => {
-                            if (media.type === 'image') {
-                                carouselItems += `
-                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                        <img src="${media.url}" alt="${media.alt}">
-                                    </div>
-                                `;
-                            } else if (media.type === 'video') {
-                                carouselItems += `
-                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                        <div class="video-container">
-                                            <video controls style="width:100%;height:100%;object-fit:contain;" onloadedmetadata="this.pause()">
-                                                <source src="${media.url}" type="video/mp4">
-                                            </video>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-
-                            indicators += `<span class="indicator ${index === 0 ? 'active' : ''}"></span>`;
-                        });
-
-                        mediaContent = `
-                            <div class="work-media">
-                                <div class="media-carousel">
-                                    ${carouselItems}
-                                </div>
-                                <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
-                                <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
-                                <div class="carousel-indicators">
-                                    ${indicators}
-                                </div>
-                            </div>
-                        `;
-
-                        // 如果有原声带
-                        if (work.soundtrack) {
-                            let soundtrackOptions = '<option value="">选择原声带...</option>';
-                            work.soundtrack.tracks.forEach(track => {
-                                soundtrackOptions += `<option value="${track.url}">${track.name}</option>`;
-                            });
-
-                            soundtrackContent = `
-                                <div class="soundtrack-section">
-                                    <h4 class="soundtrack-title">
-                                        <i class="fas fa-music"></i> ${work.soundtrack.title}
-                                        <span class="toggle-soundtrack"><i class="fas fa-chevron-down"></i></span>
-                                    </h4>
-                                    <div class="soundtrack-content">
-                                        <select class="soundtrack-select">
-                                            ${soundtrackOptions}
-                                        </select>
-                                        <audio class="soundtrack-player" controls></audio>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    }
-
-                    workItem.innerHTML = `
-                        ${mediaContent}
-                        ${soundtrackContent}
-                        <div class="work-info">
-                            <h3 class="work-title">${work.title}</h3>
-                            <p class="work-desc">${work.desc}</p>
-                            <p class="work-date">${work.date}</p>
-                        </div>
-                    `;
-
-                    worksGallery.appendChild(workItem);
-                });
-
-                // 初始化轮播和原声带功能
-                setupCarousels();
-                setupSoundtracks();
+            if (worksData.length === 0) {
+                emptyWorks.style.display = 'block';
+                return;
             }
 
-            // 添加新作品的方法
-            window.addWork = function (work) {
-                worksData.push(work);
-                worksData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            emptyWorks.style.display = 'none';
 
-                // 清空现有作品
-                while (worksGallery.firstChild) {
-                    worksGallery.removeChild(worksGallery.firstChild);
-                }
+            // 按日期降序排序
+            const sortedWorks = [...worksData].sort((a, b) =>
+                new Date(b.date) - new Date(a.date)
+            );
 
-                // 重新渲染所有作品
-                worksData.forEach(work => {
-                    const workItem = document.createElement('div');
-                    workItem.className = 'work-item animate__animated animate__fadeInUp';
+            sortedWorks.forEach((work, index) => {
+                const workItem = document.createElement('div');
+                workItem.className = `work-item animate__animated animate__fadeInUp`;
+                workItem.style.animationDelay = `${index * 0.1}s`;
 
-                    let mediaContent = '';
-                    let soundtrackContent = '';
+                let mediaContent = '';
+                let soundtrackContent = '';
 
-                    if (work.type === 'bilibili') {
-                        mediaContent = `
-                            <div class="work-media">
-                                <div class="bilibili-container">
-                                    <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1&autoplay=0" 
-                                        scrolling="no" frameborder="no" 
-                                        allowfullscreen="true">
-                                    </iframe>
-                                </div>
+                if (work.type === 'bilibili') {
+                    // B站视频
+                    mediaContent = `
+                        <div class="work-media">
+                            <div class="bilibili-container">
+                                <iframe src="//player.bilibili.com/player.html?bvid=${work.id}&page=1&high_quality=1&autoplay=0" 
+                                    scrolling="no" frameborder="no" 
+                                    allowfullscreen="true">
+                                </iframe>
                             </div>
-                        `;
-                    } else if (work.type === 'carousel') {
-                        let carouselItems = '';
-                        let indicators = '';
+                        </div>
+                    `;
+                } else if (work.type === 'carousel') {
+                    // 轮播媒体
+                    let carouselItems = '';
+                    let indicators = '';
 
-                        work.media.forEach((media, index) => {
-                            if (media.type === 'image') {
-                                carouselItems += `
-                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                        <img src="${media.url}" alt="${media.alt}">
-                                    </div>
-                                `;
-                            } else if (media.type === 'video') {
-                                carouselItems += `
-                                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                        <div class="video-container">
-                                            <video controls style="width:100%;height:100%;object-fit:contain;" onloadedmetadata="this.pause()">
-                                                <source src="${media.url}" type="video/mp4">
-                                            </video>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-
-                            indicators += `<span class="indicator ${index === 0 ? 'active' : ''}"></span>`;
-                        });
-
-                        mediaContent = `
-                            <div class="work-media">
-                                <div class="media-carousel">
-                                    ${carouselItems}
+                    work.media.forEach((media, mediaIndex) => {
+                        if (media.type === 'image') {
+                            carouselItems += `
+                                <div class="carousel-item ${mediaIndex === 0 ? 'active' : ''}">
+                                    
                                 </div>
-                                <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
-                                <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
-                                <div class="carousel-indicators">
-                                    ${indicators}
-                                </div>
-                            </div>
-                        `;
-
-                        if (work.soundtrack) {
-                            let soundtrackOptions = '<option value="">选择原声带...</option>';
-                            work.soundtrack.tracks.forEach(track => {
-                                soundtrackOptions += `<option value="${track.url}">${track.name}</option>`;
-                            });
-
-                            soundtrackContent = `
-                                <div class="soundtrack-section">
-                                    <h4 class="soundtrack-title">
-                                        <i class="fas fa-music"></i> ${work.soundtrack.title}
-                                        <span class="toggle-soundtrack"><i class="fas fa-chevron-down"></i></span>
-                                    </h4>
-                                    <div class="soundtrack-content">
-                                        <select class="soundtrack-select">
-                                            ${soundtrackOptions}
-                                        </select>
-                                        <audio class="soundtrack-player" controls></audio>
+                            `;
+                        } else if (media.type === 'video') {
+                            carouselItems += `
+                                <div class="carousel-item ${mediaIndex === 0 ? 'active' : ''}">
+                                    <div class="video-container">
+                                        <video controls onloadedmetadata="this.pause()">
+                                            <source src="${media.url}" type="video/mp4">
+                                        </video>
                                     </div>
                                 </div>
                             `;
                         }
-                    }
 
-                    workItem.innerHTML = `
-                        ${mediaContent}
-                        ${soundtrackContent}
-                        <div class="work-info">
-                            <h3 class="work-title">${work.title}</h3>
-                            <p class="work-desc">${work.desc}</p>
-                            <p class="work-date">${work.date}</p>
+                        indicators += `<span class="indicator ${mediaIndex === 0 ? 'active' : ''}"></span>`;
+                    });
+
+                    mediaContent = `
+                        <div class="work-media">
+                            <div class="media-carousel">
+                                ${carouselItems}
+                            </div>
+                            <div class="carousel-controls">
+                                <button class="carousel-prev"><i class="fas fa-chevron-left"></i></button>
+                                <button class="carousel-next"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="carousel-indicators">
+                                ${indicators}
+                            </div>
                         </div>
                     `;
 
-                    worksGallery.appendChild(workItem);
-                });
+                    // 原声带
+                    if (work.soundtrack) {
+                        let soundtrackOptions = '<option value="">选择原声带...</option>';
+                        work.soundtrack.tracks.forEach(track => {
+                            soundtrackOptions += `<option value="${track.url}">${track.name}</option>`;
+                        });
 
-                if (worksData.length > 0) {
-                    emptyWorks.style.display = 'none';
+                        soundtrackContent = `
+                            <div class="soundtrack-section">
+                                <h4 class="soundtrack-title">
+                                    <i class="fas fa-music"></i> ${work.soundtrack.title}
+                                    <span class="toggle-soundtrack"><i class="fas fa-chevron-down"></i></span>
+                                </h4>
+                                <div class="soundtrack-content">
+                                    <select class="soundtrack-select">
+                                        ${soundtrackOptions}
+                                    </select>
+                                    <audio class="soundtrack-player" controls></audio>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
 
-                // 重新初始化轮播和原声带功能
-                setupCarousels();
-                setupSoundtracks();
+                workItem.innerHTML = `
+                    ${mediaContent}
+                    <div class="work-info">
+                        <h3 class="work-title">${work.title}</h3>
+                        <p class="work-desc">${work.desc}</p>
+                        <p class="work-date">${work.date}</p>
+                    </div>
+                    ${soundtrackContent}
+                `;
+
+                worksGallery.appendChild(workItem);
+            });
+
+            // 初始化轮播功能
+            initCarousels();
+
+            // 初始化原声带功能
+            initSoundtracks();
+        }
+
+        // 页面加载时渲染作品
+        document.addEventListener('DOMContentLoaded', function () {
+            renderWorks();
+
+            // 添加滚动动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
             };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // 观察所有作品项
+            setTimeout(() => {
+                document.querySelectorAll('.work-item').forEach(item => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    observer.observe(item);
+                });
+            }, 100);
         });
+
+        // 添加新作品的方法（全局可用）
+        window.addWork = function (newWork) {
+            worksData.push(newWork);
+            renderWorks();
+        };
+
+        // 移除作品的方法（全局可用）
+        window.removeWork = function (workTitle) {
+            const index = worksData.findIndex(work => work.title === workTitle);
+            if (index !== -1) {
+                worksData.splice(index, 1);
+                renderWorks();
+            }
+        };
+
+        // 更新作品的方法（全局可用）
+        window.updateWork = function (workTitle, updatedWork) {
+            const index = worksData.findIndex(work => work.title === workTitle);
+            if (index !== -1) {
+                worksData[index] = updatedWork;
+                renderWorks();
+            }
+        };
     </script>
 </body>
 

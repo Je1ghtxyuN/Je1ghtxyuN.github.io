@@ -11,72 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- 添加Animate.css动画库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <style>
-        /* 新增导航栏样式 */
-        .main-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 15px rgba(255, 105, 158, 0.1);
-            display: flex;
-            justify-content: center;
-            padding: 1rem 0;
-        }
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            color: #ff6b9e;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 107, 158, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .nav-link i {
-            font-size: 1rem;
-        }
-
-        .nav-link.active {
-            background: linear-gradient(135deg, #ff6b9e, #ff3d7f);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 61, 127, 0.3);
-        }
-
-        /* 调整header位置避免被导航栏遮挡 */
-        header {
-            margin-top: 70px;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-                padding: 0.4rem 0.8rem;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -162,25 +97,13 @@
                     class="fab fa-instagram"></i></a>
         </div>
         <p>© 2025 橘京花(Je1ghtxyuN)</p>
+        <!-- 网站运行时间 -->
+        <div class="site-runtime">
+            <span class="runtime-text"> 网站已存在: <span id="runtime"></span></span>
+        </div>
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // 高亮当前页面导航
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            navLinks.forEach(link => {
-                const linkPage = link.getAttribute('href');
-                if (currentPage === linkPage) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>

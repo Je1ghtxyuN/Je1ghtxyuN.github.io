@@ -7,263 +7,8 @@
     <link rel="shortcut icon" href="images/icon.png">
     <title>留言板 - 橘京花の小窝</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- 添加Font Awesome图标库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 添加Animate.css动画库 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <style>
-        /* 基础样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            height: 100%;
-        }
-
-        body {
-            font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.7;
-            color: var(--text-color);
-            background-color: #fff0f5;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* 导航栏样式 */
-        .main-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            box-shadow: 0 2px 15px rgba(255, 105, 158, 0.1);
-            display: flex;
-            justify-content: center;
-            padding: 1rem 0;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            color: #ff6b9e;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 107, 158, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .nav-link i {
-            font-size: 1rem;
-        }
-
-        .nav-link.active {
-            background: linear-gradient(135deg, #ff6b9e, #ff3d7f);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 61, 127, 0.3);
-        }
-
-        /* 调整header位置避免被导航栏遮挡 */
-        header {
-            margin-top: 70px;
-        }
-
-        /* 留言板专用样式 */
-        .contact-container {
-            max-width: 800px;
-            margin: 5rem auto;
-            padding: 0 2rem;
-            flex: 1;
-            width: 100%;
-        }
-
-        /* 留言表单样式 - 修改为白色半透明磨砂效果 */
-        .ask-me {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 3rem;
-            box-shadow: 0 8px 32px rgba(255, 105, 158, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .question-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: var(--pink-dark);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            padding: 1rem;
-            border: 2px solid var(--pink-pale);
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: all 0.4s ease;
-            background: rgba(255, 255, 255, 0.95);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--pink-primary);
-            box-shadow: 0 0 0 4px rgba(255, 107, 158, 0.2);
-            background: white;
-        }
-
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .optional-tag {
-            color: #888;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-
-        /* 修改提交按钮样式 - 居中并增加上边距 */
-        .submit-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, var(--pink-primary), var(--pink-accent));
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all 0.5s var(--cubic-bounce);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(255, 105, 158, 0.4);
-            min-width: 200px;
-            text-align: center;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(255, 61, 127, 0.5);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        .privacy-note {
-            font-size: 0.85rem;
-            color: var(--pink-dark);
-            text-align: center;
-            margin-top: 1.5rem;
-            position: relative;
-            padding-top: 1rem;
-        }
-
-        .privacy-note::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 2px;
-            background: linear-gradient(to right, transparent, var(--pink-primary), transparent);
-        }
-
-        .privacy-note i {
-            margin-right: 5px;
-            color: var(--pink-accent);
-        }
-
-        /* 页脚样式 */
-        footer {
-            background: linear-gradient(135deg, var(--pink-dark), #8a1242);
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: auto;
-            width: 100%;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 1.8rem;
-            transition: all 0.5s var(--cubic-bounce);
-        }
-
-        .social-links a:hover {
-            color: var(--pink-pale);
-            transform: translateY(-5px);
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-                padding: 0.4rem 0.8rem;
-            }
-
-            .ask-me {
-                padding: 2rem 1.5rem;
-            }
-
-            .submit-container {
-                margin-top: 1.5rem;
-            }
-
-            .social-links {
-                gap: 1.5rem;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -289,7 +34,7 @@
                     <form id="questionForm" action="https://formspree.io/f/mkgbpnbb" method="POST">
                         <div class="form-group">
                             <label for="nickname">您的昵称 <span class="optional-tag">(必填)</span></label>
-                            <input type="text" id="nickname" name="nickname" placeholder="怎么称呼你呢～(´･ω･｀)" required>
+                            <input type="text" id="nickname" name="nickname" placeholder="怎么称呼你呢～(´･ω･｀｀)" required>
                         </div>
 
                         <div class="form-group">
@@ -299,23 +44,23 @@
 
                         <div class="form-group">
                             <label for="message">留言内容 <span class="optional-tag">(必填)</span></label>
-                            <textarea id="message" name="message" placeholder="想对京花ちゃん说的话都可以写在这里哦～(｡♥‿♥｡)"
+                            <textarea id="message" name="message" placeholder="想对京花ちゃん说的话都可以写在这里哦～(｡｡♥‿‿♥｡｡)"
                                 required></textarea>
                         </div>
 
                         <input type="hidden" name="_subject" value="【个人网站】新的留言">
                         <input type="text" name="_gotcha" style="display:none">
 
-                        <!-- 修改后的提交按钮容器 -->
                         <div class="submit-container">
                             <button type="submit" class="submit-btn">提交留言 <i class="fas fa-paper-plane"></i></button>
                         </div>
                     </form>
-                    <p class="privacy-note"><i class="fas fa-lock"></i> 所有留言都会认真查看，联系方式仅用于回复不会公开哦！(｀・ω・´)</p>
+                    <p class="privacy-note"><i class="fas fa-lock"></i> 所有留言都会认真查看，联系方式仅用于回复不会公开哦！(｀｀・ω・´)</p>
                 </div>
             </section>
         </main>
     </div>
+
     <!-- 悬浮音乐播放器 -->
     <div class="floating-music-player">
         <div class="player-minimized">
@@ -342,73 +87,12 @@
                     class="fab fa-instagram"></i></a>
         </div>
         <p>© 2025 橘京花(Je1ghtxyuN)</p>
+        <div class="site-runtime">
+            <span class="runtime-text"> 网站已存在: <span id="runtime"></span></span>
+        </div>
     </footer>
 
     <script src="script.js"></script>
-    <script>
-        // 高亮当前页面导航
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            const navLinks = document.querySelectorAll('.nav-link');
-
-            navLinks.forEach(link => {
-                const linkPage = link.getAttribute('href');
-                if (currentPage === linkPage) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-
-            // 表单提交处理
-            const form = document.getElementById('questionForm');
-            const submitBtn = form.querySelector('.submit-btn');
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                try {
-                    // 更新按钮状态
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = '发送中...';
-                    submitBtn.style.background = 'linear-gradient(to right, #4facfe, #00f2fe)';
-
-                    // 发送表单数据
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: new FormData(form),
-                        headers: { 'Accept': 'application/json' }
-                    });
-
-                    if (response.ok) {
-                        // 成功反馈
-                        submitBtn.textContent = '✓ 已发送';
-                        submitBtn.style.background = 'linear-gradient(to right, #4cd964, #5ac8fa)';
-                        form.reset();
-
-                        // 3秒后恢复按钮状态
-                        setTimeout(() => {
-                            submitBtn.textContent = '提交留言';
-                            submitBtn.style.background = 'linear-gradient(to right, #ff6b9e, #ff3d7f)';
-                            submitBtn.disabled = false;
-                        }, 2000);
-                    } else {
-                        throw new Error('提交失败');
-                    }
-                } catch (error) {
-                    // 错误处理
-                    submitBtn.textContent = '✗ 发送失败';
-                    submitBtn.style.background = 'linear-gradient(to right, #ff5e57, #ff2d55)';
-
-                    setTimeout(() => {
-                        submitBtn.textContent = '提交留言';
-                        submitBtn.style.background = 'linear-gradient(to right, #ff6b9e, #ff3d7f)';
-                        submitBtn.disabled = false;
-                    }, 2000);
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>
