@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="images/icon.png">
+    <title>留言板 - 橘京花の小窝</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="main-nav animate__animated animate__fadeInDown">
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">
+                <i class="fas fa-home"></i> 主页
+            </a>
+            <a href="works.html" class="nav-link">
+                <i class="fas fa-code"></i> 作品
+            </a>
+            <a href="contact.html" class="nav-link active">
+                <i class="fas fa-envelope"></i> 留言板
+            </a>
+        </div>
+    </nav>
+
+    <div class="contact-container">
+        <main>
+            <section class="ask-me animate__animated animate__fadeInUp">
+                <div class="question-form">
+                    <form id="questionForm" action="https://formspree.io/f/mkgbpnbb" method="POST">
+                        <div class="form-group">
+                            <label for="nickname">您的昵称 <span class="optional-tag">(必填)</span></label>
+                            <input type="text" id="nickname" name="nickname" placeholder="怎么称呼你呢～(´･ω･｀｀)" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact">联系方式 <span class="optional-tag">(选填)</span></label>
+                            <input type="text" id="contact" name="contact" placeholder="邮箱/QQ/微信等，方便窝回复你～">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">留言内容 <span class="optional-tag">(必填)</span></label>
+                            <textarea id="message" name="message" placeholder="想对京花ちゃん说的话都可以写在这里哦～(｡｡♥‿‿♥｡｡)"
+                                required></textarea>
+                        </div>
+
+                        <input type="hidden" name="_subject" value="【个人网站】新的留言">
+                        <input type="text" name="_gotcha" style="display:none">
+
+                        <div class="submit-container">
+                            <button type="submit" class="submit-btn">提交留言 <i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                    <p class="privacy-note"><i class="fas fa-lock"></i> 所有留言都会认真查看，联系方式仅用于回复不会公开哦！(｀｀・ω・´)</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 悬浮音乐播放器 -->
+    <div class="floating-music-player">
+        <div class="player-minimized">
+            <i class="fas fa-music"></i>
+        </div>
+        <div class="player-expanded">
+            <div class="player-header">
+                <span>窝喜欢的歌 / お気に入りの歌</span>
+                <button class="minimize-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <audio id="myAudio" controls>
+                <source src="music/あたらよ - 夏霞.mp3" type="audio/mpeg">
+            </audio>
+            <div class="song-info">あたらよ - 夏霞</div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://github.com/Je1ghtxyuN" aria-label="GitHub" title="Githubでフォローしてね～"><i
+                    class="fab fa-github"></i></a>
+            <a href="https://x.com/Je1ghtxyuN" aria-label="x" title="xでお话しましょう～"><i class="fab fa-x"></i></a>
+            <a href="https://instagram.com/Je1ghtxyuN" aria-label="Instagram" title="Instagramも見てみて～"><i
+                    class="fab fa-instagram"></i></a>
+        </div>
+        <p>© 2025 橘京花(Je1ghtxyuN)</p>
+        <div class="site-runtime">
+            <span class="runtime-text"> 网站已存在: <span id="runtime"></span></span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
