@@ -190,6 +190,7 @@ const RuntimeCounter = () => {
   const [time, setTime] = useState({ d: 0, h: 0, m: 0, s: 0 });
   
   useEffect(() => {
+    // 强制设定建站时间为 2025-06-25
     const startDate = new Date('2025-06-25T00:00:00'); 
     const timer = setInterval(() => {
       const now = new Date();
@@ -410,14 +411,21 @@ const HomeSection = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // === 关键修改：增加 Try-Catch-Finally，防止网络错误导致页面卡死 ===
   useEffect(() => {
     const fetchProfile = async () => {
-      const docRef = doc(db, 'artifacts', APP_ID, 'public', 'profile');
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        setProfile(snap.data());
+      try {
+        const docRef = doc(db, 'artifacts', APP_ID, 'public', 'profile');
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          setProfile(snap.data());
+        }
+      } catch (error) {
+        console.warn("Firebase 连接失败（可能是网络原因），使用默认数据渲染:", error);
+      } finally {
+        // 无论成功还是失败，都结束 loading 状态
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProfile();
   }, []);
@@ -438,15 +446,24 @@ const HomeSection = ({ user }) => {
 
   return (
     <div className="container fade-in" style={{textAlign:'center', paddingTop:'60px'}}>
-      <div style={{position:'relative', display:'inline-block'}}>
-        <div style={{width:'150px', height:'150px', borderRadius:'50%', margin:'0 auto 30px', padding:'5px', background:'white', boxShadow:'0 10px 25px rgba(0,0,0,0.1)'}}>
-          <img src={profile.avatar} alt="Avatar" style={{width:'100%', height:'100%', borderRadius:'50%', objectFit:'cover'}} onError={(e)=>e.target.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Kyoka'} />
+      
+      {/* 头像区域 */}
+      <div style={{marginBottom:'30px'}}>
+        <div style={{position:'relative', display:'inline-block'}}>
+          <div style={{width:'150px', height:'150px', borderRadius:'50%', margin:'0 auto', padding:'5px', background:'white', boxShadow:'0 10px 25px rgba(0,0,0,0.1)'}}>
+            <img src={profile.avatar} alt="Avatar" style={{width:'100%', height:'100%', borderRadius:'50%', objectFit:'cover'}} onError={(e)=>e.target.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Kyoka'} />
+          </div>
         </div>
+
         {isEditing && (
-          <div style={{position:'absolute', bottom:'20px', right:'0', background:'white', padding:'5px', borderRadius:'50%', boxShadow:'0 2px 10px rgba(0,0,0,0.1)'}}>
-             <input className="form-input" style={{fontSize:'0.8rem', width:'200px', position:'absolute', top:'100%', left:'50%', transform:'translateX(-50%)', zIndex:10}} 
-               value={profile.avatar} onChange={e=>setProfile({...profile, avatar:e.target.value})} placeholder="输入头像链接" />
-             <Edit3 size={16} color="var(--primary)"/>
+          <div style={{maxWidth: '300px', margin: '15px auto 0'}}>
+            <input 
+              className="form-input" 
+              value={profile.avatar} 
+              onChange={e=>setProfile({...profile, avatar:e.target.value})} 
+              placeholder="粘贴头像链接..." 
+              style={{textAlign: 'center', fontSize: '0.85rem'}}
+            />
           </div>
         )}
       </div>
@@ -510,19 +527,20 @@ const WorksSection = ({ user }) => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'works'), orderBy('createdAt', 'desc'));
-    return onSnapshot(q, snap => setWorks(snap.docs.map(d => ({id:d.id, ...d.data()}))));
+    // 增加错误捕获，防止works加载失败导致白屏
+    try {
+      const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'works'), orderBy('createdAt', 'desc'));
+      return onSnapshot(q, snap => setWorks(snap.docs.map(d => ({id:d.id, ...d.data()}))), err => console.error("Works load err:", err));
+    } catch (e) { console.error(e); }
   }, []);
 
   const handleDelete = async (id) => { if(confirm('确定删除？')) await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'works', id)); };
   
-  // 打开添加弹窗
   const openAdd = () => {
     setEditingWork(null);
     setShowModal(true);
   };
 
-  // 打开编辑弹窗
   const openEdit = (work) => {
     setEditingWork(work);
     setShowModal(true);
@@ -569,8 +587,10 @@ const PhotoWall = ({ user }) => {
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   useEffect(() => {
-    const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'photos'), orderBy('createdAt', 'desc'));
-    return onSnapshot(q, snap => setPhotos(snap.docs.map(d => ({id:d.id, ...d.data()}))));
+    try {
+        const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'photos'), orderBy('createdAt', 'desc'));
+        return onSnapshot(q, snap => setPhotos(snap.docs.map(d => ({id:d.id, ...d.data()}))), err => console.error(err));
+    } catch(e){ console.error(e); }
   }, []);
   const handleDelete = async (id) => { if(confirm('删除照片？')) await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'photos', id)); };
   
@@ -603,7 +623,6 @@ const PhotoWall = ({ user }) => {
   );
 };
 
-// === 新增：评论区组件 ===
 const CommentSection = ({ postId, user }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -611,24 +630,27 @@ const CommentSection = ({ postId, user }) => {
 
   useEffect(() => {
     if (!postId) return;
-    const q = query(
-      collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts', postId, 'comments'), 
-      orderBy('createdAt', 'asc')
-    );
-    return onSnapshot(q, snap => setComments(snap.docs.map(d => ({id:d.id, ...d.data()}))));
+    try {
+        const q = query(
+        collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts', postId, 'comments'), 
+        orderBy('createdAt', 'asc')
+        );
+        return onSnapshot(q, snap => setComments(snap.docs.map(d => ({id:d.id, ...d.data()}))), err=>console.error(err));
+    } catch(e) { console.error(e); }
   }, [postId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !nickname.trim()) return;
-    
-    await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts', postId, 'comments'), {
-      nickname,
-      content: newComment,
-      createdAt: serverTimestamp(),
-      uid: user?.uid || 'anonymous'
-    });
-    setNewComment('');
+    try {
+        await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts', postId, 'comments'), {
+        nickname,
+        content: newComment,
+        createdAt: serverTimestamp(),
+        uid: user?.uid || 'anonymous'
+        });
+        setNewComment('');
+    } catch(e) { alert("评论失败，可能是网络问题"); }
   };
 
   return (
@@ -636,8 +658,6 @@ const CommentSection = ({ postId, user }) => {
       <h3 style={{marginBottom:'20px', display:'flex', alignItems:'center', gap:'10px'}}>
         <MessageSquare size={20}/> 评论 ({comments.length})
       </h3>
-      
-      {/* 评论列表 */}
       <div style={{marginBottom:'30px'}}>
         {comments.length === 0 ? <p style={{color:'#aaa', textAlign:'center'}}>还没有评论，快来抢沙发~</p> : (
           comments.map(c => (
@@ -651,8 +671,6 @@ const CommentSection = ({ postId, user }) => {
           ))
         )}
       </div>
-
-      {/* 发表评论 */}
       <form onSubmit={handleSubmit} className="glass" style={{padding:'20px', borderRadius:'12px', background:'rgba(255,255,255,0.8)'}}>
          <div style={{display:'flex', gap:'10px', marginBottom:'10px'}}>
            <input className="form-input" placeholder="昵称" value={nickname} onChange={e=>setNickname(e.target.value)} required style={{flex:1}} />
@@ -670,40 +688,41 @@ const BlogSection = ({ user }) => {
   const [posts, setPosts] = useState([]);
   const [activePostId, setActivePostId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const isMobile = window.innerWidth < 768; 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); 
 
   useEffect(() => {
-    const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts'), orderBy('createdAt', 'desc'));
-    return onSnapshot(q, snap => setPosts(snap.docs.map(d => ({id:d.id, ...d.data()}))));
+    try {
+        const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts'), orderBy('createdAt', 'desc'));
+        return onSnapshot(q, snap => setPosts(snap.docs.map(d => ({id:d.id, ...d.data()}))), err=>console.error(err));
+    } catch(e) { console.error(e); }
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const activePost = posts.find(p => p.id === activePostId);
 
-  // 修改：点赞逻辑（每个账号限一次）
   const handleLike = async (post) => {
     if (!user) { alert('请先登录（点击左下角锁图标）'); return; }
-    
-    // 检查是否已经点赞
-    const likeRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', post.id, 'likes', user.uid);
-    const likeSnap = await getDoc(likeRef);
-    
-    if (likeSnap.exists()) {
-      alert('这篇你已经赞过了哦 ~');
-      return;
-    }
-
-    // 执行点赞
-    await setDoc(likeRef, { uid: user.uid, createdAt: serverTimestamp() });
-    const postRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', post.id);
-    await updateDoc(postRef, { likes: increment(1) });
+    try {
+        const likeRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', post.id, 'likes', user.uid);
+        const likeSnap = await getDoc(likeRef);
+        if (likeSnap.exists()) {
+        alert('这篇你已经赞过了哦 ~');
+        return;
+        }
+        await setDoc(likeRef, { uid: user.uid, createdAt: serverTimestamp() });
+        const postRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', post.id);
+        await updateDoc(postRef, { likes: increment(1) });
+    } catch(e) { alert("操作失败"); }
   };
 
-  // 新增：删除博客
   const handleDeletePost = async (e, id) => {
     e.stopPropagation();
     if (!confirm('确定要删除这篇博客吗？操作无法撤销。')) return;
-    
-    // 1. 删除文章本体
     await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', id));
     if (activePostId === id) setActivePostId(null);
   };
@@ -731,7 +750,6 @@ const BlogSection = ({ user }) => {
               <span style={{display:'flex', alignItems:'center', gap:'4px'}}><ThumbsUp size={12}/> {post.likes || 0}</span>
             </div>
             
-            {/* 只有管理员可见的删除按钮 */}
             {user && !user.isAnonymous && (
               <button 
                 onClick={(e)=>handleDeletePost(e, post.id)} 
@@ -756,7 +774,6 @@ const BlogSection = ({ user }) => {
               <MarkdownRenderer content={activePost.content} />
             </div>
             
-            {/* 评论区 */}
             <CommentSection postId={activePost.id} user={user} />
           </div>
         ) : <div style={{display:'flex', alignItems:'center', justifyContent:'center', height:'100%', color:'#a0aec0'}}><BookOpen size={64} style={{marginBottom:'20px', opacity:0.5}}/></div>}
@@ -783,19 +800,15 @@ const BlogEditor = ({ onClose }) => {
   );
 };
 
-// 修改：支持添加和编辑的通用弹窗
 const WorkModal = ({ onClose, workToEdit }) => {
-  // 如果有 workToEdit，则初始化为该作品数据，否则为空
   const [data, setData] = useState(workToEdit || { title:'', description:'', date:'', imageUrl:'', videoUrl:'', link:'' });
   
   const handleSubmit = async (e) => { 
     e.preventDefault(); 
     if (workToEdit) {
-      // 编辑模式：更新文档
       const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'works', workToEdit.id);
-      await updateDoc(docRef, { ...data }); // 不更新 createdAt 以保持排序
+      await updateDoc(docRef, { ...data }); 
     } else {
-      // 添加模式：新建文档
       await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'works'), { ...data, createdAt: serverTimestamp() }); 
     }
     onClose(); 
@@ -884,9 +897,13 @@ export default function App() {
   const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
+    // 认证状态监听通常比较稳健，但如果完全断网，Auth 也可能初始化缓慢
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
-      if (!u) signInAnonymously(auth).catch(console.error);
+      // 只有在没有用户时才尝试匿名登录，避免死循环
+      if (!u) {
+          signInAnonymously(auth).catch(err => console.warn("匿名登录失败，可能因网络屏蔽:", err));
+      }
     });
     return unsub;
   }, []);
