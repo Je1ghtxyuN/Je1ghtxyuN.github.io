@@ -11,7 +11,6 @@ import {
 import {
   collection,
   addDoc,
-  deleteDoc,
   doc,
   query,
   orderBy,
@@ -20,9 +19,10 @@ import {
   updateDoc,
   increment,
   setDoc,
-  getDoc,
-  getDocs
+  getDoc
 } from "firebase/firestore";
+// 导入数据服务
+import dataService from './dataService';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -409,22 +409,14 @@ const HomeSection = ({ user }) => {
     aboutContent: '东南大学CS在读  \n 虚拟现实与人机交互方向，游戏开发  \n 同时也是镇守府的提督和十年葱葱人 ~ \n PC/SWITCH 欢迎一起玩 ~'
   });
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
 
-  // === 关键修改：增加 Try-Catch-Finally，防止网络错误导致页面卡死 ===
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const docRef = doc(db, 'artifacts', APP_ID, 'public', 'profile');
-        const snap = await getDoc(docRef);
-        if (snap.exists()) {
-          setProfile(snap.data());
-        }
+        const profileData = await dataService.getProfile();
+        setProfile(profileData);
       } catch (error) {
-        console.warn("Firebase 连接失败（可能是网络原因），使用默认数据渲染:", error);
-      } finally {
-        // 无论成功还是失败，都结束 loading 状态
-        setLoading(false);
+        console.warn("获取个人资料失败:", error);
       }
     };
     fetchProfile();
@@ -432,15 +424,17 @@ const HomeSection = ({ user }) => {
 
   const handleSave = async () => {
     try {
-      await setDoc(doc(db, 'artifacts', APP_ID, 'public', 'profile'), profile);
+      const result = await dataService.updateProfile(profile);
       setIsEditing(false);
-      alert('保存成功！');
-    } catch (e) {
-      alert('保存失败: ' + e.message);
+      if (result.isLocal) {
+        alert('保存成功（本地模式）！网络恢复后将同步到服务器。');
+      } else {
+        alert('保存成功！');
+      }
+    } catch (error) {
+      alert('保存失败: ' + error.message);
     }
   };
-
-  if (loading) return <div className="container" style={{ paddingTop: '100px', textAlign: 'center' }}>加载中...</div>;
 
   const isAdmin = user && !user.isAnonymous;
 
@@ -527,14 +521,42 @@ const WorksSection = ({ user }) => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    // 增加错误捕获，防止works加载失败导致白屏
-    try {
-      const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'works'), orderBy('createdAt', 'desc'));
-      return onSnapshot(q, snap => setWorks(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error("Works load err:", err));
-    } catch (e) { console.error(e); }
+    const fetchWorks = async () => {
+      try {
+        const worksData = await dataService.getWorks();
+        setWorks(worksData);
+      } catch (error) {
+        console.warn("获取作品失败:", error);
+      }
+    };
+    fetchWorks();
+
+    // 订阅实时更新
+    const unsubscribe = dataService.subscribeWorks((newWorks) => {
+      setWorks(newWorks);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const handleDelete = async (id) => { if (confirm('确定删除？')) await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'works', id)); };
+  const handleDelete = async (id) => {
+    if (!confirm('确定删除？')) return;
+    try {
+      const result = await dataService.delete({
+        collectionPath: ['artifacts', APP_ID, 'public', 'data', 'works'],
+        docId: id,
+        cacheKey: 'works'
+      });
+      if (result.isLocal) {
+        alert('删除成功（本地模式）！网络恢复后将同步到服务器。');
+      } else {
+        alert('删除成功！');
+      }
+    } catch (error) {
+      console.error('删除失败:', error);
+      alert(`删除失败: ${error.message}`);
+    }
+  };
 
   const openAdd = () => {
     setEditingWork(null);
@@ -586,13 +608,44 @@ const PhotoWall = ({ user }) => {
   const [photos, setPhotos] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
+
   useEffect(() => {
-    try {
-      const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'photos'), orderBy('createdAt', 'desc'));
-      return onSnapshot(q, snap => setPhotos(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err));
-    } catch (e) { console.error(e); }
+    const fetchPhotos = async () => {
+      try {
+        const photosData = await dataService.getPhotos();
+        setPhotos(photosData);
+      } catch (error) {
+        console.warn("获取照片失败:", error);
+      }
+    };
+    fetchPhotos();
+
+    // 订阅实时更新
+    const unsubscribe = dataService.subscribePhotos((newPhotos) => {
+      setPhotos(newPhotos);
+    });
+
+    return () => unsubscribe();
   }, []);
-  const handleDelete = async (id) => { if (confirm('删除照片？')) await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'photos', id)); };
+
+  const handleDelete = async (id) => {
+    if (!confirm('删除照片？')) return;
+    try {
+      const result = await dataService.delete({
+        collectionPath: ['artifacts', APP_ID, 'public', 'data', 'photos'],
+        docId: id,
+        cacheKey: 'photos'
+      });
+      if (result.isLocal) {
+        alert('删除成功（本地模式）！网络恢复后将同步到服务器。');
+      } else {
+        alert('删除成功！');
+      }
+    } catch (error) {
+      console.error('删除失败:', error);
+      alert(`删除失败: ${error.message}`);
+    }
+  };
 
   return (
     <div className="container fade-in">
@@ -636,7 +689,7 @@ const CommentSection = ({ postId, user }) => {
         orderBy('createdAt', 'asc')
       );
       return onSnapshot(q, snap => setComments(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err));
-    } catch (e) { console.error(e); }
+    } catch { console.error('评论加载失败'); }
   }, [postId]);
 
   const handleSubmit = async (e) => {
@@ -650,7 +703,7 @@ const CommentSection = ({ postId, user }) => {
         uid: user?.uid || 'anonymous'
       });
       setNewComment('');
-    } catch (e) { alert("评论失败，可能是网络问题"); }
+    } catch { alert("评论失败，可能是网络问题"); }
   };
 
   return (
@@ -688,13 +741,26 @@ const BlogSection = ({ user }) => {
   const [posts, setPosts] = useState([]);
   const [activePostId, setActivePostId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-    try {
-      const q = query(collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts'), orderBy('createdAt', 'desc'));
-      return onSnapshot(q, snap => setPosts(snap.docs.map(d => ({ id: d.id, ...d.data() }))), err => console.error(err));
-    } catch (e) { console.error(e); }
+    const fetchPosts = async () => {
+      try {
+        const postsData = await dataService.getPosts();
+        setPosts(postsData);
+      } catch (error) {
+        console.warn("获取博客文章失败:", error);
+      }
+    };
+    fetchPosts();
+
+    // 订阅实时更新
+    const unsubscribe = dataService.subscribePosts((newPosts) => {
+      setPosts(newPosts);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -717,14 +783,29 @@ const BlogSection = ({ user }) => {
       await setDoc(likeRef, { uid: user.uid, createdAt: serverTimestamp() });
       const postRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', post.id);
       await updateDoc(postRef, { likes: increment(1) });
-    } catch (e) { alert("操作失败"); }
+    } catch { alert("操作失败"); }
+  };
+
+  const handleEditPost = (post) => {
+    setEditingPost(post);
+    setIsEditing(true);
   };
 
   const handleDeletePost = async (e, id) => {
     e.stopPropagation();
     if (!confirm('确定要删除这篇博客吗？操作无法撤销。')) return;
-    await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', id));
-    if (activePostId === id) setActivePostId(null);
+    try {
+      const result = await dataService.deletePost(id);
+      if (result.isLocal) {
+        alert('删除成功（本地模式）！网络恢复后将同步到服务器。');
+      } else {
+        alert('删除成功！');
+      }
+      if (activePostId === id) setActivePostId(null);
+    } catch (error) {
+      console.error('删除失败:', error);
+      alert(`删除失败: ${error.message}`);
+    }
   };
 
   return (
@@ -751,12 +832,20 @@ const BlogSection = ({ user }) => {
             </div>
 
             {user && !user.isAnonymous && (
-              <button
-                onClick={(e) => handleDeletePost(e, post.id)}
-                style={{ position: 'absolute', top: '10px', right: '10px', border: 'none', background: 'none', color: '#e53e3e', cursor: 'pointer' }}
-              >
-                <Trash2 size={14} />
-              </button>
+              <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '5px' }}>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleEditPost(post); }}
+                  style={{ border: 'none', background: 'none', color: '#4a5568', cursor: 'pointer' }}
+                >
+                  <Edit3 size={14} />
+                </button>
+                <button
+                  onClick={(e) => handleDeletePost(e, post.id)}
+                  style={{ border: 'none', background: 'none', color: '#e53e3e', cursor: 'pointer' }}
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             )}
           </div>
         ))}
@@ -778,22 +867,93 @@ const BlogSection = ({ user }) => {
           </div>
         ) : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#a0aec0' }}><BookOpen size={64} style={{ marginBottom: '20px', opacity: 0.5 }} /></div>}
       </div>
-      {isEditing && <BlogEditor onClose={() => setIsEditing(false)} />}
+      {isEditing && <BlogEditor onClose={() => { setIsEditing(false); setEditingPost(null); }} postToEdit={editingPost} />}
     </div>
   );
 };
 
-const BlogEditor = ({ onClose }) => {
-  const [title, setTitle] = useState(''); const [content, setContent] = useState('');
-  const handleDrop = (e) => { e.preventDefault(); const file = e.dataTransfer.files[0]; if (file && file.name.endsWith('.md')) { const r = new FileReader(); r.onload = ev => setContent(ev.target.result); r.readAsText(file); } };
-  const handlePublish = async () => { if (!title || !content) return; await addDoc(collection(db, 'artifacts', APP_ID, 'public', 'data', 'posts'), { title, content, likes: 0, createdAt: serverTimestamp() }); onClose(); };
+const BlogEditor = ({ onClose, postToEdit = null }) => {
+  const [title, setTitle] = useState(postToEdit?.title || '');
+  const [content, setContent] = useState(postToEdit?.content || '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.md')) {
+      const r = new FileReader();
+      r.onload = ev => setContent(ev.target.result);
+      r.readAsText(file);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!title.trim() || !content.trim()) {
+      alert('标题和内容不能为空');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (postToEdit) {
+        // 编辑现有文章
+        const result = await dataService.updatePost(postToEdit.id, { title, content });
+        if (result.isLocal) {
+          alert('更新成功（本地模式）！网络恢复后将同步到服务器。');
+        } else {
+          alert('更新成功！');
+        }
+      } else {
+        // 创建新文章
+        const result = await dataService.addPost({ title, content, likes: 0 });
+        if (result.isLocal) {
+          alert('发布成功（本地模式）！网络恢复后将同步到服务器。');
+        } else {
+          alert('发布成功！');
+        }
+      }
+      onClose();
+    } catch (error) {
+      console.error('发布失败:', error);
+      alert(`发布失败: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'white', zIndex: 2000, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between' }}><h3>写文章</h3><div><button onClick={onClose} className="btn btn-ghost">取消</button><button onClick={handlePublish} className="btn btn-primary">发布</button></div></div>
+      <div style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3>{postToEdit ? '编辑文章' : '写文章'}</h3>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onClose} className="btn btn-ghost" disabled={isSubmitting}>取消</button>
+          <button onClick={handlePublish} className="btn btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? '处理中...' : postToEdit ? '更新' : '发布'}
+          </button>
+        </div>
+      </div>
       <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <input className="form-input" placeholder="标题" value={title} onChange={e => setTitle(e.target.value)} style={{ fontSize: '1.5rem', border: 'none', background: 'transparent' }} />
-        <div style={{ flex: 1, border: '2px dashed #eee', borderRadius: '12px', padding: '10px' }} onDragOver={e => e.preventDefault()} onDrop={handleDrop}>
-          <textarea placeholder="Markdown 内容..." value={content} onChange={e => setContent(e.target.value)} style={{ width: '100%', height: '100%', border: 'none', resize: 'none', outline: 'none', background: 'transparent' }} />
+        <input
+          className="form-input"
+          placeholder="标题"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          style={{ fontSize: '1.5rem', border: 'none', background: 'transparent' }}
+          disabled={isSubmitting}
+        />
+        <div style={{ flex: 1, border: '2px dashed #eee', borderRadius: '12px', padding: '10px' }}
+          onDragOver={e => e.preventDefault()}
+          onDrop={handleDrop}>
+          <textarea
+            placeholder="Markdown 内容..."
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            style={{ width: '100%', height: '100%', border: 'none', resize: 'none', outline: 'none', background: 'transparent' }}
+            disabled={isSubmitting}
+          />
+        </div>
+        <div style={{ fontSize: '0.8rem', color: '#718096', padding: '10px', background: '#f7fafc', borderRadius: '8px' }}>
+          <strong>提示：</strong>支持 Markdown 语法，可以直接拖拽 .md 文件到编辑区域
         </div>
       </div>
     </div>
