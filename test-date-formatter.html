@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期格式化工具测试</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-case {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .error {
+            border-left: 4px solid #f44336;
+        }
+
+        .test-input {
+            font-family: monospace;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .test-result {
+            font-family: monospace;
+            background: #e8f5e8;
+            padding: 5px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>日期格式化工具测试</h1>
+    <p>这个页面测试日期格式化工具的各种输入情况。</p>
+
+    <div id="test-results"></div>
+
+    <script>
+        // 模拟日期格式化工具的功能
+        const normalizeDate = (dateInput) => {
+            if (!dateInput) return null;
+
+            try {
+                // 如果是Firebase Timestamp对象（模拟）
+                if (dateInput.toDate && typeof dateInput.toDate === 'function') {
+                    return dateInput.toDate();
+                }
+
+                // 如果是Firebase Timestamp的seconds和nanoseconds格式
+                if (dateInput.seconds !== undefined) {
+                    return new Date(dateInput.seconds * 1000 + (dateInput.nanoseconds || 0) / 1000000);
+                }
+
+                // 如果是ISO字符串
+                if (typeof dateInput === 'string') {
+                    const date = new Date(dateInput);
+                    return isNaN(date.getTime()) ? null : date;
+                }
+
+                // 如果是时间戳
+                if (typeof dateInput === 'number') {
+                    const date = new Date(dateInput);
+                    return isNaN(date.getTime()) ? null : date;
+                }
+
+                // 如果是Date对象
+                if (dateInput instanceof Date) {
+                    return isNaN(dateInput.getTime()) ? null : dateInput;
+                }
+
+                return null;
+            } catch (error) {
+                console.warn('日期转换失败:', error, dateInput);
+                return null;
+            }
+        };
+
+        const formatDate = (dateInput) => {
+            const date = normalizeDate(dateInput);
+            if (!date) return 'Invalid Date';
+
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        };
+
+        const formatDateTime = (dateInput) => {
+            const date = normalizeDate(dateInput);
+            if (!date) return 'Invalid Date';
+
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        };
+
+        // 测试用例
+        const testCases = [
+            {
+                name: 'Firebase Timestamp (seconds)',
+                input: { seconds: 1741190400, nanoseconds: 0 }, // 2025-03-05
+                expected: '2025年3月5日'
+            },
+            {
+                name: 'ISO字符串',
+                input: '2025-03-05T12:00:00Z',
+                expected: '2025年3月5日'
+            },
+            {
+                name: '时间戳',
+                input: 1741190400000, // 2025-03-05
+                expected: '2025年3月5日'
+            },
+            {
+                name: 'Date对象',
+                input: new Date('2025-03-05'),
+                expected: '2025年3月5日'
+            },
+            {
+                name: '无效日期字符串',
+                input: 'invalid-date',
+                expected: 'Invalid Date'
+            },
+            {
+                name: 'null输入',
+                input: null,
+                expected: 'Invalid Date'
+            },
+            {
+                name: 'undefined输入',
+                input: undefined,
+                expected: 'Invalid Date'
+            },
+            {
+                name: '空字符串',
+                input: '',
+                expected: 'Invalid Date'
+            }
+        ];
+
+        // 运行测试
+        const testResults = document.getElementById('test-results');
+        let passed = 0;
+        let failed = 0;
+
+        testCases.forEach(testCase => {
+            const result = formatDate(testCase.input);
+            const isSuccess = result === testCase.expected;
+
+            if (isSuccess) passed++;
+            else failed++;
+
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-case ${isSuccess ? 'success' : 'error'}`;
+
+            testDiv.innerHTML = `
+                <h3>${testCase.name}</h3>
+                <div class="test-input">输入: ${JSON.stringify(testCase.input)}</div>
+                <div class="test-result">结果: ${result}</div>
+                <div class="test-result">预期: ${testCase.expected}</div>
+                <div><strong>${isSuccess ? '✓ 通过' : '✗ 失败'}</strong></div>
+            `;
+
+            testResults.appendChild(testDiv);
+        });
+
+        // 显示总结
+        const summary = document.createElement('div');
+        summary.className = 'test-case';
+        summary.innerHTML = `
+            <h2>测试总结</h2>
+            <p>总测试用例: ${testCases.length}</p>
+            <p style="color: #4CAF50;">通过: ${passed}</p>
+            <p style="color: ${failed > 0 ? '#f44336' : '#4CAF50'};">失败: ${failed}</p>
+            <p>成功率: ${Math.round((passed / testCases.length) * 100)}%</p>
+        `;
+
+        testResults.insertBefore(summary, testResults.firstChild);
+    </script>
+</body>
+
+</html>

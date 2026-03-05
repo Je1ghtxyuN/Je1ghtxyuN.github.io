@@ -25,6 +25,8 @@ import {
 import dataService from './dataService';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+// 导入日期格式化工具
+import { formatDate, formatDateTime } from './utils/dateFormatter';
 
 // 导入上下文和组件
 import { useApp } from './contexts/AppContext';
@@ -743,7 +745,7 @@ const CommentSection = ({ postId, user }) => {
             <div key={c.id} className="comment-bubble">
               <div style={{ fontWeight: 'bold', color: 'var(--primary)', marginBottom: '5px', display: 'flex', justifyContent: 'space-between' }}>
                 <span>{c.nickname}</span>
-                <span style={{ fontSize: '0.7rem', color: '#cbd5e0' }}>{c.createdAt ? new Date(c.createdAt.seconds * 1000).toLocaleString() : '刚刚'}</span>
+                <span style={{ fontSize: '0.7rem', color: '#cbd5e0' }}>{c.createdAt ? formatDateTime(c.createdAt) : '刚刚'}</span>
               </div>
               <div style={{ color: '#4a5568', lineHeight: 1.5 }}>{c.content}</div>
             </div>
@@ -853,7 +855,7 @@ const BlogSection = ({ user, t }) => {
           }}>
             <h4 style={{ fontWeight: 'bold', color: '#2d3748', paddingRight: '20px' }}>{post.title}</h4>
             <div style={{ fontSize: '0.8rem', color: '#718096', display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
-              <span>{post.createdAt ? new Date(post.createdAt?.seconds ? post.createdAt.seconds * 1000 : post.createdAt).toLocaleDateString() : 'Unknown'}</span>
+              <span>{formatDate(post.createdAt)}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ThumbsUp size={12} /> {post.likes || 0}</span>
             </div>
 
@@ -882,7 +884,7 @@ const BlogSection = ({ user, t }) => {
             {isMobile && <button onClick={() => setActivePostId(null)} className="btn-ghost" style={{ marginBottom: '10px', paddingLeft: 0 }}><ChevronLeft size={18} /> {t('common.back')}</button>}
             <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>{activePost.title}</h1>
             <div style={{ display: 'flex', gap: '20px', color: '#718096', marginBottom: '30px', fontSize: '0.9rem' }}>
-              <span>{new Date(activePost.createdAt?.seconds * 1000).toLocaleString()}</span>
+              <span>{formatDateTime(activePost.createdAt)}</span>
               <button onClick={() => handleLike(activePost)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--primary)' }}><ThumbsUp size={16} /> ({activePost.likes || 0})</button>
             </div>
             <div className="glass" style={{ padding: '30px', borderRadius: '20px', background: 'white', minHeight: '60vh' }}>
