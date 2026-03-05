@@ -26,6 +26,10 @@ import dataService from './dataService';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+// 导入上下文和组件
+import { useApp } from './contexts/AppContext';
+import SettingsPanel from './components/SettingsPanel';
+
 import {
   Home, Gamepad2, Mail, User, Lock, LogOut,
   Trash2, Play, Pause, Send, Github, Twitter, Instagram,
@@ -186,7 +190,7 @@ const VideoPlayer = ({ url }) => {
   return <video src={url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
 };
 
-const RuntimeCounter = () => {
+const RuntimeCounter = ({ t }) => {
   const [time, setTime] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
   useEffect(() => {
@@ -206,25 +210,41 @@ const RuntimeCounter = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // 根据语言获取时间单位
+  const getTimeUnits = () => {
+    const language = localStorage.getItem('language') || 'en';
+    switch (language) {
+      case 'zh':
+        return { days: '天', hours: '时', minutes: '分', seconds: '秒' };
+      case 'ja':
+        return { days: '日', hours: '時間', minutes: '分', seconds: '秒' };
+      case 'en':
+      default:
+        return { days: 'd', hours: 'h', minutes: 'm', seconds: 's' };
+    }
+  };
+
+  const units = getTimeUnits();
+
   return (
     <div style={{ fontFamily: 'monospace', fontSize: '1.4rem', fontWeight: 'bold', color: '#2d3748', display: 'flex', gap: '10px', justifyContent: 'center' }}>
-      <span>{time.d}天</span>
-      <span>{time.h}时</span>
-      <span>{time.m}分</span>
-      <span>{time.s}秒</span>
+      <span>{time.d}{units.days}</span>
+      <span>{time.h}{units.hours}</span>
+      <span>{time.m}{units.minutes}</span>
+      <span>{time.s}{units.seconds}</span>
     </div>
   );
 };
 
 // === 4. 功能组件 ===
 
-const Sidebar = ({ tab, setTab, user, onLogin, onLogout }) => {
+const Sidebar = ({ tab, setTab, user, onLogin, onLogout, t }) => {
   const navItems = [
-    { id: 'home', icon: Home, label: '主页' },
-    { id: 'works', icon: Gamepad2, label: '作品' },
-    { id: 'blog', icon: BookOpen, label: '博客' },
-    { id: 'photos', icon: ImageIcon, label: '相册' },
-    { id: 'contact', icon: Mail, label: '留言' },
+    { id: 'home', icon: Home, label: t('common.home') },
+    { id: 'works', icon: Gamepad2, label: t('common.works') },
+    { id: 'blog', icon: BookOpen, label: t('common.blog') },
+    { id: 'photos', icon: ImageIcon, label: t('common.photos') },
+    { id: 'contact', icon: Mail, label: t('common.contact') },
   ];
 
   return (
@@ -265,22 +285,22 @@ const Sidebar = ({ tab, setTab, user, onLogin, onLogout }) => {
 
       <button onClick={user && !user.isAnonymous ? onLogout : onLogin} style={{
         marginTop: 'auto', display: 'flex', alignItems: 'center', gap: '10px', padding: '12px',
-        background: 'rgba(255,255,255,0.5)', borderRadius: '12px', border: 'none', color: '#4a5568', cursor: 'pointer', transition: 'all 0.2s'
-      }} onMouseOver={e => e.currentTarget.style.background = 'white'}>
+        background: 'var(--glass-bg)', borderRadius: '12px', border: '1px solid var(--border-color)', color: 'var(--text-sub)', cursor: 'pointer', transition: 'all 0.2s'
+      }} onMouseOver={e => e.currentTarget.style.background = 'var(--card-bg)'}>
         {user && !user.isAnonymous ? <LogOut size={18} color="#e53e3e" /> : <Lock size={18} />}
-        <span style={{ fontSize: '0.9rem' }}>{user && !user.isAnonymous ? '退出登录' : '管理员登录'}</span>
+        <span style={{ fontSize: '0.9rem' }}>{user && !user.isAnonymous ? t('common.logout') : t('common.login')}</span>
       </button>
     </div>
   );
 };
 
-const BottomNav = ({ tab, setTab, user, onLogin, onLogout }) => {
+const BottomNav = ({ tab, setTab, user, onLogin, onLogout, t }) => {
   const navItems = [
-    { id: 'home', icon: Home, label: '主页' },
-    { id: 'works', icon: Gamepad2, label: '作品' },
-    { id: 'blog', icon: BookOpen, label: '博客' },
-    { id: 'photos', icon: ImageIcon, label: '相册' },
-    { id: 'contact', icon: Mail, label: '留言' },
+    { id: 'home', icon: Home, label: t('common.home') },
+    { id: 'works', icon: Gamepad2, label: t('common.works') },
+    { id: 'blog', icon: BookOpen, label: t('common.blog') },
+    { id: 'photos', icon: ImageIcon, label: t('common.photos') },
+    { id: 'contact', icon: Mail, label: t('common.contact') },
   ];
 
   return (
@@ -311,7 +331,7 @@ const BottomNav = ({ tab, setTab, user, onLogin, onLogout }) => {
   );
 };
 
-const MusicPlayer = () => {
+const MusicPlayer = ({ t }) => {
   const [expanded, setExpanded] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef(null);
@@ -339,15 +359,16 @@ const MusicPlayer = () => {
         overflow: 'hidden',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'pointer',
-        background: 'rgba(255, 255, 255, 0.95)',
-        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+        background: 'var(--card-bg)',
+        border: '1px solid var(--border-color)',
+        boxShadow: 'var(--shadow-lg)'
       }}
     >
       <div style={{
         opacity: expanded ? 0 : 1, position: 'absolute',
         display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%'
       }}>
-        <Disc size={24} className={playing ? 'spin' : ''} color="#ff6b9e" />
+        <Disc size={24} className={playing ? 'spin' : ''} color="var(--primary)" />
       </div>
 
       <div style={{
@@ -357,12 +378,12 @@ const MusicPlayer = () => {
         visibility: expanded ? 'visible' : 'hidden'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '50px', height: '50px', borderRadius: '8px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            <Disc size={30} color="#ff6b9e" className={playing ? 'spin' : ''} />
+          <div style={{ width: '50px', height: '50px', borderRadius: '8px', background: 'var(--glass-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            <Disc size={30} color="var(--primary)" className={playing ? 'spin' : ''} />
           </div>
           <div>
-            <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#333' }}>夏霞</div>
-            <div style={{ fontSize: '0.75rem', color: '#718096' }}>あたらよ</div>
+            <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-main)' }}>{t('music.songTitle')}</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-sub)' }}>{t('music.artist')}</div>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', marginTop: 'auto' }}>
@@ -400,13 +421,13 @@ const Footer = () => (
   </footer>
 );
 
-const HomeSection = ({ user }) => {
+const HomeSection = ({ user, t }) => {
   const [profile, setProfile] = useState({
     name: 'Je1ghtxyuN',
-    subtitle: 'Code, Anime, Games, and Coffee.',
+    subtitle: '',
     avatar: '/images/profile.jpg',
-    aboutTitle: 'About Me',
-    aboutContent: '东南大学CS在读  \n 虚拟现实与人机交互方向，游戏开发  \n 同时也是镇守府的提督和十年葱葱人 ~ \n PC/SWITCH 欢迎一起玩 ~'
+    aboutTitle: '',
+    aboutContent: ''
   });
   const [isEditing, setIsEditing] = useState(false);
 
@@ -414,7 +435,12 @@ const HomeSection = ({ user }) => {
     const fetchProfile = async () => {
       try {
         const profileData = await dataService.getProfile();
-        setProfile(profileData);
+        // 只更新非文本字段（如头像），文本字段使用翻译
+        setProfile(prev => ({
+          ...prev,
+          avatar: profileData.avatar || prev.avatar,
+          name: profileData.name || prev.name
+        }));
       } catch (error) {
         console.warn("获取个人资料失败:", error);
       }
@@ -472,7 +498,7 @@ const HomeSection = ({ user }) => {
           <h1 style={{ fontSize: '2.5rem', marginBottom: '10px', background: 'linear-gradient(to right, #ff6b9e, #ff3d7f)', WebkitBackgroundClip: 'text', color: 'transparent' }}>
             {profile.name}
           </h1>
-          <p style={{ color: '#718096', marginBottom: '40px' }}>{profile.subtitle}</p>
+          <p style={{ color: '#718096', marginBottom: '40px' }}>{t('home.subtitle')}</p>
         </>
       )}
 
@@ -490,23 +516,23 @@ const HomeSection = ({ user }) => {
         <div className="glass" style={{ padding: '25px', borderRadius: '20px', position: 'relative' }}>
           <h3 style={{ color: 'var(--primary)', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <User size={18} />
-            {isEditing ? <input value={profile.aboutTitle} onChange={e => setProfile({ ...profile, aboutTitle: e.target.value })} className="form-input" style={{ width: 'auto' }} /> : profile.aboutTitle}
+            {isEditing ? <input value={profile.aboutTitle} onChange={e => setProfile({ ...profile, aboutTitle: e.target.value })} className="form-input" style={{ width: 'auto' }} /> : t('home.aboutTitle')}
           </h3>
           {isEditing ? (
             <textarea className="form-input" rows="5" value={profile.aboutContent} onChange={e => setProfile({ ...profile, aboutContent: e.target.value })} />
           ) : (
             <div style={{ lineHeight: 1.8, fontSize: '0.95rem', color: '#4a5568' }}>
-              <ReactMarkdown>{profile.aboutContent}</ReactMarkdown>
+              <ReactMarkdown>{t('home.aboutContent')}</ReactMarkdown>
             </div>
           )}
         </div>
 
         <div className="glass" style={{ padding: '25px', borderRadius: '20px' }}>
           <h3 style={{ color: 'var(--primary)', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Clock size={18} /> 网站运行
+            <Clock size={18} /> {t('home.websiteRuntime')}
           </h3>
-          <RuntimeCounter />
-          <p style={{ fontSize: '0.8rem', color: '#718096', textAlign: 'center', marginTop: '10px' }}>感谢你的每一次访问 (｡•̀ᴗ-)✧</p>
+          <RuntimeCounter t={t} />
+          <p style={{ fontSize: '0.8rem', color: '#718096', textAlign: 'center', marginTop: '10px' }}>{t('home.runtimeThanks')}</p>
         </div>
       </div>
 
@@ -515,7 +541,7 @@ const HomeSection = ({ user }) => {
   );
 };
 
-const WorksSection = ({ user }) => {
+const WorksSection = ({ user, t }) => {
   const [works, setWorks] = useState([]);
   const [editingWork, setEditingWork] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -540,7 +566,7 @@ const WorksSection = ({ user }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm('确定删除？')) return;
+    if (!confirm(t('works.deleteConfirm'))) return;
     try {
       const result = await dataService.delete({
         collectionPath: ['artifacts', APP_ID, 'public', 'data', 'works'],
@@ -571,9 +597,9 @@ const WorksSection = ({ user }) => {
   return (
     <div className="container fade-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '40px 0 20px' }}>
-        <h2 style={{ fontSize: '2rem' }}>我的作品</h2>
+        <h2 style={{ fontSize: '2rem' }}>{t('works.title')}</h2>
         {user && !user.isAnonymous && (
-          <button onClick={openAdd} className="btn btn-primary" style={{ padding: '8px 16px' }}><Plus size={18} /> 添加作品</button>
+          <button onClick={openAdd} className="btn btn-primary" style={{ padding: '8px 16px' }}><Plus size={18} /> {t('works.addWork')}</button>
         )}
       </div>
 
@@ -587,7 +613,7 @@ const WorksSection = ({ user }) => {
               <h3 style={{ fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '5px' }}>{work.title}</h3>
               <p style={{ fontSize: '0.9rem', color: '#4a5568', marginBottom: '15px', lineHeight: 1.5 }}>{work.description}</p>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {work.link && <a href={work.link} target="_blank" className="btn-ghost" style={{ padding: '5px 10px', fontSize: '0.8rem' }}><LinkIcon size={14} /> 访问</a>}
+                {work.link && <a href={work.link} target="_blank" className="btn-ghost" style={{ padding: '5px 10px', fontSize: '0.8rem' }}><LinkIcon size={14} /> {t('works.visit')}</a>}
                 {user && !user.isAnonymous && (
                   <div style={{ display: 'flex', gap: '5px' }}>
                     <button onClick={() => openEdit(work)} style={{ color: '#4a5568', border: 'none', background: 'none', cursor: 'pointer' }}><Edit3 size={16} /></button>
@@ -599,12 +625,12 @@ const WorksSection = ({ user }) => {
           </div>
         ))}
       </div>
-      {showModal && <WorkModal workToEdit={editingWork} onClose={() => setShowModal(false)} />}
+      {showModal && <WorkModal workToEdit={editingWork} onClose={() => setShowModal(false)} t={t} />}
     </div>
   );
 };
 
-const PhotoWall = ({ user }) => {
+const PhotoWall = ({ user, t }) => {
   const [photos, setPhotos] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -629,7 +655,7 @@ const PhotoWall = ({ user }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm('删除照片？')) return;
+    if (!confirm(t('photos.deleteConfirm'))) return;
     try {
       const result = await dataService.delete({
         collectionPath: ['artifacts', APP_ID, 'public', 'data', 'photos'],
@@ -650,9 +676,9 @@ const PhotoWall = ({ user }) => {
   return (
     <div className="container fade-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '40px 0 20px' }}>
-        <h2 style={{ fontSize: '2rem' }}>My Photos</h2>
+        <h2 style={{ fontSize: '2rem' }}>{t('photos.title')}</h2>
         {user && !user.isAnonymous && (
-          <button onClick={() => setShowAdd(true)} className="btn btn-primary" style={{ padding: '8px 16px' }}><Plus size={18} /> 上传照片</button>
+          <button onClick={() => setShowAdd(true)} className="btn btn-primary" style={{ padding: '8px 16px' }}><Plus size={18} /> {t('photos.uploadPhoto')}</button>
         )}
       </div>
 
@@ -671,7 +697,7 @@ const PhotoWall = ({ user }) => {
           <img src={selected} style={{ maxWidth: '90vw', maxHeight: '90vh', borderRadius: '8px' }} />
         </div>, document.body
       )}
-      {showAdd && <AddPhotoModal onClose={() => setShowAdd(false)} />}
+      {showAdd && <AddPhotoModal onClose={() => setShowAdd(false)} t={t} />}
     </div>
   );
 };
@@ -737,7 +763,7 @@ const CommentSection = ({ postId, user }) => {
   );
 };
 
-const BlogSection = ({ user }) => {
+const BlogSection = ({ user, t }) => {
   const [posts, setPosts] = useState([]);
   const [activePostId, setActivePostId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -772,12 +798,12 @@ const BlogSection = ({ user }) => {
   const activePost = posts.find(p => p.id === activePostId);
 
   const handleLike = async (post) => {
-    if (!user) { alert('请先登录（点击左下角锁图标）'); return; }
+    if (!user) { alert(t('auth.pleaseLogin')); return; }
     try {
       const likeRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'posts', post.id, 'likes', user.uid);
       const likeSnap = await getDoc(likeRef);
       if (likeSnap.exists()) {
-        alert('这篇你已经赞过了哦 ~');
+        alert(t('auth.alreadyLiked'));
         return;
       }
       await setDoc(likeRef, { uid: user.uid, createdAt: serverTimestamp() });
@@ -793,7 +819,7 @@ const BlogSection = ({ user }) => {
 
   const handleDeletePost = async (e, id) => {
     e.stopPropagation();
-    if (!confirm('确定要删除这篇博客吗？操作无法撤销。')) return;
+    if (!confirm(t('blog.deleteConfirm'))) return;
     try {
       const result = await dataService.deletePost(id);
       if (result.isLocal) {
@@ -815,8 +841,8 @@ const BlogSection = ({ user }) => {
         display: (isMobile && activePostId) ? 'none' : 'block'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '1.5rem' }}>文章</h2>
-          {user && !user.isAnonymous && <button onClick={() => setIsEditing(true)} className="btn btn-primary" style={{ padding: '5px 10px', fontSize: '0.8rem' }}><Plus size={14} /></button>}
+          <h2 style={{ fontSize: '1.5rem' }}>{t('blog.title')}</h2>
+          {user && !user.isAnonymous && <button onClick={() => setIsEditing(true)} className="btn btn-primary" style={{ padding: '5px 10px', fontSize: '0.8rem' }}><Plus size={14} /> {t('blog.writeArticle')}</button>}
         </div>
         {posts.map(post => (
           <div key={post.id} onClick={() => setActivePostId(post.id)} style={{
@@ -827,7 +853,7 @@ const BlogSection = ({ user }) => {
           }}>
             <h4 style={{ fontWeight: 'bold', color: '#2d3748', paddingRight: '20px' }}>{post.title}</h4>
             <div style={{ fontSize: '0.8rem', color: '#718096', display: 'flex', justifyContent: 'space-between', marginTop: '5px' }}>
-              <span>{new Date(post.createdAt?.seconds * 1000).toLocaleDateString()}</span>
+              <span>{post.createdAt ? new Date(post.createdAt?.seconds ? post.createdAt.seconds * 1000 : post.createdAt).toLocaleDateString() : 'Unknown'}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ThumbsUp size={12} /> {post.likes || 0}</span>
             </div>
 
@@ -853,7 +879,7 @@ const BlogSection = ({ user }) => {
       <div style={{ flex: 1, height: '100%', overflowY: 'auto', padding: '40px', background: 'rgba(255,255,255,0.4)', display: (isMobile && !activePostId) ? 'none' : 'block' }}>
         {activePost ? (
           <div className="fade-in">
-            {isMobile && <button onClick={() => setActivePostId(null)} className="btn-ghost" style={{ marginBottom: '10px', paddingLeft: 0 }}><ChevronLeft size={18} /> 返回</button>}
+            {isMobile && <button onClick={() => setActivePostId(null)} className="btn-ghost" style={{ marginBottom: '10px', paddingLeft: 0 }}><ChevronLeft size={18} /> {t('common.back')}</button>}
             <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>{activePost.title}</h1>
             <div style={{ display: 'flex', gap: '20px', color: '#718096', marginBottom: '30px', fontSize: '0.9rem' }}>
               <span>{new Date(activePost.createdAt?.seconds * 1000).toLocaleString()}</span>
@@ -863,11 +889,11 @@ const BlogSection = ({ user }) => {
               <MarkdownRenderer content={activePost.content} />
             </div>
 
-            <CommentSection postId={activePost.id} user={user} />
+            <CommentSection postId={activePost.id} user={user} t={t} />
           </div>
         ) : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#a0aec0' }}><BookOpen size={64} style={{ marginBottom: '20px', opacity: 0.5 }} /></div>}
       </div>
-      {isEditing && <BlogEditor onClose={() => { setIsEditing(false); setEditingPost(null); }} postToEdit={editingPost} />}
+      {isEditing && <BlogEditor onClose={() => { setIsEditing(false); setEditingPost(null); }} postToEdit={editingPost} t={t} />}
     </div>
   );
 };
@@ -1009,25 +1035,25 @@ const AddPhotoModal = ({ onClose }) => {
   );
 };
 
-const LoginModal = ({ onClose }) => {
+const LoginModal = ({ onClose, t }) => {
   const [email, setE] = useState(''); const [pass, setP] = useState('');
   const handleLogin = (e) => { e.preventDefault(); signInWithEmailAndPassword(auth, email, pass).then(onClose).catch(e => alert(e.message)); };
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="glass" style={{ padding: '30px', borderRadius: '20px', width: '300px', background: 'white', position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '10px', right: '10px', border: 'none', background: 'none', cursor: 'pointer' }}><X size={20} /></button>
-        <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>管理员登录</h3>
+        <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>{t('auth.adminLogin')}</h3>
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <input className="form-input" type="email" placeholder="邮箱" value={email} onChange={e => setE(e.target.value)} />
-          <input className="form-input" type="password" placeholder="密码" value={pass} onChange={e => setP(e.target.value)} />
-          <button className="btn btn-primary" style={{ justifyContent: 'center' }}>登录</button>
+          <input className="form-input" type="email" placeholder={t('auth.email')} value={email} onChange={e => setE(e.target.value)} />
+          <input className="form-input" type="password" placeholder={t('auth.password')} value={pass} onChange={e => setP(e.target.value)} />
+          <button className="btn btn-primary" style={{ justifyContent: 'center' }}>{t('auth.login')}</button>
         </form>
       </div>
     </div>
   );
 };
 
-const ContactSection = () => (
+const ContactSection = ({ t }) => (
   <div className="contact-section fade-in container" style={{ paddingTop: '50px' }}>
     <div className="contact-card glass" style={{
       display: 'grid', gridTemplateColumns: '1fr 1fr', borderRadius: '20px', overflow: 'hidden',
@@ -1035,15 +1061,15 @@ const ContactSection = () => (
     }}>
       <style>{`@media(max-width:768px){.contact-card{grid-template-columns:1fr !important;}}`}</style>
       <div className="contact-info" style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-hover))', padding: '40px', color: 'white' }}>
-        <h2 style={{ fontSize: '2rem', marginBottom: '20px' }}>留言板 ✨</h2>
-        <p style={{ opacity: 0.9, lineHeight: 1.6 }}>欢迎来到窝的空间！<br />留下泥的想对窝说的话吧～</p>
+        <h2 style={{ fontSize: '2rem', marginBottom: '20px' }}>{t('contact.title')}</h2>
+        <p style={{ opacity: 0.9, lineHeight: 1.6 }}>{t('contact.description')}</p>
       </div>
       <div className="contact-form" style={{ padding: '40px' }}>
         <form action="https://formspree.io/f/mkgbpnbb" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <input type="text" name="nickname" className="form-input" placeholder="昵称" required />
-          <input type="text" name="contact" className="form-input" placeholder="联系方式" />
-          <textarea name="message" className="form-input" rows="5" placeholder="留言内容..." required></textarea>
-          <button type="submit" className="btn btn-primary" style={{ justifyContent: 'center' }}>发送 <Send size={18} /></button>
+          <input type="text" name="nickname" className="form-input" placeholder={t('contact.nickname')} required />
+          <input type="text" name="contact" className="form-input" placeholder={t('contact.contactInfo')} />
+          <textarea name="message" className="form-input" rows="5" placeholder={t('contact.message')} required></textarea>
+          <button type="submit" className="btn btn-primary" style={{ justifyContent: 'center' }}>{t('contact.sendMessage')} <Send size={18} /></button>
         </form>
       </div>
     </div>
@@ -1055,6 +1081,7 @@ export default function App() {
   const [tab, setTab] = useState('home');
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
+  const { t } = useApp();
 
   useEffect(() => {
     // 认证状态监听通常比较稳健，但如果完全断网，Auth 也可能初始化缓慢
@@ -1073,17 +1100,18 @@ export default function App() {
   return (
     <>
       <GlobalStyles />
-      <Sidebar tab={tab} setTab={setTab} user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} />
+      <Sidebar tab={tab} setTab={setTab} user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} t={t} />
       <main style={{ minHeight: '100vh', position: 'relative' }}>
-        {tab === 'home' && <HomeSection user={user} />}
-        {tab === 'works' && <WorksSection user={user} />}
-        {tab === 'photos' && <PhotoWall user={user} />}
-        {tab === 'blog' && <BlogSection user={user} />}
-        {tab === 'contact' && <ContactSection />}
+        {tab === 'home' && <HomeSection user={user} t={t} />}
+        {tab === 'works' && <WorksSection user={user} t={t} />}
+        {tab === 'photos' && <PhotoWall user={user} t={t} />}
+        {tab === 'blog' && <BlogSection user={user} t={t} />}
+        {tab === 'contact' && <ContactSection t={t} />}
       </main>
-      <BottomNav tab={tab} setTab={setTab} user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} />
-      <MusicPlayer />
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+      <BottomNav tab={tab} setTab={setTab} user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} t={t} />
+      <MusicPlayer t={t} />
+      <SettingsPanel />
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} t={t} />}
     </>
   );
 }
