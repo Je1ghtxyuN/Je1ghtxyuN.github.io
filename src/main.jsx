@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import ErrorBoundary from './ErrorBoundary.jsx'
+import { AppProvider } from './contexts/AppContext.jsx'
 
 // 添加性能监控
 if (import.meta.env.PROD) {
@@ -22,7 +23,9 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
-      <App />
+      <AppProvider>
+        <App />
+      </AppProvider>
     </ErrorBoundary>
   </StrictMode>,
 )
