@@ -11,6 +11,12 @@ const DEFAULT_PREFERENCES = Object.freeze({
   volume: 0.45,
 })
 
+const DEFAULT_UI_STATE = Object.freeze({
+  mode: 'idle',
+  activePanel: null,
+  previousMode: 'idle',
+})
+
 const minutesToSeconds = (minutes) => Math.round(minutes * 60)
 
 const clampMinutes = (value, fallback) => {
@@ -63,6 +69,9 @@ export const createInitialStudyRoomState = () => {
     },
     preferences: {
       ...DEFAULT_PREFERENCES,
+    },
+    ui: {
+      ...DEFAULT_UI_STATE,
     },
   }
 }
@@ -194,6 +203,50 @@ export function studyRoomReducer(state, action) {
             action.key === 'volume'
               ? clampVolume(action.value)
               : action.value,
+        },
+      }
+
+    case 'ui/set-idle':
+      return {
+        ...state,
+        ui: {
+          mode: 'idle',
+          activePanel: null,
+          previousMode: 'idle',
+        },
+      }
+
+    case 'ui/set-focus':
+      return {
+        ...state,
+        ui: {
+          mode: 'focus',
+          activePanel: null,
+          previousMode: 'focus',
+        },
+      }
+
+    case 'ui/open-panel': {
+      const previousMode =
+        state.ui.mode === 'panel' ? state.ui.previousMode : state.ui.mode
+
+      return {
+        ...state,
+        ui: {
+          mode: 'panel',
+          activePanel: action.panel,
+          previousMode,
+        },
+      }
+    }
+
+    case 'ui/close-panel':
+      return {
+        ...state,
+        ui: {
+          mode: state.ui.previousMode,
+          activePanel: null,
+          previousMode: state.ui.previousMode,
         },
       }
 

@@ -16,16 +16,13 @@ export function AmbientMusicPanel() {
   } = useAmbientMusicController()
 
   return (
-    <section className="feature-card">
-      <div className="feature-card__header">
+    <section className="floating-widget music-widget">
+      <div className="floating-widget__header">
         <div>
-          <h2>Ambient Music System</h2>
-          <p className="feature-card__copy">
-            The controller already supports play, pause, track switching, and
-            volume updates using local placeholder tracks.
-          </p>
+          <p className="floating-widget__eyebrow">Ambient Music</p>
+          <h2 className="floating-widget__title">{currentTrack.title}</h2>
         </div>
-        <span className="feature-card__badge">{playbackState}</span>
+        <span className="floating-widget__badge">{playbackState}</span>
       </div>
 
       <div className="field">
@@ -44,7 +41,7 @@ export function AmbientMusicPanel() {
         </select>
       </div>
 
-      <div className="feature-card__actions">
+      <div className="music-widget__controls">
         <button
           type="button"
           className="button button--ghost"
@@ -83,9 +80,9 @@ export function AmbientMusicPanel() {
         />
       </div>
 
-      <p className="feature-card__meta">{currentTrack.note}</p>
+      <p className="floating-widget__meta">{currentTrack.note}</p>
       {playbackError ? (
-        <p className="feature-card__hint">{playbackError}</p>
+        <p className="floating-widget__hint">{playbackError}</p>
       ) : null}
     </section>
   )

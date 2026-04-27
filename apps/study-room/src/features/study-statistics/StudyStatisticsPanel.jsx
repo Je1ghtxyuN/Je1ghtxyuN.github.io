@@ -4,35 +4,36 @@ export function StudyStatisticsPanel() {
   const { timer } = useStudyRoomState()
 
   return (
-    <section className="feature-card">
-      <div className="feature-card__header">
+    <section className="floating-widget">
+      <div className="floating-widget__header">
         <div>
-          <h2>Study Statistics Placeholder</h2>
-          <p className="feature-card__copy">
+          <p className="floating-widget__eyebrow">Statistics</p>
+          <h2 className="floating-widget__title">Session counters</h2>
+          <p className="floating-widget__copy">
             The reducer already tracks completed sessions so this feature has a
             stable surface for future persistence and analytics.
           </p>
         </div>
-        <span className="feature-card__badge">Local</span>
+        <span className="floating-widget__badge">Local</span>
       </div>
 
-      <div className="feature-card__row">
-        <div className="feature-card__stat">
-          <span className="feature-card__stat-value">
+      <div className="widget-metrics">
+        <div className="widget-metric">
+          <span className="widget-metric__value">
             {timer.completedWorkSessions}
           </span>
-          <span className="feature-card__stat-label">Completed work sessions</span>
+          <span className="widget-metric__label">Completed work sessions</span>
         </div>
 
-        <div className="feature-card__stat">
-          <span className="feature-card__stat-value">
+        <div className="widget-metric">
+          <span className="widget-metric__value">
             {timer.completedBreakSessions}
           </span>
-          <span className="feature-card__stat-label">Completed breaks</span>
+          <span className="widget-metric__label">Completed breaks</span>
         </div>
       </div>
 
-      <p className="feature-card__meta">
+      <p className="floating-widget__meta">
         Future backend sync can store session history, streaks, and per-user
         study summaries without changing how the timer feature reports completion.
       </p>

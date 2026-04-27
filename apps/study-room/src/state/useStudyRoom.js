@@ -46,5 +46,17 @@ export function useStudyRoomActions() {
     setPreference(key, value) {
       dispatch({ type: 'preferences/set', key, value })
     },
+    enterIdleMode() {
+      dispatch({ type: 'ui/set-idle' })
+    },
+    enterFocusMode() {
+      dispatch({ type: 'ui/set-focus' })
+    },
+    openPanel(panel) {
+      dispatch({ type: 'ui/open-panel', panel })
+    },
+    closePanel() {
+      dispatch({ type: 'ui/close-panel' })
+    },
   }
 }
