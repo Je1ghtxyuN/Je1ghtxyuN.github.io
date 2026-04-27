@@ -1,39 +1,140 @@
 # Study Room Architecture Notes
 
-## Purpose Of This Scaffold
+## Purpose Of This Application
 
-This application is the independent interactive study environment in the long-term platform split.
+The Study Room is the independent interactive focus application in the long-term platform split.
 
-The scaffold is intentionally minimal today. It is only preparing the app boundary and future feature organization, not implementing the actual product yet.
+This first implementation pass is intentionally architecture-heavy and UI-light. The goal is to lock the app shell, routing, timer logic, feature boundaries, and shared state model before visual polish begins.
 
-## Planned Future Capability Areas
+## Feature Structure
 
-- focus timer
-- todo/task capture
-- ambient music and audio controls
-- login and user identity flows
-- study statistics and session history
+Current feature modules:
 
-## Current Structural Direction
+- `src/features/timer/`
+  - Pomodoro session logic
+  - start, pause, reset, session switching
+  - configurable work and break durations
+  - timer engine hook that drives countdown updates
 
-- `src/features/timer/` for future timer logic and UI
-- `src/features/todo/` for task capture and task management
-- `src/features/ambient-music/` for player state and ambience controls
-- `src/features/auth/` for login and identity-related UI
-- `src/features/study-statistics/` for session summaries and persisted study data
-- `src/components/` for shared UI pieces
-- `src/layouts/` for top-level screen composition
-- `src/lib/` for app-local utilities and future API client code
+- `src/features/todo/`
+  - lightweight local task capture
+  - isolated reducer so future persistence can be added without touching timer logic
 
-## Why This App Stays Separate
+- `src/features/ambient-music/`
+  - local audio controller
+  - play, pause, previous, next, track selection
+  - volume wiring through shared preferences
 
-- the Study Room has different runtime needs from the static blog portal
-- it needs room for interactive state, longer browser sessions, and future account-linked data
-- keeping it separate avoids forcing Hexo to carry application concerns it should not own
+- `src/features/auth/`
+  - placeholder module for future backend-owned login and session handoff
+
+- `src/features/study-statistics/`
+  - placeholder presentation backed by reducer-level completed-session counters
+
+Each feature now has an `index.js` entry point so future page-level composition can stay stable even if internal files grow.
+
+## App Shell And Routing
+
+Top-level app structure:
+
+- `src/app/AppRouter.jsx`
+- `src/app/AppShell.jsx`
+- `src/app/pages/StudyPage.jsx`
+- `src/app/pages/SettingsPage.jsx`
+
+Routing decision:
+
+- `BrowserRouter` is used with `basename={import.meta.env.BASE_URL}`
+- Vite development keeps the app at `http://localhost:5173`
+- production builds use the `/study-app/` base path
+
+This keeps the existing portal handoff contract stable while still preparing clean app routes such as `/settings`.
+
+## Shared State Design
+
+Global state is now managed through:
+
+- `src/state/studyRoomReducer.js`
+- `src/state/StudyRoomProvider.jsx`
+
+Current reducer domains:
+
+- `timer`
+  - `sessionType`
+  - `status`
+  - `remainingSeconds`
+  - `durations`
+  - `lastTickAt`
+  - completed work and break counters
+
+- `preferences`
+  - `autoStartBreaks`
+  - `autoStartWork`
+  - `soundEnabled`
+  - `selectedTrackId`
+  - `volume`
+
+Why this shape was chosen:
+
+- timer state is shared across routes
+- music preferences and future user settings need a single source of truth
+- the reducer can later hydrate from local storage or backend APIs without changing feature APIs
+- the timer and statistics features already communicate through the same state contract
+
+## Timer Logic Design
+
+The timer uses a reducer-backed session model instead of isolated component state.
+
+Important mechanics:
+
+- `timer/start` records a `lastTickAt` timestamp
+- `useTimerEngine()` runs a lightweight interval while the timer is active
+- `timer/tick` computes elapsed whole seconds from timestamps rather than assuming perfect interval timing
+- when a session finishes, the reducer switches to the next session type and respects the auto-start preferences
+
+This keeps the timer deterministic and easier to extend for future persistence or sync.
+
+## Audio System Design
+
+The ambient music feature is intentionally local-first.
+
+Current architecture:
+
+- a small track catalog lives in `src/features/ambient-music/tracks.js`
+- `useAmbientMusicController()` owns the browser `Audio` instance
+- playback state is managed inside the feature
+- shared preferences store the selected track id and volume
+
+For this pass, track sources are silent local placeholder data URIs. That keeps the player logic real without introducing final audio asset policy decisions too early.
+
+## Future Backend Integration Direction
+
+When the backend service is ready, the Study Room should integrate in layers:
+
+1. hydrate preferences from authenticated user settings
+2. persist timer presets and selected ambience choices
+3. store session completion summaries and study statistics
+4. introduce auth/session handoff from the main platform
+
+Important boundary rule:
+
+- backend integration should plug into the provider/reducer layer and feature hooks
+- feature UI should not talk to backend routes directly without shared client abstractions
 
 ## Current Scope Boundary
 
-- Vite + React scaffold created
-- no feature implementation yet
-- no shared auth or backend integration yet
-- no final design system or state model locked yet
+Implemented in this pass:
+
+- real route shell
+- reducer-based global state
+- working timer logic
+- working local audio controller
+- placeholder auth and statistics modules
+
+Still intentionally not final:
+
+- polished visual design
+- final ambience catalog
+- login flow
+- backend persistence
+- advanced study analytics
