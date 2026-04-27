@@ -181,3 +181,36 @@ Append new dated sessions below this line.
 - decisions made:
 - risks or blockers:
 - next recommended step:
+
+### Session 2026-04-27 — Portal Content Initialization And Realism Pass
+
+- objectives:
+  - populate the portal with real starter content so the homepage and portfolio sections become meaningful
+  - replace empty recent-post states with actual articles
+  - improve the profile and contact content without changing the existing layout structure
+- actions taken:
+  - created three real blog posts under `apps/blog-portal/source/_posts/`
+  - updated `site_profile.yml` with stronger intro copy, clearer subtitle, more realistic social placeholders, and better contact metadata
+  - replaced seed portfolio placeholders with current project-track entries in `portfolio.yml`
+  - rewrote the contact page into a cleaner structured contact surface with a Formspree-ready form layout
+  - expanded `CONTENT_EDITING_GUIDE.md` so post writing and data flow are clearer for future editing sessions
+  - moved the default generated post index to `/blog/` so the branded root route can remain the homepage
+  - verified with a clean Hexo build that the homepage now renders real posts and portfolio cards instead of fallback empty states
+- files changed:
+  - added three markdown posts under `apps/blog-portal/source/_posts/`
+  - updated `apps/blog-portal/source/_data/site_profile.yml`
+  - updated `apps/blog-portal/source/_data/portfolio.yml`
+  - updated `apps/blog-portal/source/_data/navigation.yml`
+  - updated `apps/blog-portal/source/contact/index.md`
+  - updated `apps/blog-portal/_config.yml`
+  - updated `apps/blog-portal/CONTENT_EDITING_GUIDE.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - content population continues to use the existing data-driven Hexo setup instead of introducing new layout mechanisms
+  - portfolio entries are now framed around real current project tracks rather than abstract placeholders
+  - the contact page remains Formspree-ready for now, but the longer-term backend-owned contact flow remains the strategic direction
+- risks or blockers:
+  - the Formspree endpoint is still a placeholder and cannot be considered production-ready
+  - social handles were upgraded to more realistic placeholders but still need final owner confirmation before launch
+- next recommended step:
+  - continue the portal pass by refining the about, contact, and portfolio content depth, then move into the first implementation work for the standalone Study Room application

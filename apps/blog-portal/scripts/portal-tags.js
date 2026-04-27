@@ -693,3 +693,10 @@ hexo.extend.tag.register('portal_home', renderHome)
 hexo.extend.tag.register('portal_portfolio', renderPortfolio)
 hexo.extend.tag.register('portal_about', renderAbout)
 hexo.extend.tag.register('portal_study_room', renderStudyRoom)
+
+module.exports = {
+  renderHome,
+  renderPortfolio,
+  renderAbout,
+  renderStudyRoom
+}

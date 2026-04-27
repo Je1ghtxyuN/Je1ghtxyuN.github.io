@@ -33,10 +33,10 @@ home_shortcuts:
   description: Fast paths into writing, project showcases, the future Study Room, and contact entry.
   items:
     - label: Blog
-      path: /archives/
+      path: /blog/
       icon: fas fa-feather-pointed
       external: false
-      description: Read current articles, notes, and future archive entries.
+      description: Browse the generated post index and jump into the latest articles.
     - label: Portfolio
       path: /portfolio/
       icon: fas fa-laptop-code

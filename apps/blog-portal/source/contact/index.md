@@ -4,29 +4,30 @@ date: 2026-04-27 00:00:00
 top_img: /shared-assets/images/background.jpg
 aside: true
 comments: false
-description: Contact and inquiry entry page prepared for future Formspree integration.
+description: Contact channels and a Formspree-ready message form for the portal rebuild.
 ---
 
-## Contact Overview
+## Contact Channels
 
-This page is the future public contact entry for the portal.
+- Email: `hello@je1ghtxyun.dev`
+- Location: Nanjing, Jiangsu, China
+- Best for: project discussions, collaboration ideas, technical writing, and portfolio conversation
 
-- The current form structure is a placeholder.
-- The final Formspree endpoint has not been connected yet.
-- Backend-owned contact handling may replace Formspree later if the architecture decision changes.
+## What To Include In Your Message
 
-## Planned Contact Fields
+The clearest messages usually include:
 
-- Name
-- Email
-- Topic
-- Message
+1. who you are
+2. what you are reaching out about
+3. useful links or context
+4. how you would like me to reply
 
-## Placeholder Form Structure
+## Contact Form
 
 <form action="https://formspree.io/f/your-form-id" method="POST">
-  <fieldset disabled>
-    <p><strong>Status:</strong> Placeholder only. Replace the Formspree endpoint before launch.</p>
+  <fieldset>
+    <legend>Send a message</legend>
+    <input type="hidden" name="_subject" value="Portal Contact Message">
     <p>
       <label>Name<br>
         <input type="text" name="name" placeholder="Your name">
@@ -39,21 +40,22 @@ This page is the future public contact entry for the portal.
     </p>
     <p>
       <label>Topic<br>
-        <input type="text" name="topic" placeholder="Project, collaboration, or hello">
+        <input type="text" name="topic" placeholder="Project, collaboration, or a quick hello">
       </label>
     </p>
     <p>
       <label>Message<br>
-        <textarea name="message" rows="6" placeholder="Write your message here"></textarea>
+        <textarea name="message" rows="6" placeholder="A short introduction and your message"></textarea>
       </label>
     </p>
     <p>
-      <button type="submit">Send Placeholder Message</button>
+      <button type="submit">Send Message</button>
     </p>
   </fieldset>
 </form>
 
-## Editing Notes
+## Notes
 
-- Form endpoint placeholder is also stored in `source/_data/site_profile.yml`.
-- Replace placeholder contact data before this page is considered public-ready.
+- This form structure is ready for Formspree-style submission once the final endpoint is added.
+- The endpoint is still a placeholder and must be replaced before public launch.
+- In the long term, this flow may move behind the self-hosted backend service instead of staying on Formspree.

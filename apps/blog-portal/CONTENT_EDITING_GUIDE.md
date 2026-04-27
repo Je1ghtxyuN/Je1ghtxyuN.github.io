@@ -1,62 +1,106 @@
 # Content Editing Guide
 
-This guide explains where to edit portal content in simple terms.
+This guide explains how the blog portal content is organized and how each file feeds into the current UI.
 
-## 1. Blog Posts
+## 1. Where Blog Posts Live
 
-Blog posts live in:
+Blog posts are stored in:
 
 - `source/_posts/`
 
-How to use it:
+How to write a new post:
 
-- add one markdown file per post
-- the filename becomes the starting point for the post URL
-- write normal Hexo front matter at the top, then the article body below
+- create one markdown file per article
+- add front matter at the top
+- write the body in normal markdown below it
+- use headings, lists, quotes, and code blocks freely
 
-## 2. Profile Text
+Useful front matter example:
 
-Profile and site identity seed data lives in:
+```yaml
+---
+title: Example Post
+date: 2026-04-27 09:00:00
+description: Short summary used by the homepage preview and metadata.
+categories:
+  - Engineering
+tags:
+  - Hexo
+  - Architecture
+---
+```
+
+How posts flow into the UI:
+
+- the latest posts automatically appear on the custom homepage
+- the generated post index is available at `/blog/`
+- posts also feed the archives, categories, tags, and search index
+
+## 2. Where Profile And Identity Content Lives
+
+Profile and site identity data is stored in:
 
 - `source/_data/site_profile.yml`
 
 Edit this file when you want to change:
 
-- owner name
-- subtitle
-- avatar path
-- intro text
-- social placeholders
-- contact placeholders
+- display name and subtitle
+- hero intro text
+- avatar, icon, and background paths
+- social links
+- contact metadata
+- about page skills and experience
+- Study Room entry copy
 
-## 3. Portfolio Data
+How it flows into the UI:
 
-Portfolio card seed data lives in:
+- homepage hero
+- homepage footer contact and social section
+- about page content
+- Study Room landing page
+- parts of the Butterfly shell through `scripts/portal-data-sync.js`
+
+## 3. Where Portfolio Data Lives
+
+Portfolio content is stored in:
 
 - `source/_data/portfolio.yml`
 
-Edit this file when you want to change:
+Each card can contain:
 
-- project titles
-- summaries
-- preview image paths
+- title
+- year
+- status
+- summary
+- cover image
+- gallery images
+- tech stack
 - tags
-- placeholder links
+- optional links
 
-## 4. Navigation
+How it flows into the UI:
 
-Human-readable navigation source data lives in:
+- the homepage portfolio preview section reads from this file
+- the full `/portfolio/` page also reads from this file
+
+## 4. Where Navigation Data Lives
+
+Navigation data is stored in:
 
 - `source/_data/navigation.yml`
 
+This file controls:
+
+- top-level menu entries
+- homepage shortcut cards
+
 Important note:
 
-- the live Butterfly menu is synchronized from this file by `scripts/portal-data-sync.js`
-- homepage shortcut cards also read from this file
+- the Butterfly menu is synchronized from this file by `scripts/portal-data-sync.js`
 
-## 5. Custom Pages
+## 5. Where Custom Page Shells Live
 
-Main custom portal pages live here:
+Main portal page shells live here:
 
 - `source/index.md`
 - `source/archives/index.md`
@@ -67,36 +111,39 @@ Main custom portal pages live here:
 
 Important note:
 
-- these files are now lightweight page shells
-- the branded page body is rendered by custom Hexo tags in `scripts/portal-tags.js`
-- this keeps content in YAML while still using Butterfly's normal page layout
-- the current page tags are `{% portal_home %}`, `{% portal_about %}`, `{% portal_portfolio %}`, and `{% portal_study_room %}`
+- these pages are intentionally lightweight
+- the branded sections for home, about, portfolio, and Study Room are rendered by custom Hexo tags in `scripts/portal-tags.js`
+- the current tag entry points are `{% portal_home %}`, `{% portal_about %}`, `{% portal_portfolio %}`, and `{% portal_study_room %}`
 
-## 6. Shared Images And Media
+## 6. Where Shared Images And Media Live
 
-Shared asset files are maintained in:
+Canonical shared assets are maintained in:
 
-- `/packages/shared-assets/`
+- `packages/shared-assets/`
 
-The blog portal uses them through a mounted source path:
+The blog portal consumes them through:
 
 - `source/shared-assets`
 
-Edit the canonical files in `packages/shared-assets/`, not the mounted path.
+Editing rule:
+
+- change the canonical files in `packages/shared-assets/`
+- do not edit or duplicate files under the mounted path unless the asset strategy changes
 
 ## 7. Which Files Will Likely Be CMS-Managed Later
 
-These are the best future CMS candidates:
+The best future CMS candidates are:
 
 - `source/_posts/`
 - `source/_data/site_profile.yml`
 - `source/_data/portfolio.yml`
 - `source/_data/navigation.yml`
-- selected custom page markdown files
+- selected custom page markdown files such as `source/contact/index.md`
 
 ## 8. Safest Editing Workflow
 
-- change one content file at a time
-- run the local Hexo server to preview
+- change one content area at a time
+- rebuild or run the local Hexo server after each meaningful edit
+- check the homepage after editing posts, profile data, or portfolio data
 - check navigation after editing `source/_data/navigation.yml`
-- check image paths after editing any asset reference
+- check image paths after changing any asset reference

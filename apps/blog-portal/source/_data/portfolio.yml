@@ -1,42 +1,75 @@
 section:
   title: Portfolio
-  intro: A structured catalog for future project showcase cards, case studies, and media previews.
+  intro: Current builds and migration-era projects that define the platform direction, product scope, and long-term engineering priorities.
   home_preview_title: Selected Projects
-  home_preview_intro: Seed portfolio cards rendered from shared data, ready for later case study expansion.
+  home_preview_intro: Active workstreams and documented project tracks rendered from a shared portfolio data model.
   home_preview_limit: 3
   page_link_label: View Project
 cards:
-  - slug: gssj
-    title: GSSJ
-    year: 2025
-    status: Legacy showcase reference
-    summary: Legacy project placeholder carried into the new portal planning layer for future write-up and case study migration.
-    cover_image: /shared-assets/images/works/GSSJ1.jpeg
+  - slug: personal-platform-rebuild
+    title: Personal Platform Rebuild
+    year: 2026
+    status: Active architecture and migration
+    summary: Rebuilding the original React and Firebase website into a static-first Hexo portal, an independent Study Room app, and a self-hosted backend platform with clearer service boundaries.
+    cover_image: /shared-assets/images/background.jpg
     gallery:
-      - /shared-assets/images/works/GSSJ1.jpeg
-      - /shared-assets/images/works/GSSJ2.jpeg
+      - /shared-assets/images/background.jpg
+      - /shared-assets/images/profile.jpg
+    tech_stack:
+      - Hexo
+      - Butterfly
+      - React
+      - Vite
+      - Node.js
+      - Prisma
+      - MySQL
+      - Docker
+      - Cloudflare
     tags:
-      - Game Development
-      - Prototype
-      - Legacy Migration
+      - Architecture
+      - Self-Hosting
+      - Migration
     links:
-      demo:
-      repo:
-      article:
-  - slug: reborn
-    title: REBORN
-    year: 2025
-    status: Legacy showcase reference
-    summary: Legacy visual/project entry reserved for future portfolio refinement, copywriting, and richer media presentation.
+      repo: https://github.com/Je1ghtxyuN/Je1ghtxyuN.github.io
+      article: /posts/project-architecture-journey/
+  - slug: study-room
+    title: Study Room
+    year: 2026
+    status: Product design and scaffold phase
+    summary: A dedicated focus environment designed around timers, ambient music, small-task capture, and a calm interface that can support long study sessions without unnecessary friction.
+    cover_image: /shared-assets/images/gallery/photo5.png
+    gallery:
+      - /shared-assets/images/gallery/photo5.png
+      - /shared-assets/images/gallery/photo6.png
+    tech_stack:
+      - React
+      - Vite
+      - Web Audio API
+      - Shared Assets
+      - Future Backend API
+    tags:
+      - Focus UX
+      - Ambient Music
+      - Productivity
+    links:
+      article: /posts/building-my-study-room/
+  - slug: portfolio-content-system
+    title: Portfolio Content System
+    year: 2026
+    status: Content modeling and documentation phase
+    summary: Turning scattered legacy showcase material into structured portfolio records so future case studies, media previews, and cross-project comparisons can be managed consistently.
     cover_image: /shared-assets/images/works/REBORN1.jpg
     gallery:
       - /shared-assets/images/works/REBORN1.jpg
       - /shared-assets/images/works/REBORN2.jpg
+    tech_stack:
+      - Hexo Data Files
+      - Markdown
+      - Shared Assets
+      - Content Modeling
     tags:
-      - Visual Design
-      - Experiment
-      - Legacy Migration
+      - Documentation
+      - Portfolio
+      - Content Design
     links:
-      demo:
-      repo:
-      article:
+      article: /posts/tech-stack-decisions/

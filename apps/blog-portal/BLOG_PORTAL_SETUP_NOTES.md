@@ -70,7 +70,7 @@ Main branded page shells live in normal Hexo page files:
 - `source/portfolio/index.md`
 - `source/study-room/index.md`
 
-Those pages are intentionally thin and delegate rendering to custom Hexo tags:
+Those routes are intentionally thin and delegate rendering to custom Hexo tags:
 
 - `scripts/portal-tags.js`
 

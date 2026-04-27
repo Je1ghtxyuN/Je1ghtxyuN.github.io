@@ -54,7 +54,7 @@ prismjs:
   tab_replace: ''
 
 index_generator:
-  path: ''
+  path: blog
   per_page: 8
   order_by: -date
 
