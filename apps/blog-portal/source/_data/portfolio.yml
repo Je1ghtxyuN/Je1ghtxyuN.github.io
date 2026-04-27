@@ -1,0 +1,42 @@
+section:
+  title: Portfolio
+  intro: A structured catalog for future project showcase cards, case studies, and media previews.
+  home_preview_title: Selected Projects
+  home_preview_intro: Seed portfolio cards rendered from shared data, ready for later case study expansion.
+  home_preview_limit: 3
+  page_link_label: View Project
+cards:
+  - slug: gssj
+    title: GSSJ
+    year: 2025
+    status: Legacy showcase reference
+    summary: Legacy project placeholder carried into the new portal planning layer for future write-up and case study migration.
+    cover_image: /shared-assets/images/works/GSSJ1.jpeg
+    gallery:
+      - /shared-assets/images/works/GSSJ1.jpeg
+      - /shared-assets/images/works/GSSJ2.jpeg
+    tags:
+      - Game Development
+      - Prototype
+      - Legacy Migration
+    links:
+      demo:
+      repo:
+      article:
+  - slug: reborn
+    title: REBORN
+    year: 2025
+    status: Legacy showcase reference
+    summary: Legacy visual/project entry reserved for future portfolio refinement, copywriting, and richer media presentation.
+    cover_image: /shared-assets/images/works/REBORN1.jpg
+    gallery:
+      - /shared-assets/images/works/REBORN1.jpg
+      - /shared-assets/images/works/REBORN2.jpg
+    tags:
+      - Visual Design
+      - Experiment
+      - Legacy Migration
+    links:
+      demo:
+      repo:
+      article:

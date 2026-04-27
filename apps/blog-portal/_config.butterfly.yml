@@ -1,0 +1,185 @@
+nav:
+  logo: /shared-assets/images/icon.png
+  display_title: true
+  display_post_title: true
+  fixed: true
+
+menu:
+  Home: / || fas fa-house
+  Archives: /archives/ || fas fa-box-archive
+  Categories: /categories/ || fas fa-folder-open
+  Portfolio: /portfolio/ || fas fa-laptop-code
+  Study Room: /study-room/ || fas fa-book-open
+  Contact: /contact/ || fas fa-envelope
+  About: /about/ || fas fa-id-card
+
+code_blocks:
+  theme: darker
+  macStyle: true
+  word_wrap: false
+  copy: true
+  language: true
+  shrink: false
+  fullpage: false
+
+social:
+  fab fa-github: https://github.com/your-handle || GitHub || '#24292e'
+
+favicon: /shared-assets/images/icon.png
+
+avatar:
+  img: /shared-assets/images/profile.jpg
+  effect: true
+
+default_top_img: /shared-assets/images/background.jpg
+index_img: /shared-assets/images/background.jpg
+archive_img: /shared-assets/images/background.jpg
+tag_img: /shared-assets/images/background.jpg
+category_img: /shared-assets/images/background.jpg
+footer_img: false
+
+subtitle:
+  enable: true
+  effect: false
+  sub:
+    - Code, Anime, Games, and Coffee.
+    - Elegant technical blog and portfolio foundation.
+
+index_layout: 4
+
+toc:
+  post: true
+  page: true
+  number: true
+  expand: false
+  style_simple: false
+  scroll_percent: true
+
+footer:
+  owner:
+    enable: true
+    since: 2026
+  copyright:
+    enable: true
+    version: true
+  custom_text: Main portal foundation under reconstruction.
+
+aside:
+  enable: true
+  hide: false
+  button: true
+  mobile: true
+  position: right
+  display:
+    archive: true
+    tag: true
+    category: true
+  card_author:
+    enable: true
+    description: Code, anime, games, and coffee.
+    button:
+      enable: true
+      icon: fas fa-user-circle
+      text: About This Site
+      link: /about/
+  card_announcement:
+    enable: false
+  card_recent_post:
+    enable: true
+    limit: 5
+    sort: date
+  card_categories:
+    enable: true
+    limit: 8
+    expand: none
+  card_tags:
+    enable: true
+    limit: 30
+    color: false
+    orderby: random
+    order: 1
+  card_archives:
+    enable: true
+    type: yearly
+    format: YYYY
+    order: -1
+    limit: 6
+  card_webinfo:
+    enable: true
+    post_count: true
+    last_push_date: true
+
+readmode: true
+
+darkmode:
+  enable: true
+  button: true
+  autoChangeMode: false
+
+copy:
+  enable: true
+  copyright:
+    enable: false
+
+busuanzi:
+  site_uv: false
+  site_pv: false
+  page_pv: false
+
+search:
+  use: local_search
+  placeholder: Search articles, pages, and project notes...
+  local_search:
+    preload: false
+    top_n_per_article: 2
+    unescape: false
+    pagination:
+      enable: true
+      hitsPerPage: 8
+
+share:
+  use:
+
+comments:
+  use:
+  text: true
+  lazyload: false
+  count: false
+  card_post_count: false
+
+giscus:
+  repo:
+  repo_id:
+  category_id:
+  light_theme: light
+  dark_theme: dark
+  js:
+  option:
+
+category_ui: default
+tag_ui: default
+rounded_corners_ui: true
+
+mask:
+  header: true
+  footer: true
+
+display_mode: dark
+
+lazyload:
+  enable: true
+  native: false
+  field: site
+
+Open_Graph_meta:
+  enable: true
+
+structured_data:
+  enable: true
+  alternate_name:
+    - Je1ghtxyuN
+    - Kyoka
+
+inject:
+  head:
+    - <link rel="stylesheet" href="/css/portal-custom.css">
