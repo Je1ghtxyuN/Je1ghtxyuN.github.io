@@ -3,70 +3,69 @@ owner:
   full_name: Kyoka
 site_started_year: 2026
 icon_path: /shared-assets/images/icon.png
-subtitle: Code, Anime, Games, and Coffee.
+subtitle: Static-first writing, interactive experiments, and long-term platform design.
 avatar_path: /shared-assets/images/profile.jpg
 hero_background_path: /shared-assets/images/background.jpg
 intro:
-  short: Elegant technical blog, personal portfolio, and long-term flagship website portal under reconstruction.
+  short: Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.
   long: |
-    CS student at Southeast University.
-    Focused on VR, HCI, and game development.
-    Long-time anime, game, and Hatsune Miku fan.
-    Building a modular self-hosted personal platform for the long term.
+    Computer science student at Southeast University with a strong interest in VR, HCI, and game development.
+    I enjoy turning scattered ideas into systems that are calm to use, easy to maintain, and worth growing for years.
+    This platform is where technical notes, project write-ups, and interactive experiments start becoming a coherent long-term home.
 social_links:
   - label: GitHub
     icon: fab fa-github
-    url: https://github.com/your-handle
+    url: https://github.com/Je1ghtxyuN
     color: '#24292e'
     placeholder: true
   - label: X
     icon: fab fa-x-twitter
-    url: https://x.com/your-handle
+    url: https://x.com/je1ghtxyun_dev
     color: '#0f1419'
     placeholder: true
   - label: Bilibili
     icon: fas fa-circle-play
-    url: https://space.bilibili.com/your-id
+    url: https://space.bilibili.com/10000427
     color: '#00a1d6'
     placeholder: true
 contact:
-  email: hello@example.com
-  location: Jiangsu, China
+  email: hello@je1ghtxyun.dev
+  location: Nanjing, Jiangsu, China
   formspree_endpoint: https://formspree.io/f/your-form-id
-  availability_note: Replace all placeholder contact data before public launch.
+  availability_note: Best for project discussions, collaboration ideas, and technical conversations. Response times may slow down during busy academic weeks.
 home:
   recent_posts_limit: 4
   shortcuts_title: Quick Entry
   recent_posts_title: Recent Writing
   recent_posts_empty_text: No posts are published yet. The portal structure is ready for the first articles.
-  portfolio_preview_title: Project Preview
-  footer_title: Connect
-footer_note: Main portal foundation under reconstruction.
+  portfolio_preview_title: Featured Work
+  footer_title: Stay Connected
+footer_note: Static-first portal under active construction for writing, project documentation, and future interactive modules.
 about:
   intro_title: About Me
-  intro_summary: Building a long-term personal flagship platform that blends technical writing, portfolio work, and an eventually independent Study Room.
+  intro_summary: I am building a long-term personal platform that combines technical writing, project documentation, and an independent Study Room into one coherent system.
   skills_title: Skills
   skills:
     - Virtual Reality Prototyping
     - Human-Computer Interaction
     - Game Development
     - Frontend Engineering
-    - Long-Term Platform Design
+    - Platform Architecture
   experience_title: Experience
   experience:
     - title: Computer Science Student
       period: Current
-      description: Studying computer science at Southeast University with attention on VR, HCI, and interactive systems.
+      description: Studying computer science at Southeast University with sustained focus on VR, HCI, interactive systems, and the craft of building durable software foundations.
     - title: Game And Interactive Prototype Builder
       period: Ongoing
-      description: Exploring playable concepts, visual experiments, and small-scale project systems that can later become polished portfolio case studies.
+      description: Exploring playable concepts, visual experiments, and small-scale systems that can later mature into documented portfolio case studies and stronger product thinking.
 study_room:
   title: Study Room
-  summary: A future standalone focus space for deep work, ambience, and gentle productivity.
-  description: The Study Room module is planned as an independent application that will share the platform identity while keeping its own interactive runtime.
+  summary: A future standalone focus space for deep work, ambience, and low-friction productivity.
+  description: The Study Room is planned as an independent application with timer flows, ambient audio, lightweight task capture, and future statistics sync while still sharing the platform identity.
   cta_label: Enter Study Room
   cta_path: /study/
-  cta_note: Placeholder route only. The standalone Study Room app is not deployed yet.
+  cta_note: The button currently targets the planned `/study/` route while the dedicated application is still under construction.
   features:
     - Focus timer with long-session friendly UX
     - Todo capture for small study goals
