@@ -1,6 +1,6 @@
 # Codex Worklog
 
-Last updated: 2026-04-27
+Last updated: 2026-04-28
 Status: persistent append-only engineering progress journal
 
 ## Usage Rule
@@ -181,6 +181,42 @@ Append new dated sessions below this line.
 - decisions made:
 - risks or blockers:
 - next recommended step:
+
+### Session 2026-04-28 — Portal Homepage Stabilization And Study Room Integration Prep
+
+- objectives:
+  - stabilize homepage content selection so recent posts render deterministically
+  - centralize homepage preview limits in code instead of YAML
+  - prepare the Study Room entry flow for environment-aware app links
+  - document homepage data flow for future editing and CMS preparation
+- actions taken:
+  - completed the shared portal renderer split so homepage, about, portfolio, and Study Room rendering now flow through `apps/blog-portal/scripts/portal-renderer.js`
+  - kept the homepage on a generator-backed root route through `apps/blog-portal/scripts/portal-home-generator.js`
+  - updated the recent-post logic to normalize the post collection, sort explicitly by date descending, apply a stable tie-breaker, and then trim to the configured homepage limit
+  - centralized homepage configuration in `PORTAL_CONFIG`, including recent-post count, portfolio-preview count, fallback text, fallback image paths, and Study Room dev/prod URLs
+  - removed stale content-level limit fields from `site_profile.yml` and `portfolio.yml` so editing data files no longer changes homepage structural behavior implicitly
+  - updated the Study Room landing page metadata and integration notes for the future standalone app handoff
+  - documented the homepage rendering flow and content map in portal docs
+  - added `docs/CONTENT_MAP.md` to explain where content is stored and how it reaches the homepage
+- files changed:
+  - updated `apps/blog-portal/scripts/portal-renderer.js`
+  - updated `apps/blog-portal/source/study-room/index.md`
+  - updated `apps/blog-portal/source/_data/site_profile.yml`
+  - updated `apps/blog-portal/source/_data/portfolio.yml`
+  - updated `apps/blog-portal/BLOG_PORTAL_SETUP_NOTES.md`
+  - updated `apps/blog-portal/CONTENT_EDITING_GUIDE.md`
+  - deleted `apps/blog-portal/source/index.md`
+  - added `docs/CONTENT_MAP.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - the root homepage is now generator-owned and should not return to source-page tag rendering
+  - homepage preview counts are configuration constants in code, not editable YAML content
+  - Study Room CTA routing is environment-aware: local server sessions target the Vite app and generated builds target the production placeholder path
+- risks or blockers:
+  - the Study Room production mount path `/study-app/` is still a placeholder and must be finalized during real app integration
+  - the current environment split is intentionally simple and may later need a more formal deploy-time variable strategy
+- next recommended step:
+  - verify generated output in `apps/blog-portal/public/`, then begin the first true Study Room app implementation pass while keeping the portal CTA contract stable
 
 ### Session 2026-04-27 — Portal Content Initialization And Realism Pass
 

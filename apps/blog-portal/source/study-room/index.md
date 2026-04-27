@@ -6,7 +6,10 @@ type: portal-study-room
 top_img: false
 aside: false
 comments: false
-description: Entry gateway for the future standalone Study Room application.
+description: Integration gateway for the future standalone Study Room application, including environment-aware entry links.
 ---
+
+<!-- TODO: Replace the production placeholder route after the standalone Study Room deployment path is finalized. -->
+<!-- TODO: Add account/session handoff notes here once backend auth integration begins in the next platform phase. -->
 
 {% portal_study_room %}
