@@ -286,3 +286,116 @@ Append new dated sessions below this line.
   - BrowserRouter on `/study-app/` assumes the eventual production service will serve SPA fallback for nested routes such as `/study-app/settings`
 - next recommended step:
   - begin the next Study Room pass by deepening the timer/session UX and deciding whether local persistence should be added before backend APIs exist
+
+### Session 2026-04-28 — Study Room Immersive UI Foundation Pass
+
+- objectives:
+  - move the Study Room from stacked panel UI toward an immersive floating layout
+  - introduce a reusable fixed background system and a zone-based placement model
+  - convert the timer, music, and todo modules into compact floating widgets without changing their core logic
+- actions taken:
+  - added `BackgroundLayer` and a simple scene config so the app now renders a fixed full-screen background with overlay treatment
+  - introduced `StudyLayout` with explicit top-left, top-right, center, bottom-left, and bottom-right zones
+  - moved app chrome and navigation into a lightweight floating widget instead of a large header panel
+  - refactored the study route to place widgets in floating zones rather than a stacked card grid
+  - converted the timer into a compact center widget and moved duration controls into a separate timer settings widget
+  - converted the music controller and todo list into smaller floating widgets
+  - updated the settings route to reuse the same floating layout system
+  - rewrote the Study Room CSS around fixed background, glass-like widgets, and responsive zone collapse
+  - updated `STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - verified the Study Room app with successful lint and build runs
+- files changed:
+  - added `apps/study-room/src/components/BackgroundLayer.jsx`
+  - added `apps/study-room/src/lib/studyScene.js`
+  - added `apps/study-room/src/layouts/StudyLayout.jsx`
+  - added `apps/study-room/src/app/StudyChromeWidget.jsx`
+  - updated `apps/study-room/src/app/AppShell.jsx`
+  - updated study and settings route files under `apps/study-room/src/app/pages/`
+  - updated timer, music, todo, statistics, and auth feature UI files
+  - added `apps/study-room/src/features/timer/TimerSettingsWidget.jsx`
+  - replaced `apps/study-room/src/App.css`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - the background system lives only at the app-shell layer and should not be embedded into feature widgets
+  - the floating zone layout is now the structural basis for immersive UI work
+  - duration editing moved out of the center timer so the main study view can stay visually lighter
+- risks or blockers:
+  - the current background scene still uses a local placeholder image and should be replaced once final study background assets are chosen
+  - the floating layout is desktop-first and intentionally conservative on smaller screens; more nuanced mobile behavior can be refined later
+- next recommended step:
+  - continue by deepening the center timer experience and ambient scene controls before starting any final visual polish pass
+
+### Session 2026-04-28 — Study Room Interaction Model Upgrade
+
+- objectives:
+  - introduce a mode-based interaction model without replacing the existing timer architecture
+  - make the timer the primary entry point and move secondary tools into overlays
+  - simplify layout usage so the center interaction space becomes dominant
+- actions taken:
+  - extended reducer state with a `ui` domain for `idle`, `focus`, and `panel` modes
+  - added panel open/close actions while preserving the existing timer reducer and engine logic
+  - refactored the main Study Room page so idle mode shows a small timer entry and focus mode shows a larger immersive timer
+  - added a reusable panel overlay system for todo, music, statistics, and settings
+  - simplified StudyLayout usage to emphasize top-left chrome plus the center interaction space
+  - updated the app shell so the background layer responds to focus and panel modes
+  - redirected the old `/settings` route back to the root interaction surface because settings now live inside panel mode
+  - updated Study Room interaction documentation
+- files changed:
+  - updated `apps/study-room/src/state/studyRoomReducer.js`
+  - updated `apps/study-room/src/state/useStudyRoom.js`
+  - added `apps/study-room/src/app/PanelOverlay.jsx`
+  - added `apps/study-room/src/app/panels/SettingsPanelContent.jsx`
+  - updated `apps/study-room/src/app/AppRouter.jsx`
+  - updated `apps/study-room/src/app/AppShell.jsx`
+  - updated `apps/study-room/src/app/StudyChromeWidget.jsx`
+  - updated `apps/study-room/src/app/pages/StudyPage.jsx`
+  - updated `apps/study-room/src/layouts/StudyLayout.jsx`
+  - updated `apps/study-room/src/features/timer/TimerPanel.jsx`
+  - replaced `apps/study-room/src/App.css`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - the timer remains the only always-visible primary interaction surface
+  - secondary tools now belong to panel mode instead of permanent layout zones
+  - focus mode enhances immersion mainly through timer scale and scene dimming rather than heavy visual effects
+- risks or blockers:
+  - the panel system currently assumes one panel at a time and does not yet preserve deeper sub-state such as per-panel tabs
+  - the `/settings` path is now a compatibility redirect rather than an independent page
+- next recommended step:
+  - deepen the focus-mode scene with session-complete cues, optional local persistence, and future background/audio controls before any final polish phase
+
+### Session 2026-04-28 — Study Room Scene-First Immersive Redesign
+
+- objectives:
+  - keep the new idle/focus/panel interaction model but redesign the presentation around atmosphere instead of widgets
+  - demote navigation and utility controls so the scene becomes the visual protagonist
+  - embed the timer into the scene more lightly and make focus exit spatially intuitive
+- actions taken:
+  - replaced the descriptive top-left chrome card with a compact top-center micro-toolbar
+  - simplified `StudyLayout` usage so the main screen now revolves around chrome, center timer space, and an optional hint area
+  - redesigned the idle timer into a small scene-entry control and the focus timer into lightweight overlay text with subtle control rails
+  - implemented scene click-exit in focus mode by adding a dedicated interaction hit area behind the timer and chrome
+  - kept panel architecture but visually subordinated the launchers so todo/music/stats/settings now feel like hidden utilities instead of homepage content
+  - extended the scene structure and background layer so future animated or video-backed study scenes can be supported without replacing the shell
+  - rewrote Study Room styling toward scene-first balance, lighter chrome, and atmospheric timer presentation
+  - updated Study Room architecture notes to document the philosophy shift
+- files changed:
+  - updated `apps/study-room/src/components/BackgroundLayer.jsx`
+  - updated `apps/study-room/src/lib/studyScene.js`
+  - updated `apps/study-room/src/app/StudyChromeWidget.jsx`
+  - updated `apps/study-room/src/layouts/StudyLayout.jsx`
+  - updated `apps/study-room/src/app/pages/StudyPage.jsx`
+  - updated `apps/study-room/src/features/timer/TimerPanel.jsx`
+  - replaced `apps/study-room/src/App.css`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - the scene is now the dominant layer and the UI should read as attached controls rather than standalone cards
+  - chrome is intentionally compact and symmetric so it does not pull visual weight to one side
+  - focus mode should keep the background highly visible and rely on empty-scene click exit for natural control
+- risks or blockers:
+  - the current scene media is still a placeholder image, so the full emotional payoff depends on future illustration or animated background assets
+  - panel contents still use the shared floating surface language and may need another pass later to feel even more scene-native
+- next recommended step:
+  - add richer scene assets and session-complete ambience behavior so the new scene-first shell starts feeling like a real study atmosphere instead of a structural mockup

@@ -9,19 +9,20 @@ export function TodoPanel() {
   }
 
   return (
-    <section className="feature-card">
-      <div className="feature-card__header">
+    <section className="floating-widget todo-widget">
+      <div className="floating-widget__header">
         <div>
-          <h2>Task Capture</h2>
-          <p className="feature-card__copy">
-            Local-only for now, but already separated into its own feature
-            module so persistence can be added later without touching timer code.
-          </p>
+          <p className="floating-widget__eyebrow">Task Capture</p>
+          <h2 className="floating-widget__title">Current todos</h2>
         </div>
-        <span className="feature-card__badge">{items.length} tasks</span>
+        <span className="floating-widget__badge">{items.length}</span>
       </div>
 
-      <form className="feature-card__inline-form" onSubmit={handleSubmit}>
+      <p className="floating-widget__copy">
+        Compact local task list for the current study session.
+      </p>
+
+      <form className="widget-inline-form" onSubmit={handleSubmit}>
         <input
           className="input"
           type="text"
@@ -35,13 +36,13 @@ export function TodoPanel() {
       </form>
 
       {items.length ? (
-        <ul className="feature-card__list">
+        <ul className="todo-widget__list">
           {items.map((item) => (
             <li
               key={item.id}
-              className={`feature-card__list-item${item.done ? ' feature-card__list-item--done' : ''}`}
+              className={`todo-widget__list-item${item.done ? ' todo-widget__list-item--done' : ''}`}
             >
-              <p className="feature-card__copy">{item.label}</p>
+              <p className="floating-widget__copy">{item.label}</p>
               <button
                 type="button"
                 className="button button--ghost"
@@ -53,7 +54,7 @@ export function TodoPanel() {
           ))}
         </ul>
       ) : (
-        <div className="feature-card__empty">No tasks yet.</div>
+        <div className="floating-widget__empty">No tasks yet.</div>
       )}
     </section>
   )

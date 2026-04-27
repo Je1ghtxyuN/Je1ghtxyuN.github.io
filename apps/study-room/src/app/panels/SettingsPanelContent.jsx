@@ -1,31 +1,30 @@
+import { AuthPlaceholderCard } from '../../features/auth/index.js'
+import { TimerSettingsWidget } from '../../features/timer/index.js'
 import {
   useStudyRoomActions,
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
 
-export function SettingsPage() {
+export function SettingsPanelContent() {
   const { preferences } = useStudyRoomState()
   const { setPreference } = useStudyRoomActions()
 
   return (
-    <div className="settings-page">
-      <section className="settings-card">
-        <h2>Future Settings Surface</h2>
-        <p className="settings-card__copy">
-          This route is intentionally lightweight for now. It already reads from
-          the shared Study Room state so backend-backed preferences can later
-          replace local-only values without changing the route structure.
-        </p>
-      </section>
+    <div className="panel-stack">
+      <section className="floating-widget">
+        <div className="floating-widget__header">
+          <div>
+            <p className="floating-widget__eyebrow">Shared Preferences</p>
+            <h3 className="floating-widget__title">Session behavior</h3>
+          </div>
+        </div>
 
-      <section className="settings-card">
-        <h2>Session Preferences</h2>
-        <div className="settings-card__row">
-          <div className="settings-card__toggle">
+        <div className="settings-widget__list">
+          <div className="settings-widget__toggle">
             <div>
               <strong>Auto-start breaks</strong>
-              <p className="settings-card__meta">
-                Automatically begin break sessions after a work session completes.
+              <p className="floating-widget__meta">
+                Automatically begin a break after a work session completes.
               </p>
             </div>
             <button
@@ -39,11 +38,11 @@ export function SettingsPage() {
             </button>
           </div>
 
-          <div className="settings-card__toggle">
+          <div className="settings-widget__toggle">
             <div>
-              <strong>Auto-start work sessions</strong>
-              <p className="settings-card__meta">
-                Automatically resume focus after a break completes.
+              <strong>Auto-start work</strong>
+              <p className="floating-widget__meta">
+                Automatically return to work after a break finishes.
               </p>
             </div>
             <button
@@ -57,11 +56,11 @@ export function SettingsPage() {
             </button>
           </div>
 
-          <div className="settings-card__toggle">
+          <div className="settings-widget__toggle">
             <div>
               <strong>Sound enabled</strong>
-              <p className="settings-card__meta">
-                Shared placeholder preference used by the ambient music feature.
+              <p className="floating-widget__meta">
+                Shared audio preference used by the ambient music controller.
               </p>
             </div>
             <button
@@ -75,14 +74,8 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="settings-card">
-        <h2>Routing Contract</h2>
-        <p className="settings-card__route-note">
-          Development keeps the app at <code>http://localhost:5173</code>.
-          Production builds keep the portal handoff contract stable by building
-          for the <code>/study-app/</code> base path.
-        </p>
-      </section>
+      <TimerSettingsWidget />
+      <AuthPlaceholderCard />
     </div>
   )
 }

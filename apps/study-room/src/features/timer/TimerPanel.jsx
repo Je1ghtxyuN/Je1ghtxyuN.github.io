@@ -1,8 +1,11 @@
-import { useState } from 'react'
-import { secondsToMinutes } from './timerUtils.js'
 import { useTimerController } from './useTimerController.js'
 
-export function TimerPanel() {
+export function TimerPanel({
+  mode = 'idle',
+  timerStatus,
+  onEnterFocus,
+  onExitFocus,
+}) {
   const {
     timer,
     sessionLabel,
@@ -11,125 +14,94 @@ export function TimerPanel() {
     pauseTimer,
     resetTimer,
     setSession,
-    setDurations,
   } = useTimerController()
 
-  const [workMinutes, setWorkMinutes] = useState(
-    String(secondsToMinutes(timer.durations.work)),
-  )
-  const [breakMinutes, setBreakMinutes] = useState(
-    String(secondsToMinutes(timer.durations.break)),
-  )
+  if (mode === 'idle') {
+    const handleIdlePrimaryAction = () => {
+      if (timer.status !== 'running') {
+        startTimer()
+      }
 
-  const handleDurationSubmit = (event) => {
-    event.preventDefault()
+      onEnterFocus()
+    }
 
-    setDurations({
-      workMinutes,
-      breakMinutes,
-    })
+    return (
+      <section
+        className="scene-timer scene-timer--idle"
+        onClick={onEnterFocus}
+      >
+        <p className="scene-timer__label">Timer</p>
+        <div className="scene-timer__clock scene-timer__clock--idle">
+          {formattedRemaining}
+        </div>
+        <button
+          type="button"
+          className="scene-timer__primary"
+          onClick={(event) => {
+            event.stopPropagation()
+            handleIdlePrimaryAction()
+          }}
+        >
+          {timerStatus === 'running' ? 'Resume Focus' : 'Start'}
+        </button>
+      </section>
+    )
+  }
+
+  const handleFocusPrimaryAction = () => {
+    if (timer.status === 'running') {
+      pauseTimer()
+      return
+    }
+
+    startTimer()
   }
 
   return (
-    <section className="feature-card feature-card--wide">
-      <div className="feature-card__header">
-        <div>
-          <h2>Pomodoro Timer Core</h2>
-          <p className="feature-card__copy">
-            The timer state lives in the global study room reducer so future
-            backend sync can observe one stable session model.
-          </p>
-        </div>
-        <span className="feature-card__badge">{timer.status}</span>
-      </div>
+    <section className="scene-timer scene-timer--focus">
+      <p className="scene-timer__label">{sessionLabel}</p>
+      <div className="scene-timer__clock">{formattedRemaining}</div>
 
-      <div className="feature-card__stat">
-        <span className="feature-card__stat-value">{formattedRemaining}</span>
-        <span className="feature-card__stat-label">{sessionLabel}</span>
-      </div>
-
-      <div className="feature-card__session-switch">
+      <div className="scene-timer__session-switch">
         <button
           type="button"
-          className={`button ${timer.sessionType === 'work' ? 'button--active' : 'button--ghost'}`}
+          className={`scene-timer__chip${timer.sessionType === 'work' ? ' scene-timer__chip--active' : ''}`}
           onClick={() => setSession('work')}
         >
           Work
         </button>
         <button
           type="button"
-          className={`button ${timer.sessionType === 'break' ? 'button--active' : 'button--ghost'}`}
+          className={`scene-timer__chip${timer.sessionType === 'break' ? ' scene-timer__chip--active' : ''}`}
           onClick={() => setSession('break')}
         >
           Break
         </button>
       </div>
 
-      <div className="feature-card__actions">
+      <div className="scene-timer__actions">
         <button
           type="button"
-          className="button button--primary"
-          onClick={startTimer}
-          disabled={timer.status === 'running'}
+          className="scene-timer__control scene-timer__control--primary"
+          onClick={handleFocusPrimaryAction}
         >
-          Start
+          {timer.status === 'running' ? 'Pause' : 'Start'}
         </button>
         <button
           type="button"
-          className="button button--ghost"
-          onClick={pauseTimer}
-          disabled={timer.status !== 'running'}
-        >
-          Pause
-        </button>
-        <button
-          type="button"
-          className="button button--ghost"
+          className="scene-timer__control"
           onClick={resetTimer}
         >
           Reset
         </button>
+        <button
+          type="button"
+          className="scene-timer__control"
+          onClick={onExitFocus}
+        >
+          Exit
+        </button>
       </div>
-
-      <form className="feature-card__form" onSubmit={handleDurationSubmit}>
-        <div className="feature-card__form-grid">
-          <div className="field">
-            <label htmlFor="work-minutes">Work minutes</label>
-            <input
-              id="work-minutes"
-              className="input"
-              type="number"
-              min="1"
-              max="180"
-              value={workMinutes}
-              onChange={(event) => setWorkMinutes(event.target.value)}
-            />
-          </div>
-
-          <div className="field">
-            <label htmlFor="break-minutes">Break minutes</label>
-            <input
-              id="break-minutes"
-              className="input"
-              type="number"
-              min="1"
-              max="180"
-              value={breakMinutes}
-              onChange={(event) => setBreakMinutes(event.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="feature-card__actions">
-          <button type="submit" className="button button--ghost">
-            Apply Durations
-          </button>
-          <span className="feature-card__hint">
-            Duration changes update the shared timer state without changing the
-            current route or page shell.
-          </span>
-        </div>
-      </form>
     </section>
   )
 }
