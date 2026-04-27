@@ -250,3 +250,39 @@ Append new dated sessions below this line.
   - social handles were upgraded to more realistic placeholders but still need final owner confirmation before launch
 - next recommended step:
   - continue the portal pass by refining the about, contact, and portfolio content depth, then move into the first implementation work for the standalone Study Room application
+
+### Session 2026-04-28 — Study Room Foundation Architecture First Pass
+
+- objectives:
+  - replace the Vite starter UI with a real Study Room application shell
+  - define modular feature boundaries for timer, todo, ambient music, auth, and study statistics
+  - implement the first shared state model and the timer core without overbuilding the UI
+  - keep the Study Room route contract aligned with the portal handoff decision
+- actions taken:
+  - installed `react-router-dom` and introduced a route shell with a study page and a placeholder settings page
+  - configured Vite to keep development on `/` and production builds on `/study-app/`
+  - created a reducer-driven global state layer under `apps/study-room/src/state/`
+  - implemented timer actions for start, pause, reset, session switching, duration updates, and reducer-driven ticking based on timestamps
+  - created separate feature entry points under `src/features/` for timer, todo, ambient music, auth, and study statistics
+  - added a local audio controller with play, pause, track switching, and volume support using silent placeholder tracks
+  - replaced the Vite starter content with a lightweight app shell that exercises the new architecture without attempting final visual design
+  - updated `STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - verified the app with successful `npm run lint` and `npm run build`
+- files changed:
+  - updated `apps/study-room/package.json`
+  - added `apps/study-room/package-lock.json`
+  - updated `apps/study-room/vite.config.js`
+  - replaced the starter app files under `apps/study-room/src/`
+  - added route, state, and feature modules under `apps/study-room/src/app/`, `src/state/`, and `src/features/`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - the timer is the first reducer-owned runtime feature and acts as the central session model
+  - preferences are shared state now so future backend sync has a stable insertion point
+  - the production base path remains `/study-app/`, matching the current portal CTA contract
+  - ambient music remains local-first for now and does not depend on any external API
+- risks or blockers:
+  - the current audio catalog is intentionally placeholder-only and should be replaced only after media policy and asset packaging are decided
+  - BrowserRouter on `/study-app/` assumes the eventual production service will serve SPA fallback for nested routes such as `/study-app/settings`
+- next recommended step:
+  - begin the next Study Room pass by deepening the timer/session UX and deciding whether local persistence should be added before backend APIs exist
