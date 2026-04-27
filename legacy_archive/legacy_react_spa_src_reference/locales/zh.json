@@ -1,0 +1,116 @@
+{
+    "common": {
+        "home": "主页",
+        "works": "作品",
+        "blog": "博客",
+        "photos": "相册",
+        "contact": "留言",
+        "login": "管理员登录",
+        "logout": "退出登录",
+        "save": "保存",
+        "edit": "编辑",
+        "delete": "删除",
+        "cancel": "取消",
+        "submit": "提交",
+        "add": "添加",
+        "upload": "上传",
+        "close": "关闭",
+        "back": "返回",
+        "send": "发送",
+        "play": "播放",
+        "pause": "暂停",
+        "like": "点赞",
+        "comment": "评论",
+        "comments": "评论",
+        "readMore": "阅读更多",
+        "viewAll": "查看全部",
+        "loading": "加载中...",
+        "error": "错误",
+        "success": "成功",
+        "warning": "警告",
+        "confirm": "确认",
+        "yes": "是",
+        "no": "否"
+    },
+    "home": {
+        "title": "Je1ghtxyuN",
+        "subtitle": "代码、动漫、游戏、还有咖啡。",
+        "aboutTitle": "关于我",
+        "aboutContent": "东南大学CS在读  \n虚拟现实与人机交互方向，游戏开发  \n同时也是镇守府的提督和十年葱葱人 ~  \nPC/SWITCH 欢迎一起玩 ~",
+        "websiteRuntime": "网站运行时间",
+        "runtimeThanks": "感谢你的每一次访问 (｡•̀ᴗ-)✧",
+        "editProfile": "编辑个人资料",
+        "editHomeInfo": "编辑主页信息"
+    },
+    "works": {
+        "title": "我的作品",
+        "addWork": "添加作品",
+        "editWork": "编辑作品",
+        "workTitle": "标题",
+        "workDescription": "描述",
+        "workDate": "日期",
+        "workImageUrl": "图片链接",
+        "workVideoUrl": "视频链接 (B站/YouTube)",
+        "workLink": "项目链接",
+        "visit": "访问",
+        "deleteConfirm": "确定要删除吗？"
+    },
+    "blog": {
+        "title": "文章",
+        "writeArticle": "写文章",
+        "editArticle": "编辑文章",
+        "articleTitle": "标题",
+        "articleContent": "内容",
+        "publish": "发布",
+        "update": "更新",
+        "deleteConfirm": "确定要删除这篇博客吗？此操作无法撤销。",
+        "noComments": "还没有评论，快来抢沙发~",
+        "commentPlaceholder": "说点什么吧...",
+        "nickname": "昵称",
+        "tip": "提示：支持 Markdown 语法，可以直接拖拽 .md 文件到编辑区域"
+    },
+    "photos": {
+        "title": "我的照片",
+        "uploadPhoto": "上传照片",
+        "photoUrl": "链接",
+        "photoDescription": "描述",
+        "deleteConfirm": "删除照片？"
+    },
+    "contact": {
+        "title": "留言板 ✨",
+        "description": "欢迎来到窝的空间！  \n留下泥的想对窝说的话吧～",
+        "nickname": "昵称",
+        "contactInfo": "联系方式",
+        "message": "留言",
+        "sendMessage": "发送留言"
+    },
+    "music": {
+        "songTitle": "夏霞",
+        "artist": "あたらよ",
+        "previous": "上一首",
+        "next": "下一首"
+    },
+    "footer": {
+        "copyright": "© {year} 橘京花 (Je1ghtxyuN). All Rights Reserved.",
+        "poweredBy": "Powered by React & Firebase"
+    },
+    "auth": {
+        "adminLogin": "管理员登录",
+        "email": "邮箱",
+        "password": "密码",
+        "login": "登录",
+        "anonymousLogin": "匿名登录",
+        "pleaseLogin": "请先登录（点击左下角锁图标）",
+        "alreadyLiked": "这篇你已经赞过了哦 ~"
+    },
+    "settings": {
+        "language": "语言",
+        "theme": "主题",
+        "lightMode": "日间模式",
+        "darkMode": "夜间模式",
+        "chinese": "中文",
+        "english": "英语",
+        "japanese": "日语",
+        "system": "系统"
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "backend-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Framework-neutral backend API scaffold for the rebuilt personal website platform.",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
+  }
+}
