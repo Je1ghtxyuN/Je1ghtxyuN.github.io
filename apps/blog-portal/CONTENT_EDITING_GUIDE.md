@@ -36,6 +36,11 @@ How posts flow into the UI:
 - the generated post index is available at `/blog/`
 - posts also feed the archives, categories, tags, and search index
 
+Important note:
+
+- the homepage recent-post count is controlled in `scripts/portal-renderer.js`
+- edit `PORTAL_CONFIG.HOMEPAGE_POST_LIMIT` to change how many posts appear on the homepage
+
 ## 2. Where Profile And Identity Content Lives
 
 Profile and site identity data is stored in:
@@ -102,7 +107,6 @@ Important note:
 
 Main portal page shells live here:
 
-- `source/index.md`
 - `source/archives/index.md`
 - `source/about/index.md`
 - `source/contact/index.md`
@@ -111,9 +115,10 @@ Main portal page shells live here:
 
 Important note:
 
-- these pages are intentionally lightweight
-- the branded sections for home, about, portfolio, and Study Room are rendered by custom Hexo tags in `scripts/portal-tags.js`
-- the current tag entry points are `{% portal_home %}`, `{% portal_about %}`, `{% portal_portfolio %}`, and `{% portal_study_room %}`
+- the homepage is generated at the root route by `scripts/portal-home-generator.js`
+- the branded rendering logic lives in `scripts/portal-renderer.js`
+- the about, portfolio, and Study Room page shells stay intentionally lightweight
+- the current tag entry points are `{% portal_about %}`, `{% portal_portfolio %}`, and `{% portal_study_room %}`
 
 ## 6. Where Shared Images And Media Live
 

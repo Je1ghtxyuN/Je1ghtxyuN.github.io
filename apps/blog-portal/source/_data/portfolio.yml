@@ -3,7 +3,6 @@ section:
   intro: Current builds and migration-era projects that define the platform direction, product scope, and long-term engineering priorities.
   home_preview_title: Selected Projects
   home_preview_intro: Active workstreams and documented project tracks rendered from a shared portfolio data model.
-  home_preview_limit: 3
   page_link_label: View Project
 cards:
   - slug: personal-platform-rebuild
