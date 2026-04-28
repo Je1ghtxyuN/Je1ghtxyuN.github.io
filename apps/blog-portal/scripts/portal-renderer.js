@@ -1,7 +1,14 @@
 const { url_for: urlFor } = require('hexo-util')
+const {
+  getDefaultLocaleText,
+  siteIdentity,
+} = require('./portal-shared-config')
 
 module.exports = function createPortalRenderer(hexo) {
   const resolveInternalUrl = urlFor.bind(hexo)
+  const studyRoomAppPath = siteIdentity.routes?.studyRoomAppPath || '/study-app/'
+  const studyRoomLandingPath =
+    siteIdentity.routes?.studyRoomLandingPath || '/study-room/'
 
   // Keep homepage behavior in code rather than data files so build output stays
   // deterministic across CMS edits and future content migrations.
@@ -12,8 +19,7 @@ module.exports = function createPortalRenderer(hexo) {
     DEFAULT_DESCRIPTION: 'Details for this section are still being prepared.',
     DEFAULT_IMAGE_PATH: '/shared-assets/images/background.jpg',
     DEFAULT_AVATAR_PATH: '/shared-assets/images/profile.jpg',
-    STUDY_ROOM_DEV_URL: 'http://localhost:5173',
-    STUDY_ROOM_PROD_URL: '/study-app/',
+    STUDY_ROOM_APP_URL: studyRoomAppPath,
   })
 
   const escapeHtml = (value = '') =>
@@ -64,6 +70,11 @@ module.exports = function createPortalRenderer(hexo) {
     return attrText ? `<${tag} ${attrText}>${content}</${tag}>` : `<${tag}>${content}</${tag}>`
   }
 
+  const renderVoidTag = (tag, attrs = {}) => {
+    const attrText = renderAttrs(attrs)
+    return attrText ? `<${tag} ${attrText}>` : `<${tag}>`
+  }
+
   const renderParagraphs = (value = '', className = '') =>
     splitLines(value)
       .map((line) => renderTag('p', className ? { class: className } : {}, escapeHtml(line)))
@@ -95,19 +106,19 @@ module.exports = function createPortalRenderer(hexo) {
   const fallbackImagePath = (value) =>
     fallbackText(value, PORTAL_CONFIG.DEFAULT_IMAGE_PATH)
 
-  const getPortalBuildMode = () => {
-    const forcedMode = String(process.env.PORTAL_APP_ENV || '').toLowerCase()
-
-    if (forcedMode === 'development' || forcedMode === 'dev') return 'development'
-    if (forcedMode === 'production' || forcedMode === 'prod') return 'production'
-
-    return hexo.env.cmd === 'server' ? 'development' : 'production'
-  }
-
   const resolveHref = (path, explicitExternal = false) => {
     if (!path) return '#'
     return isExternalPath(path, explicitExternal) ? path : resolveInternalUrl(path)
   }
+
+  const getLocaleText = (keyPath, fallback = '') =>
+    getDefaultLocaleText(keyPath, fallback)
+
+  const withI18nAttr = (attrs = {}, keyPath, fallback = '') => ({
+    ...attrs,
+    'data-i18n': keyPath,
+    'data-i18n-fallback': fallback || getLocaleText(keyPath, ''),
+  })
 
   const getLocalsData = (siteLocals) => siteLocals?.data || hexo.locals.get('data') || {}
 
@@ -159,15 +170,9 @@ module.exports = function createPortalRenderer(hexo) {
       .map((item) => ({ ...item, external: isExternalPath(item.url) }))
   }
 
-  const isDevelopmentEnvironment = () => getPortalBuildMode() === 'development'
-
-  // The portal is static, so Study Room links must be chosen at generation time.
-  // Local `hexo server` sessions should point at the Vite dev app, while generated
-  // builds should point at the future production mount path.
-  const getStudyRoomAppUrl = () =>
-    isDevelopmentEnvironment()
-      ? PORTAL_CONFIG.STUDY_ROOM_DEV_URL
-      : PORTAL_CONFIG.STUDY_ROOM_PROD_URL
+  // The portal now links to the shared mounted Study Room path directly so the
+  // public integration contract is stable across local previews and production.
+  const getStudyRoomAppUrl = () => PORTAL_CONFIG.STUDY_ROOM_APP_URL
 
   const renderSocialLinks = (links = []) => {
     if (!links.length) {
@@ -204,13 +209,19 @@ module.exports = function createPortalRenderer(hexo) {
 
   const renderContactMeta = (contact = {}) => {
     const items = []
+    const emailLabel = getLocaleText('brand.contactEmailLabel', 'Email')
+    const locationLabel = getLocaleText('brand.contactLocationLabel', 'Location')
 
     if (contact.email) {
       items.push(
         renderTag(
           'li',
           {},
-          `${renderTag('strong', {}, 'Email:')} ${escapeHtml(contact.email)}`
+          `${renderTag(
+            'strong',
+            withI18nAttr({}, 'brand.contactEmailLabel', emailLabel),
+            `${escapeHtml(emailLabel)}:`
+          )} ${escapeHtml(contact.email)}`
         )
       )
     }
@@ -220,7 +231,11 @@ module.exports = function createPortalRenderer(hexo) {
         renderTag(
           'li',
           {},
-          `${renderTag('strong', {}, 'Location:')} ${escapeHtml(contact.location)}`
+          `${renderTag(
+            'strong',
+            withI18nAttr({}, 'brand.contactLocationLabel', locationLabel),
+            `${escapeHtml(locationLabel)}:`
+          )} ${escapeHtml(contact.location)}`
         )
       )
     }
@@ -308,7 +323,7 @@ module.exports = function createPortalRenderer(hexo) {
     )
     const subtitle = fallbackText(
       profile.subtitle,
-      PORTAL_CONFIG.DEFAULT_DESCRIPTION
+      getLocaleText('brand.portalTagline', PORTAL_CONFIG.DEFAULT_DESCRIPTION)
     )
     const shortIntro = fallbackText(
       profile.intro?.short,
@@ -336,7 +351,11 @@ module.exports = function createPortalRenderer(hexo) {
           'h1',
           { class: 'portal-title' },
           escapeHtml(ownerName)
-        )}${renderTag('p', { class: 'portal-subtitle' }, escapeHtml(subtitle))}${renderTag(
+        )}${renderTag(
+          'p',
+          withI18nAttr({ class: 'portal-subtitle' }, 'brand.portalTagline', subtitle),
+          escapeHtml(subtitle)
+        )}${renderTag(
           'p',
           { class: 'portal-lead' },
           escapeHtml(shortIntro)
@@ -363,35 +382,81 @@ module.exports = function createPortalRenderer(hexo) {
         { class: 'portal-section-heading' },
         `${renderTag(
           'h2',
-          {},
-          escapeHtml(fallbackText(shortcuts.title, fallbackText(home.shortcuts_title, 'Quick Entry')))
+          withI18nAttr(
+            {},
+            'portal.home.shortcutsTitle',
+            fallbackText(shortcuts.title, fallbackText(home.shortcuts_title, 'Quick Entry'))
+          ),
+          escapeHtml(
+            fallbackText(
+              shortcuts.title,
+              fallbackText(
+                home.shortcuts_title,
+                getLocaleText('portal.home.shortcutsTitle', 'Quick Entry')
+              )
+            )
+          )
         )}${
-          shortcuts.description ? renderTag('p', {}, escapeHtml(shortcuts.description)) : ''
+          shortcuts.description
+            ? renderTag(
+                'p',
+                withI18nAttr(
+                  {},
+                  'portal.home.shortcutsDescription',
+                  shortcuts.description
+                ),
+                escapeHtml(shortcuts.description)
+              )
+            : ''
         }`
       )}${renderTag(
         'div',
         { class: 'portal-card-grid portal-card-grid--shortcuts' },
         shortcutItems
-          .map((item) =>
-            renderTag(
+          .map((item) => {
+            const shortcutKey =
+              item.path === '/blog/'
+                ? 'blog'
+                : item.path === '/portfolio/'
+                  ? 'portfolio'
+                  : item.path === studyRoomAppPath
+                    ? 'studyRoom'
+                    : item.path === '/contact/'
+                      ? 'contact'
+                      : null
+
+            return renderTag(
               'a',
               {
                 class: 'portal-card portal-shortcut-card',
                 href: resolveHref(item.path, item.external),
+                'data-portal-shortcut-path': item.path,
                 target: isExternalPath(item.path, item.external) ? '_blank' : null,
                 rel: isExternalPath(item.path, item.external) ? 'noopener noreferrer' : null,
               },
               `${item.icon ? renderTag('i', { class: item.icon }, '') : ''}${renderTag(
                 'h3',
-                { class: 'portal-card__title' },
+                shortcutKey
+                  ? withI18nAttr(
+                      { class: 'portal-card__title' },
+                      `portal.shortcuts.${shortcutKey}.label`,
+                      fallbackText(item.label, PORTAL_CONFIG.DEFAULT_TITLE)
+                    )
+                  : { class: 'portal-card__title' },
                 escapeHtml(fallbackText(item.label, PORTAL_CONFIG.DEFAULT_TITLE))
               )}${renderTag(
                 'p',
-                { class: 'portal-card__copy' },
+                shortcutKey
+                  ? withI18nAttr(
+                      { class: 'portal-card__copy' },
+                      `portal.shortcuts.${shortcutKey}.description`,
+                      fallbackText(item.description, PORTAL_CONFIG.DEFAULT_DESCRIPTION)
+                    )
+                  : { class: 'portal-card__copy' },
                 escapeHtml(fallbackText(item.description, PORTAL_CONFIG.DEFAULT_DESCRIPTION))
               )}`
             )
-          )
+          })
           .join('')
       )}`
     )
@@ -408,9 +473,26 @@ module.exports = function createPortalRenderer(hexo) {
         { class: 'portal-section-heading' },
         `${renderTag(
           'h2',
-          {},
+          withI18nAttr(
+            {},
+            'portal.home.recentPostsTitle',
+            fallbackText(home.recent_posts_title, 'Recent Writing')
+          ),
           escapeHtml(fallbackText(home.recent_posts_title, 'Recent Writing'))
-        )}${renderTag('p', {}, 'Latest posts from the portal publishing surface.')}`
+        )}${renderTag(
+          'p',
+          withI18nAttr(
+            {},
+            'portal.home.recentPostsIntro',
+            'Latest posts from the portal publishing surface.'
+          ),
+          escapeHtml(
+            getLocaleText(
+              'portal.home.recentPostsIntro',
+              'Latest posts from the portal publishing surface.'
+            )
+          )
+        )}`
       )}${
         recentPosts.length
           ? renderTag(
@@ -488,7 +570,17 @@ module.exports = function createPortalRenderer(hexo) {
         { class: 'portal-section-heading' },
         `${renderTag(
           'h2',
-          {},
+          withI18nAttr(
+            {},
+            'portal.home.portfolioPreviewTitle',
+            fallbackText(
+              portfolioSection.home_preview_title,
+              fallbackText(
+                home.portfolio_preview_title,
+                fallbackText(portfolioSection.title, 'Project Preview')
+              )
+            )
+          ),
           escapeHtml(
             fallbackText(
               portfolioSection.home_preview_title,
@@ -534,12 +626,25 @@ module.exports = function createPortalRenderer(hexo) {
         { class: 'portal-section-heading' },
         `${renderTag(
           'h2',
-          {},
+          withI18nAttr(
+            {},
+            'portal.home.footerTitle',
+            fallbackText(home.footer_title, 'Connect')
+          ),
           escapeHtml(fallbackText(home.footer_title, 'Connect'))
         )}${renderTag(
           'p',
-          {},
-          'Keep the public portal and social placeholders easy to update from data files.'
+          withI18nAttr(
+            {},
+            'portal.home.footerIntro',
+            'Keep the public portal and shared profile details easy to update from one place.'
+          ),
+          escapeHtml(
+            getLocaleText(
+              'portal.home.footerIntro',
+              'Keep the public portal and shared profile details easy to update from one place.'
+            )
+          )
         )}`
       )}${renderTag(
         'div',
@@ -547,13 +652,21 @@ module.exports = function createPortalRenderer(hexo) {
         `${renderTag(
           'div',
           { class: 'portal-card' },
-          `${renderTag('h3', { class: 'portal-card__title' }, 'Social Links')}${renderSocialLinks(
+          `${renderTag(
+            'h3',
+            withI18nAttr({ class: 'portal-card__title' }, 'portal.footer.socialLinks', 'Social Links'),
+            escapeHtml(getLocaleText('portal.footer.socialLinks', 'Social Links'))
+          )}${renderSocialLinks(
             fallbackArray(profile.social_links)
           )}`
         )}${renderTag(
           'div',
           { class: 'portal-card' },
-          `${renderTag('h3', { class: 'portal-card__title' }, 'Contact')}${renderContactMeta(
+          `${renderTag(
+            'h3',
+            withI18nAttr({ class: 'portal-card__title' }, 'portal.footer.contact', 'Contact'),
+            escapeHtml(getLocaleText('portal.footer.contact', 'Contact'))
+          )}${renderContactMeta(
             profile.contact || {}
           )}${renderTag(
             'p',
@@ -597,7 +710,11 @@ module.exports = function createPortalRenderer(hexo) {
       : renderTag(
           'div',
           { class: 'portal-empty-state' },
-          renderTag('p', {}, 'No portfolio cards configured yet.')
+          renderTag(
+            'p',
+            withI18nAttr({}, 'portal.portfolio.empty', 'No portfolio cards configured yet.'),
+            escapeHtml(getLocaleText('portal.portfolio.empty', 'No portfolio cards configured yet.'))
+          )
         )
 
     return renderTag(
@@ -611,7 +728,11 @@ module.exports = function createPortalRenderer(hexo) {
           { class: 'portal-section-heading' },
           `${renderTag(
             'h1',
-            {},
+            withI18nAttr(
+              {},
+              'portal.portfolio.title',
+              fallbackText(section.title, 'Portfolio')
+            ),
             escapeHtml(fallbackText(section.title, 'Portfolio'))
           )}${renderTag(
             'p',
@@ -660,7 +781,13 @@ module.exports = function createPortalRenderer(hexo) {
       : renderTag(
           'div',
           { class: 'portal-empty-state' },
-          renderTag('p', {}, 'No experience entries configured yet.')
+          renderTag(
+            'p',
+            withI18nAttr({}, 'portal.about.emptyExperience', 'No experience entries configured yet.'),
+            escapeHtml(
+              getLocaleText('portal.about.emptyExperience', 'No experience entries configured yet.')
+            )
+          )
         )
 
     return renderTag(
@@ -674,7 +801,11 @@ module.exports = function createPortalRenderer(hexo) {
           { class: 'portal-section-heading' },
           `${renderTag(
             'h1',
-            {},
+            withI18nAttr(
+              {},
+              'portal.about.title',
+              fallbackText(about.intro_title, 'About Me')
+            ),
             escapeHtml(fallbackText(about.intro_title, 'About Me'))
           )}${renderTag(
             'p',
@@ -700,12 +831,25 @@ module.exports = function createPortalRenderer(hexo) {
           { class: 'portal-section-heading' },
           `${renderTag(
             'h2',
-            {},
+            withI18nAttr(
+              {},
+              'portal.about.skillsTitle',
+              fallbackText(about.skills_title, 'Skills')
+            ),
             escapeHtml(fallbackText(about.skills_title, 'Skills'))
           )}${renderTag(
             'p',
-            {},
-            'Placeholder structure prepared for future refinement through data editing.'
+            withI18nAttr(
+              {},
+              'portal.about.skillsIntro',
+              'Placeholder structure prepared for future refinement through data editing.'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.about.skillsIntro',
+                'Placeholder structure prepared for future refinement through data editing.'
+              )
+            )
           )}`
         )}${
           skills.length
@@ -717,7 +861,11 @@ module.exports = function createPortalRenderer(hexo) {
             : renderTag(
                 'div',
                 { class: 'portal-empty-state' },
-                renderTag('p', {}, 'No skills configured yet.')
+                renderTag(
+                  'p',
+                  withI18nAttr({}, 'portal.about.emptySkills', 'No skills configured yet.'),
+                  escapeHtml(getLocaleText('portal.about.emptySkills', 'No skills configured yet.'))
+                )
               )
         }`
       )}${renderTag(
@@ -728,12 +876,25 @@ module.exports = function createPortalRenderer(hexo) {
           { class: 'portal-section-heading' },
           `${renderTag(
             'h2',
-            {},
+            withI18nAttr(
+              {},
+              'portal.about.experienceTitle',
+              fallbackText(about.experience_title, 'Experience')
+            ),
             escapeHtml(fallbackText(about.experience_title, 'Experience'))
           )}${renderTag(
             'p',
-            {},
-            'Placeholder experience timeline seeded from site_profile.yml.'
+            withI18nAttr(
+              {},
+              'portal.about.experienceIntro',
+              'Placeholder experience timeline seeded from site_profile.yml.'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.about.experienceIntro',
+                'Placeholder experience timeline seeded from site_profile.yml.'
+              )
+            )
           )}`
         )}${experienceBody}`
       )}`
@@ -755,7 +916,11 @@ module.exports = function createPortalRenderer(hexo) {
       : renderTag(
           'div',
           { class: 'portal-empty-state' },
-          renderTag('p', {}, 'No Study Room features configured yet.')
+          renderTag(
+            'p',
+            withI18nAttr({}, 'portal.studyRoom.empty', 'No Study Room features configured yet.'),
+            escapeHtml(getLocaleText('portal.studyRoom.empty', 'No Study Room features configured yet.'))
+          )
         )
 
     return renderTag(
@@ -769,11 +934,19 @@ module.exports = function createPortalRenderer(hexo) {
           { class: 'portal-section-heading' },
           `${renderTag(
             'h1',
-            {},
+            withI18nAttr(
+              {},
+              'portal.studyRoom.title',
+              fallbackText(studyRoom.title, 'Study Room')
+            ),
             escapeHtml(fallbackText(studyRoom.title, 'Study Room'))
           )}${renderTag(
             'p',
-            {},
+            withI18nAttr(
+              {},
+              'brand.studyRoomShortDescription',
+              fallbackText(studyRoom.summary, PORTAL_CONFIG.DEFAULT_DESCRIPTION)
+            ),
             escapeHtml(fallbackText(studyRoom.summary, PORTAL_CONFIG.DEFAULT_DESCRIPTION))
           )}`
         )}${renderTag(
@@ -792,17 +965,33 @@ module.exports = function createPortalRenderer(hexo) {
             {
               class: 'portal-button portal-button--primary',
               href: resolveHref(appUrl, isExternalPath(appUrl)),
+              'data-study-room-entry': appUrl,
               target: isExternalPath(appUrl) ? '_blank' : null,
               rel: isExternalPath(appUrl) ? 'noopener noreferrer' : null,
             },
-            escapeHtml(fallbackText(studyRoom.cta_label, 'Enter Study Room'))
+            escapeHtml(
+              fallbackText(
+                studyRoom.cta_label,
+                getLocaleText('portal.studyRoom.ctaLabel', 'Enter Study Room')
+              )
+            )
           )}${renderTag(
             'p',
-            { class: 'portal-card__copy' },
-            escapeHtml(
+            withI18nAttr(
+              { class: 'portal-card__copy' },
+              'portal.studyRoom.ctaNote',
               fallbackText(
                 studyRoom.cta_note,
                 'The standalone Study Room app is not connected yet.'
+              )
+            ),
+            escapeHtml(
+              fallbackText(
+                studyRoom.cta_note,
+                getLocaleText(
+                  'portal.studyRoom.ctaNote',
+                  'The standalone Study Room app is not connected yet.'
+                )
               )
             )
           )}`
@@ -813,12 +1002,302 @@ module.exports = function createPortalRenderer(hexo) {
         `${renderTag(
           'div',
           { class: 'portal-section-heading' },
-          `${renderTag('h2', {}, 'Planned Features')}${renderTag(
+          `${renderTag(
+            'h2',
+            withI18nAttr({}, 'portal.studyRoom.featuresTitle', 'Planned Features'),
+            escapeHtml(getLocaleText('portal.studyRoom.featuresTitle', 'Planned Features'))
+          )}${renderTag(
             'p',
-            {},
-            'The dedicated application will expand beyond the portal when the separate Study Room app is integrated.'
+            withI18nAttr(
+              {},
+              'portal.studyRoom.featuresIntro',
+              'The dedicated application will expand beyond the portal when the separate Study Room app is integrated.'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.studyRoom.featuresIntro',
+                'The dedicated application will expand beyond the portal when the separate Study Room app is integrated.'
+              )
+            )
           )}`
         )}${features}`
+      )}`
+    )
+  }
+
+  const renderContact = ({ siteLocals } = {}) => {
+    const { profile } = getPortalData(siteLocals)
+    const contact = profile.contact || {}
+
+    return renderTag(
+      'div',
+      { class: 'portal-page portal-contact' },
+      `${renderTag(
+        'section',
+        { class: 'portal-section' },
+        `${renderTag(
+          'div',
+          { class: 'portal-section-heading' },
+          renderTag(
+            'h1',
+            withI18nAttr({}, 'portal.contact.title', 'Contact'),
+            escapeHtml(getLocaleText('portal.contact.title', 'Contact'))
+          )
+        )}${renderTag(
+          'div',
+          { class: 'portal-card portal-copy-card' },
+          `${renderTag(
+            'h2',
+            withI18nAttr({}, 'portal.contact.channelsTitle', 'Contact Channels'),
+            escapeHtml(getLocaleText('portal.contact.channelsTitle', 'Contact Channels'))
+          )}${renderTag(
+            'ul',
+            { class: 'portal-meta-list' },
+            `${renderTag(
+              'li',
+              {},
+              `${renderTag(
+                'strong',
+                withI18nAttr({}, 'portal.contact.emailLabel', 'Email'),
+                `${escapeHtml(getLocaleText('portal.contact.emailLabel', 'Email'))}:`
+              )} ${escapeHtml(contact.email || '')}`
+            )}${renderTag(
+              'li',
+              {},
+              `${renderTag(
+                'strong',
+                withI18nAttr({}, 'brand.contactLocationLabel', 'Location'),
+                `${escapeHtml(getLocaleText('brand.contactLocationLabel', 'Location'))}:`
+              )} ${escapeHtml(contact.location || '')}`
+            )}${renderTag(
+              'li',
+              {},
+              `${renderTag(
+                'strong',
+                withI18nAttr({}, 'portal.contact.bestForLabel', 'Best for'),
+                `${escapeHtml(getLocaleText('portal.contact.bestForLabel', 'Best for'))}:`
+              )} ${escapeHtml(contact.availability_note || PORTAL_CONFIG.DEFAULT_DESCRIPTION)}`
+            )}`
+          )}`
+        )}`
+      )}${renderTag(
+        'section',
+        { class: 'portal-section' },
+        `${renderTag(
+          'div',
+          { class: 'portal-section-heading' },
+          `${renderTag(
+            'h2',
+            withI18nAttr({}, 'portal.contact.messageChecklistTitle', 'What To Include In Your Message'),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.messageChecklistTitle',
+                'What To Include In Your Message'
+              )
+            )
+          )}${renderTag(
+            'p',
+            withI18nAttr(
+              {},
+              'portal.contact.messageChecklistIntro',
+              'The clearest messages usually include:'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.messageChecklistIntro',
+                'The clearest messages usually include:'
+              )
+            )
+          )}`
+        )}${renderTag(
+          'ol',
+          { class: 'portal-meta-list' },
+          `${renderTag(
+            'li',
+            withI18nAttr({}, 'portal.contact.checklist.who', 'who you are'),
+            escapeHtml(getLocaleText('portal.contact.checklist.who', 'who you are'))
+          )}${renderTag(
+            'li',
+            withI18nAttr({}, 'portal.contact.checklist.topic', 'what you are reaching out about'),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.checklist.topic',
+                'what you are reaching out about'
+              )
+            )
+          )}${renderTag(
+            'li',
+            withI18nAttr({}, 'portal.contact.checklist.context', 'useful links or context'),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.checklist.context',
+                'useful links or context'
+              )
+            )
+          )}${renderTag(
+            'li',
+            withI18nAttr({}, 'portal.contact.checklist.reply', 'how you would like me to reply'),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.checklist.reply',
+                'how you would like me to reply'
+              )
+            )
+          )}`
+        )}`
+      )}${renderTag(
+        'section',
+        { class: 'portal-section' },
+        `${renderTag(
+          'div',
+          { class: 'portal-section-heading' },
+          renderTag(
+            'h2',
+            withI18nAttr({}, 'portal.contact.formTitle', 'Contact Form'),
+            escapeHtml(getLocaleText('portal.contact.formTitle', 'Contact Form'))
+          )
+        )}${renderTag(
+          'div',
+          { class: 'portal-card portal-copy-card' },
+          `<form action="${escapeHtml(
+            contact.formspree_endpoint || 'https://formspree.io/f/your-form-id'
+          )}" method="POST">
+            <fieldset>
+              <legend data-i18n="portal.contact.formLegend" data-i18n-fallback="${escapeHtml(
+                getLocaleText('portal.contact.formLegend', 'Send a message')
+              )}">${escapeHtml(getLocaleText('portal.contact.formLegend', 'Send a message'))}</legend>
+              ${renderVoidTag('input', {
+                type: 'hidden',
+                name: '_subject',
+                value: 'Portal Contact Message',
+              })}
+              <p>
+                <label>
+                  <span data-i18n="portal.contact.nameLabel" data-i18n-fallback="${escapeHtml(
+                    getLocaleText('portal.contact.nameLabel', 'Name')
+                  )}">${escapeHtml(getLocaleText('portal.contact.nameLabel', 'Name'))}</span><br>
+                  ${renderVoidTag('input', {
+                    type: 'text',
+                    name: 'name',
+                    placeholder: getLocaleText('portal.contact.namePlaceholder', 'Your name'),
+                    'data-i18n-placeholder': 'portal.contact.namePlaceholder',
+                  })}
+                </label>
+              </p>
+              <p>
+                <label>
+                  <span data-i18n="portal.contact.emailLabel" data-i18n-fallback="${escapeHtml(
+                    getLocaleText('portal.contact.emailLabel', 'Email')
+                  )}">${escapeHtml(getLocaleText('portal.contact.emailLabel', 'Email'))}</span><br>
+                  ${renderVoidTag('input', {
+                    type: 'email',
+                    name: 'email',
+                    placeholder: getLocaleText('portal.contact.emailPlaceholder', 'you@example.com'),
+                    'data-i18n-placeholder': 'portal.contact.emailPlaceholder',
+                  })}
+                </label>
+              </p>
+              <p>
+                <label>
+                  <span data-i18n="portal.contact.topicLabel" data-i18n-fallback="${escapeHtml(
+                    getLocaleText('portal.contact.topicLabel', 'Topic')
+                  )}">${escapeHtml(getLocaleText('portal.contact.topicLabel', 'Topic'))}</span><br>
+                  ${renderVoidTag('input', {
+                    type: 'text',
+                    name: 'topic',
+                    placeholder: getLocaleText(
+                      'portal.contact.topicPlaceholder',
+                      'Project, collaboration, or a quick hello'
+                    ),
+                    'data-i18n-placeholder': 'portal.contact.topicPlaceholder',
+                  })}
+                </label>
+              </p>
+              <p>
+                <label>
+                  <span data-i18n="portal.contact.messageLabel" data-i18n-fallback="${escapeHtml(
+                    getLocaleText('portal.contact.messageLabel', 'Message')
+                  )}">${escapeHtml(getLocaleText('portal.contact.messageLabel', 'Message'))}</span><br>
+                  <textarea
+                    name="message"
+                    rows="6"
+                    placeholder="${escapeHtml(
+                      getLocaleText(
+                        'portal.contact.messagePlaceholder',
+                        'A short introduction and your message'
+                      )
+                    )}"
+                    data-i18n-placeholder="portal.contact.messagePlaceholder"
+                  ></textarea>
+                </label>
+              </p>
+              <p>
+                <button
+                  type="submit"
+                  data-i18n="portal.contact.sendButton"
+                  data-i18n-fallback="${escapeHtml(
+                    getLocaleText('portal.contact.sendButton', 'Send Message')
+                  )}"
+                >${escapeHtml(getLocaleText('portal.contact.sendButton', 'Send Message'))}</button>
+              </p>
+            </fieldset>
+          </form>`
+        )}`
+      )}${renderTag(
+        'section',
+        { class: 'portal-section' },
+        `${renderTag(
+          'div',
+          { class: 'portal-section-heading' },
+          renderTag(
+            'h2',
+            withI18nAttr({}, 'portal.contact.notesTitle', 'Notes'),
+            escapeHtml(getLocaleText('portal.contact.notesTitle', 'Notes'))
+          )
+        )}${renderTag(
+          'ul',
+          { class: 'portal-meta-list portal-card' },
+          `${renderTag(
+            'li',
+            withI18nAttr(
+              { class: 'portal-card__copy' },
+              'portal.contact.notes.formspreeReady',
+              'This form structure is ready for Formspree-style submission once the final endpoint is added.'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.notes.formspreeReady',
+                'This form structure is ready for Formspree-style submission once the final endpoint is added.'
+              )
+            )
+          )}${renderTag(
+            'li',
+            withI18nAttr(
+              { class: 'portal-card__copy' },
+              'portal.contact.notes.placeholderEndpoint',
+              'The endpoint is still a placeholder and must be replaced before public launch.'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.notes.placeholderEndpoint',
+                'The endpoint is still a placeholder and must be replaced before public launch.'
+              )
+            )
+          )}${renderTag(
+            'li',
+            withI18nAttr(
+              { class: 'portal-card__copy' },
+              'portal.contact.notes.futureBackend',
+              'In the long term, this flow may move behind the self-hosted backend service instead of staying on Formspree.'
+            ),
+            escapeHtml(
+              getLocaleText(
+                'portal.contact.notes.futureBackend',
+                'In the long term, this flow may move behind the self-hosted backend service instead of staying on Formspree.'
+              )
+            )
+          )}`
+        )}`
       )}`
     )
   }
@@ -834,5 +1313,6 @@ module.exports = function createPortalRenderer(hexo) {
     renderPortfolio,
     renderAbout,
     renderStudyRoom,
+    renderContact,
   }
 }

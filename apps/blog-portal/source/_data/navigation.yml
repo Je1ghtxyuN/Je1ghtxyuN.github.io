@@ -19,7 +19,7 @@ items:
     path: /study-room/
     icon: fas fa-book-open
     external: false
-    note: Temporary portal landing page. This path may later become a redirect or entry gateway for the standalone Study Room application.
+    note: Portal-level introduction and handoff page for the standalone Study Room application mounted at /study-app/.
   - label: Contact
     path: /contact/
     icon: fas fa-envelope
@@ -30,7 +30,7 @@ items:
     external: false
 home_shortcuts:
   title: Explore The Portal
-  description: Fast paths into writing, project showcases, the future Study Room, and contact entry.
+  description: Fast paths into writing, project showcases, the integrated Study Room, and contact entry.
   items:
     - label: Blog
       path: /blog/
@@ -43,10 +43,10 @@ home_shortcuts:
       external: false
       description: Browse project cards and long-term case study seeds.
     - label: Study Room
-      path: /study-room/
+      path: /study-app/
       icon: fas fa-book-open
       external: false
-      description: Preview the future standalone study experience.
+      description: Enter the integrated flagship focus application directly.
     - label: Contact
       path: /contact/
       icon: fas fa-envelope

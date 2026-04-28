@@ -1,6 +1,8 @@
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useAmbientMusicController } from './useAmbientMusicController.js'
 
 export function AmbientMusicPanel() {
+  const { t } = useStudyRoomLocale()
   const {
     musicSourceLabel,
     tracks,
@@ -15,20 +17,40 @@ export function AmbientMusicPanel() {
     previousTrack,
     setVolume,
   } = useAmbientMusicController()
+  const currentTrackTitle = t(
+    `studyRoom.music.tracks.${currentTrack.id}.title`,
+    {},
+    currentTrack.title,
+  )
+  const currentTrackNote = t(
+    `studyRoom.music.tracks.${currentTrack.id}.note`,
+    {},
+    currentTrack.note,
+  )
 
   return (
     <section className="floating-widget music-widget">
       <div className="floating-widget__header">
         <div>
-          <p className="floating-widget__eyebrow">Ambient Music</p>
-          <h2 className="floating-widget__title">{currentTrack.title}</h2>
+          <p className="floating-widget__eyebrow">
+            {t('studyRoom.music.eyebrow', {}, 'Ambient Music')}
+          </p>
+          <h2 className="floating-widget__title">{currentTrackTitle}</h2>
           <p className="floating-widget__meta">{musicSourceLabel}</p>
         </div>
-        <span className="floating-widget__badge">{playbackState}</span>
+        <span className="floating-widget__badge">
+          {t(
+            `studyRoom.music.playback.${playbackState}`,
+            {},
+            playbackState,
+          )}
+        </span>
       </div>
 
       <div className="field">
-        <label htmlFor="track-select">Track</label>
+        <label htmlFor="track-select">
+          {t('common.track', {}, 'Track')}
+        </label>
         <select
           id="track-select"
           className="select"
@@ -37,7 +59,7 @@ export function AmbientMusicPanel() {
         >
           {tracks.map((track) => (
             <option key={track.id} value={track.id}>
-              {track.title}
+              {t(`studyRoom.music.tracks.${track.id}.title`, {}, track.title)}
             </option>
           ))}
         </select>
@@ -49,7 +71,7 @@ export function AmbientMusicPanel() {
           className="button button--ghost"
           onClick={previousTrack}
         >
-          Previous
+          {t('common.previous', {}, 'Previous')}
         </button>
         <button
           type="button"
@@ -57,19 +79,23 @@ export function AmbientMusicPanel() {
           onClick={togglePlayback}
           disabled={!soundEnabled}
         >
-          {playbackState === 'playing' ? 'Pause' : 'Play'}
+          {playbackState === 'playing'
+            ? t('common.pause', {}, 'Pause')
+            : t('common.play', {}, 'Play')}
         </button>
         <button
           type="button"
           className="button button--ghost"
           onClick={nextTrack}
         >
-          Next
+          {t('common.next', {}, 'Next')}
         </button>
       </div>
 
       <div className="field">
-        <label htmlFor="music-volume">Volume</label>
+        <label htmlFor="music-volume">
+          {t('common.volume', {}, 'Volume')}
+        </label>
         <input
           id="music-volume"
           className="feature-card__slider"
@@ -82,7 +108,7 @@ export function AmbientMusicPanel() {
         />
       </div>
 
-      <p className="floating-widget__meta">{currentTrack.note}</p>
+      <p className="floating-widget__meta">{currentTrackNote}</p>
       {playbackError ? (
         <p className="floating-widget__hint">{playbackError}</p>
       ) : null}

@@ -141,6 +141,7 @@ function createSceneDefinition(scene) {
 export const STUDY_SCENES = Object.freeze([
   createSceneDefinition({
     id: 'coastal-cafe',
+    localeKey: 'coastalCafe',
     name: 'Coastal Cafe',
     label: 'Coastal Cafe',
     description:
@@ -177,6 +178,7 @@ export const STUDY_SCENES = Object.freeze([
   }),
   createSceneDefinition({
     id: 'retro-desk',
+    localeKey: 'retroDesk',
     name: 'Retro Desk',
     label: 'Retro Desk',
     description:
@@ -215,6 +217,7 @@ export const STUDY_SCENES = Object.freeze([
   }),
   createSceneDefinition({
     id: 'aquarium-room',
+    localeKey: 'aquariumRoom',
     name: 'Aquarium Room',
     label: 'Aquarium Room',
     description:

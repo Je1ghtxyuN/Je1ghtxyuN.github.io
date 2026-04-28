@@ -5,6 +5,7 @@ import { AmbientMusicPanel } from '../../features/ambient-music/index.js'
 import { StudyStatisticsPanel } from '../../features/study-statistics/index.js'
 import { TimerPanel } from '../../features/timer/index.js'
 import { TodoPanel } from '../../features/todo/index.js'
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { getStudyScene } from '../../lib/studyScene.js'
 import { StudyLayout } from '../../layouts/StudyLayout.jsx'
 import {
@@ -12,37 +13,53 @@ import {
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
 
-const PANEL_DEFINITIONS = {
-  todo: {
-    title: 'Todo Panel',
-    description: 'Small task capture stays available as an overlay instead of permanently occupying the layout.',
-    render: () => <TodoPanel />,
-  },
-  music: {
-    title: 'Music Panel',
-    description: 'Ambient playback remains available without crowding the main focus scene.',
-    render: () => <AmbientMusicPanel />,
-  },
-  statistics: {
-    title: 'Statistics Panel',
-    description: 'Session counters and future progress views now live in a dedicated overlay surface.',
-    render: () => <StudyStatisticsPanel />,
-  },
-  settings: {
-    title: 'Settings Panel',
-    description: 'Timer configuration and shared preferences open as a floating panel instead of a separate dashboard route.',
-    render: () => <SettingsPanelContent />,
-  },
-}
-
 export function StudyPage() {
   const { preferences, timer, ui } = useStudyRoomState()
   const { closePanel, enterFocusMode, enterIdleMode, openPanel } =
     useStudyRoomActions()
+  const { t } = useStudyRoomLocale()
   const displayMode = ui.mode === 'panel' ? ui.previousMode : ui.mode
   const activeScene = getStudyScene(preferences.selectedSceneId)
+  const panelDefinitions = {
+    todo: {
+      title: t('studyRoom.panels.todo.title', {}, 'Todo Panel'),
+      description: t(
+        'studyRoom.panels.todo.description',
+        {},
+        'Small task capture stays available as an overlay instead of permanently occupying the layout.',
+      ),
+      render: () => <TodoPanel />,
+    },
+    music: {
+      title: t('studyRoom.panels.music.title', {}, 'Music Panel'),
+      description: t(
+        'studyRoom.panels.music.description',
+        {},
+        'Ambient playback remains available without crowding the main focus scene.',
+      ),
+      render: () => <AmbientMusicPanel />,
+    },
+    statistics: {
+      title: t('studyRoom.panels.statistics.title', {}, 'Statistics Panel'),
+      description: t(
+        'studyRoom.panels.statistics.description',
+        {},
+        'Session counters and future progress views now live in a dedicated overlay surface.',
+      ),
+      render: () => <StudyStatisticsPanel />,
+    },
+    settings: {
+      title: t('studyRoom.panels.settings.title', {}, 'Settings Panel'),
+      description: t(
+        'studyRoom.panels.settings.description',
+        {},
+        'Timer configuration and shared preferences open as a floating panel instead of a separate dashboard route.',
+      ),
+      render: () => <SettingsPanelContent />,
+    },
+  }
   const activePanelDefinition = ui.activePanel
-    ? PANEL_DEFINITIONS[ui.activePanel]
+    ? panelDefinitions[ui.activePanel]
     : null
   const handleOpenPanel = (panel) => {
     if (ui.mode === 'panel' && ui.activePanel === panel) {
@@ -68,7 +85,11 @@ export function StudyPage() {
         center={
           <TimerPanel
             mode={displayMode}
-            sceneLabel={activeScene.label}
+            sceneLabel={t(
+              `studyRoom.scenes.${activeScene.localeKey}.name`,
+              {},
+              activeScene.label,
+            )}
             timerDisplayMode={preferences.timerDisplayMode}
             timerStatus={timer.status}
             onEnterFocus={enterFocusMode}

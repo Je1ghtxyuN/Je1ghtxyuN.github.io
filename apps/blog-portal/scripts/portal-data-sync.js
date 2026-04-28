@@ -1,8 +1,39 @@
+const {
+  defaultLocale,
+  getDefaultLocaleText,
+  localeBasePath,
+  siteIdentity,
+  supportedLocales,
+} = require('./portal-shared-config')
+
 hexo.extend.filter.register('before_generate', () => {
   const data = hexo.locals.get('data') || {}
   const profile = data.site_profile || {}
   const navigation = data.navigation || {}
   const themeConfig = hexo.theme.config || {}
+  const studyRoomLandingPath =
+    siteIdentity.routes?.studyRoomLandingPath || '/study-room/'
+  const portalI18nConfig = JSON.stringify({
+    defaultLocale,
+    storageKey: 'site-locale',
+    localeBasePath,
+    supportedLocales,
+    navMap: {
+      '/': 'portal.nav.home',
+      '/archives/': 'portal.nav.archives',
+      '/categories/': 'portal.nav.categories',
+      '/portfolio/': 'portal.nav.portfolio',
+      [studyRoomLandingPath]: 'portal.nav.studyRoom',
+      '/contact/': 'portal.nav.contact',
+      '/about/': 'portal.nav.about',
+    },
+  })
+
+  const ensureInjectEntry = (entries = [], nextEntry) => {
+    const filteredEntries = entries.filter((entry) => entry !== nextEntry)
+    filteredEntries.push(nextEntry)
+    return filteredEntries
+  }
 
   if (profile.owner && profile.owner.display_name) {
     hexo.config.author = profile.owner.display_name
@@ -17,6 +48,9 @@ hexo.extend.filter.register('before_generate', () => {
   themeConfig.footer = themeConfig.footer || {}
   themeConfig.footer.owner = themeConfig.footer.owner || {}
   themeConfig.subtitle = themeConfig.subtitle || {}
+  themeConfig.inject = themeConfig.inject || {}
+  themeConfig.search = themeConfig.search || {}
+  themeConfig.search.local_search = themeConfig.search.local_search || {}
 
   if (profile.icon_path) {
     themeConfig.favicon = profile.icon_path
@@ -64,6 +98,30 @@ hexo.extend.filter.register('before_generate', () => {
     })
     themeConfig.social = syncedSocial
   }
+
+  themeConfig.search.placeholder = getDefaultLocaleText(
+    'portal.searchPlaceholder',
+    themeConfig.search.placeholder || 'Search articles, pages, and project notes...',
+  )
+
+  const headInject = Array.isArray(themeConfig.inject.head)
+    ? themeConfig.inject.head.slice()
+    : []
+  const bottomInject = Array.isArray(themeConfig.inject.bottom)
+    ? themeConfig.inject.bottom.slice()
+    : []
+
+  themeConfig.inject.head = ensureInjectEntry(
+    headInject,
+    '<link rel="stylesheet" href="/css/portal-custom.css">',
+  )
+  themeConfig.inject.bottom = ensureInjectEntry(
+    ensureInjectEntry(
+      bottomInject,
+      `<script id="portal-i18n-config" type="application/json">${portalI18nConfig}</script>`,
+    ),
+    '<script src="/js/portal-i18n.js" defer></script>',
+  )
 
   hexo.theme.config = themeConfig
 })

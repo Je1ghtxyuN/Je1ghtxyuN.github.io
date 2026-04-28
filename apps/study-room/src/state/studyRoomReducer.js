@@ -1,4 +1,8 @@
 import { DEFAULT_SCENE_ID } from '../lib/studyScene.js'
+import {
+  DEFAULT_LOCALE,
+  normalizeLocale,
+} from '../i18n/config.js'
 
 export const TIMER_SESSION_TYPES = Object.freeze({
   work: 'work',
@@ -21,6 +25,7 @@ const DEFAULT_DURATIONS_MINUTES = Object.freeze({
 const DEFAULT_LONG_BREAK_INTERVAL = 4
 
 const DEFAULT_PREFERENCES = Object.freeze({
+  locale: DEFAULT_LOCALE,
   soundEnabled: true,
   selectedTrackId: 'deep-focus-placeholder',
   selectedSceneId: DEFAULT_SCENE_ID,
@@ -92,6 +97,7 @@ const normalizeTimerConfiguration = (timerConfig = {}) => {
 }
 
 const normalizePreferences = (preferences = {}) => ({
+  locale: normalizeLocale(preferences.locale),
   soundEnabled:
     typeof preferences.soundEnabled === 'boolean'
       ? preferences.soundEnabled
@@ -288,6 +294,8 @@ export function studyRoomReducer(state, action) {
           [action.key]:
             action.key === 'volume'
               ? clampVolume(action.value)
+              : action.key === 'locale'
+                ? normalizeLocale(action.value)
               : action.value,
         },
       }

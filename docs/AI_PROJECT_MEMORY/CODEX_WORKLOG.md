@@ -518,6 +518,44 @@ Append new dated sessions below this line.
   - the three real local videos bundle successfully, but their current build sizes are large and will likely need later compression, streaming strategy, or alternate-quality variants for production
   - ambient music remains placeholder-only, so the Study Room still lacks final-grade audio ambience despite the new bell cue and real scene loops
 - next recommended step:
+
+### Session 2026-04-28 — Portal And Study Room Integration Verification Stabilization
+
+- objectives:
+  - finish the interrupted cross-app integration pass
+  - stabilize shared locale wiring across the Hexo portal and the Study Room
+  - verify the `/study-app/` deployment contract with clean builds for both apps
+- actions taken:
+  - completed the shared route and identity contract under `packages/shared-config/site-identity.json`
+  - completed the shared locale dictionary set under `packages/shared-assets/locales/site-ui/`
+  - finished portal-side locale bootstrap wiring through `apps/blog-portal/scripts/portal-shared-config.js`, `portal-data-sync.js`, and `source/js/portal-i18n.js`
+  - hardened `apps/blog-portal/source/_data/site_profile.yml` by converting the long Study Room text fields to YAML block scalars so Hexo config validation succeeds
+  - split the Study Room locale hook into `src/i18n/useStudyRoomLocale.js` and kept the provider isolated in `StudyRoomLocaleProvider.jsx` so React Fast Refresh and eslint stop flagging mixed exports
+  - updated Study Room locale imports across timer, panel, music, todo, statistics, auth, and shell components
+  - adjusted Study Room locale hydration so the shared `site-locale` key wins on boot, keeping portal-side language changes aligned with the app on the next load
+  - verified there are no remaining `localhost:5173` references in production-facing portal content
+  - created `docs/DEPLOYMENT_CONTRACT.md` to record the stable routing and deployment assumptions for `/`, `/study-room/`, `/study-app/`, and the future API host
+  - completed verification with successful:
+    - `apps/blog-portal`: `npm run clean && npm run build`
+    - `apps/study-room`: `npm run lint`
+    - `apps/study-room`: `npm run build`
+- files changed:
+  - updated portal integration files under `apps/blog-portal/`
+  - updated Study Room i18n files under `apps/study-room/src/i18n/`
+  - updated Study Room localized UI consumers under `apps/study-room/src/`
+  - added `docs/DEPLOYMENT_CONTRACT.md`
+  - updated `apps/blog-portal/BLOG_PORTAL_SETUP_NOTES.md`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - `/study-room/` remains the portal-owned explanatory landing page, while `/study-app/` is the standalone application mount used by production-facing CTAs
+  - shared locale selection is now stored in `site-locale` so the portal and Study Room can honor the same user language preference
+  - only shared UI surfaces are localized in this phase; article bodies remain single-source content
+- risks or blockers:
+  - the deployment contract is now documented, but real production rollout still depends on future nginx or equivalent SPA fallback configuration for `/study-app/`
+  - portal locale switching is client-side DOM translation, so any future fully static multilingual SEO strategy would need an explicit later design rather than piggybacking on this UI-layer system
+- next recommended step:
+  - run a browser-level manual QA pass for locale switching and cross-app navigation, then begin backend-phase planning so comments, contact handling, and future Study Room account sync can move behind the shared API boundary
   - optimize the bundled study-scene media and then deepen the atmosphere layer with mode-aware ambience, better scene metadata, and optional persisted last-used playback state
 
 ### Session 2026-04-28 — Study Room Productization Preferences Pass

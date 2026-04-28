@@ -1,4 +1,5 @@
 import { TIMER_DISPLAY_MODES } from '../../state/studyRoomReducer.js'
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { getSessionPresentation } from './sessionPresentation.js'
 import { useTimerController } from './useTimerController.js'
 
@@ -45,6 +46,7 @@ export function TimerPanel({
   onEnterFocus,
   onExitFocus,
 }) {
+  const { t } = useStudyRoomLocale()
   const {
     timer,
     formattedRemaining,
@@ -56,6 +58,7 @@ export function TimerPanel({
   const sessionPresentation = getSessionPresentation(
     timer.sessionType,
     timer.status,
+    t,
   )
   const focusStatusText = sessionPresentation.statusText
   const sceneMetaText = `${sceneLabel} · ${sessionPresentation.metadataTone}`
@@ -65,9 +68,17 @@ export function TimerPanel({
   const nextBreakHint =
     timer.sessionType === 'work'
       ? workSessionsUntilLongBreak === 1
-        ? 'Long Break Next'
-        : `Long Break In ${workSessionsUntilLongBreak}`
-      : 'Automatic Return To Work'
+        ? t('studyRoom.timer.longBreakNext', {}, 'Long Break Next')
+        : t(
+            'studyRoom.timer.longBreakIn',
+            { count: workSessionsUntilLongBreak },
+            `Long Break In ${workSessionsUntilLongBreak}`,
+          )
+      : t(
+          'studyRoom.timer.automaticReturn',
+          {},
+          'Automatic Return To Work',
+        )
   const displayConfig = getTimerDisplayConfig(timerDisplayMode, mode)
   const panelClassName = [
     'scene-timer',
@@ -117,7 +128,9 @@ export function TimerPanel({
             handleIdlePrimaryAction()
           }}
         >
-          {timerStatus === 'running' ? 'Resume Focus' : 'Start'}
+          {timerStatus === 'running'
+            ? t('common.resumeFocus', {}, 'Resume Focus')
+            : t('common.start', {}, 'Start')}
         </button>
       </section>
     )
@@ -152,21 +165,21 @@ export function TimerPanel({
             className={`scene-timer__chip${timer.sessionType === 'work' ? ' scene-timer__chip--active' : ''}`}
             onClick={() => setSession('work')}
           >
-            Work
+            {t('studyRoom.timer.workChip', {}, 'Work')}
           </button>
           <button
             type="button"
             className={`scene-timer__chip${timer.sessionType === 'shortBreak' ? ' scene-timer__chip--active' : ''}`}
             onClick={() => setSession('shortBreak')}
           >
-            Short Break
+            {t('studyRoom.timer.shortBreakChip', {}, 'Short Break')}
           </button>
           <button
             type="button"
             className={`scene-timer__chip${timer.sessionType === 'longBreak' ? ' scene-timer__chip--active' : ''}`}
             onClick={() => setSession('longBreak')}
           >
-            Long Break
+            {t('studyRoom.timer.longBreakChip', {}, 'Long Break')}
           </button>
         </div>
       ) : null}
@@ -177,28 +190,39 @@ export function TimerPanel({
           className="scene-timer__control scene-timer__control--primary"
           onClick={handleFocusPrimaryAction}
         >
-          {timer.status === 'running' ? 'Pause' : 'Start'}
+          {timer.status === 'running'
+            ? t('common.pause', {}, 'Pause')
+            : t('common.start', {}, 'Start')}
         </button>
         <button
           type="button"
           className="scene-timer__control"
           onClick={resetTimer}
         >
-          Reset
+          {t('common.reset', {}, 'Reset')}
         </button>
         <button
           type="button"
           className="scene-timer__control"
           onClick={onExitFocus}
         >
-          Exit
+          {t('common.exit', {}, 'Exit')}
         </button>
       </div>
 
       {displayConfig.showSecondaryStatus ? (
         <p className="scene-timer__status scene-timer__status--secondary">
-          Completed Pomodoros {timer.completedWorkCycles} · Long break every{' '}
-          {timer.longBreakInterval}
+          {t(
+            'studyRoom.timer.completedPomodoros',
+            { count: timer.completedWorkCycles },
+            `Completed Pomodoros ${timer.completedWorkCycles}`,
+          )}{' '}
+          ·{' '}
+          {t(
+            'studyRoom.timer.longBreakEvery',
+            { count: timer.longBreakInterval },
+            `Long break every ${timer.longBreakInterval}`,
+          )}
         </p>
       ) : null}
     </section>

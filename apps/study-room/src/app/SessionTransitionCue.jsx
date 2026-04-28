@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { getAutomaticTransitionCue } from '../features/timer/sessionPresentation.js'
+import { useStudyRoomLocale } from '../i18n/useStudyRoomLocale.js'
 import { useStudyRoomState } from '../state/useStudyRoom.js'
 
 const CUE_DURATION_MS = 3200
@@ -8,6 +9,7 @@ export function SessionTransitionCue() {
   const {
     timer: { lastAutoTransition },
   } = useStudyRoomState()
+  const { t } = useStudyRoomLocale()
   const [visibleTransitionId, setVisibleTransitionId] = useState(0)
   const lastHandledTransitionIdRef = useRef(0)
 
@@ -19,7 +21,7 @@ export function SessionTransitionCue() {
 
     lastHandledTransitionIdRef.current = lastAutoTransition.id
 
-    const cue = getAutomaticTransitionCue(lastAutoTransition)
+    const cue = getAutomaticTransitionCue(lastAutoTransition, t)
 
     if (!cue) return undefined
 
@@ -37,13 +39,13 @@ export function SessionTransitionCue() {
       window.clearTimeout(showTimeoutId)
       window.clearTimeout(hideTimeoutId)
     }
-  }, [lastAutoTransition])
+  }, [lastAutoTransition, t])
 
   if (!lastAutoTransition || visibleTransitionId !== lastAutoTransition.id) {
     return null
   }
 
-  const activeCue = getAutomaticTransitionCue(lastAutoTransition)
+  const activeCue = getAutomaticTransitionCue(lastAutoTransition, t)
 
   if (!activeCue) return null
 
@@ -53,7 +55,9 @@ export function SessionTransitionCue() {
       role="status"
       aria-live="polite"
     >
-      <p className="session-cue__eyebrow">Atmosphere Shift</p>
+      <p className="session-cue__eyebrow">
+        {t('studyRoom.cues.eyebrow', {}, 'Atmosphere Shift')}
+      </p>
       <p className="session-cue__title">{activeCue.title}</p>
       <p className="session-cue__subtitle">{activeCue.subtitle}</p>
     </div>

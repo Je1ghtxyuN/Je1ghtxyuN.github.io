@@ -318,6 +318,105 @@ The old top-left descriptive panel has been replaced by compact scene chrome:
 - micro launcher buttons for panels
 - a tiny brand mark instead of a large textual hero block
 
+## Shared Identity And Locale Contract
+
+The Study Room now consumes the same shared product contract as the portal instead of carrying isolated app-only copy.
+
+Shared sources:
+
+- identity and route contract: `packages/shared-config/site-identity.json`
+- shared locale dictionaries: `packages/shared-assets/locales/site-ui/*.json`
+
+Study Room locale files:
+
+- `src/i18n/config.js`
+- `src/i18n/studyRoomLocaleContext.js`
+- `src/i18n/StudyRoomLocaleProvider.jsx`
+- `src/i18n/useStudyRoomLocale.js`
+
+Behavior summary:
+
+- the default locale comes from the shared identity config
+- locale selection is stored in local state and persisted to `localStorage.site-locale`
+- the portal and Study Room therefore reuse the same user language preference
+- missing keys fall back to the default locale bundle
+
+Current translated Study Room UI includes:
+
+- chrome labels and panel titles
+- timer labels, session hints, and transition cues
+- settings labels and descriptions
+- scene names and descriptions
+- music, todo, statistics, and auth placeholder UI
+
+What is not translated in this phase:
+
+- freeform blog post bodies
+- user-authored todo content
+- backend-provided content that does not exist yet
+
+## Locale Provider Flow
+
+The locale flow is intentionally simple:
+
+- `config.js` imports the shared locale bundles and exports normalization plus translation helpers
+- `StudyRoomLocaleProvider` reads the current locale from reducer preferences
+- `useStudyRoomLocale()` exposes `locale`, `supportedLocales`, `setLocale()`, and `t()`
+- feature components call `t()` for visible UI labels instead of hardcoding strings
+
+The locale hook now lives in its own module so React Fast Refresh stays clean and eslint no longer flags mixed component and hook exports.
+
+## Shared Persistence Behavior
+
+The Study Room persists both app-specific preferences and the shared locale choice.
+
+Persisted fields now include:
+
+- `preferences.locale`
+- `preferences.selectedSceneId`
+- `preferences.soundEnabled`
+- `preferences.selectedTrackId`
+- `preferences.timerDisplayMode`
+- `preferences.volume`
+- work duration
+- short-break duration
+- long-break duration
+- `longBreakInterval`
+
+Storage behavior:
+
+- `studyRoomStorage.js` writes the Study Room snapshot to its local storage key
+- the same write also syncs `preferences.locale` into `site-locale`
+- on boot, the shared `site-locale` value overrides the stored app snapshot locale when present so the portal and Study Room stay aligned after cross-app language changes
+
+This makes language switching sticky across both apps without coupling the portal to React state.
+
+## Deployment And Route Contract
+
+The Study Room must keep these path assumptions stable:
+
+- development preview stays on the Vite dev server
+- production output is built for `/study-app/`
+- the portal-owned descriptive landing page stays at `/study-room/`
+
+The key files are:
+
+- `packages/shared-config/site-identity.json`
+- `vite.config.js`
+- portal-side CTA generation in `apps/blog-portal/scripts/portal-renderer.js`
+
+## Adding A New Language
+
+To add a new shared UI language:
+
+1. register the locale in `packages/shared-config/site-identity.json`
+2. add `packages/shared-assets/locales/site-ui/<locale>.json`
+3. import that bundle into `src/i18n/config.js`
+4. translate the visible Study Room keys
+5. keep fallback behavior intact by preserving key names
+
+The portal will discover the new locale from shared config, and the Study Room will use it once the bundle import is added.
+
 This keeps navigation available while avoiding a dashboard-like first impression.
 
 ## Timer As Scene Overlay

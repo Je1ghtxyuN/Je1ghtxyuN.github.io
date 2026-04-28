@@ -60,12 +60,17 @@ about:
       description: Exploring playable concepts, visual experiments, and small-scale systems that can later mature into documented portfolio case studies and stronger product thinking.
 study_room:
   title: Study Room
-  summary: A future standalone focus space for deep work, ambience, and low-friction productivity.
-  description: The Study Room is planned as an independent application with timer flows, ambient audio, lightweight task capture, and future statistics sync while still sharing the platform identity.
+  summary: A flagship focus application for deep work, immersive ambience, and long-session study flow.
+  description: |
+    The Study Room is now treated as a first-class product inside the platform family:
+    an independent application with scene-based focus sessions, Pomodoro guidance,
+    ambient playback, lightweight task capture, and future account-linked study data.
   cta_label: Enter Study Room
-  cta_note: During local Hexo development the button points to the Vite app on `http://localhost:5173`. Generated portal builds point to the production placeholder route `/study-app/` until deployment is finalized.
+  cta_note: |
+    The Study Room opens at `/study-app/` as a standalone experience while still
+    sharing the same brand, assets, and future backend contract as the main portal.
   features:
-    - Focus timer with long-session friendly UX
-    - Todo capture for small study goals
-    - Ambient music and mood controls
+    - Scene-first immersive focus timer
+    - Todo capture for lightweight study planning
+    - Ambient music and atmosphere controls
     - Future login and study statistics sync

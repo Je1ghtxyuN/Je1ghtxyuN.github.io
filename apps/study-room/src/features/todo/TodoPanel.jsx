@@ -1,6 +1,8 @@
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useTodoList } from './useTodoList.js'
 
 export function TodoPanel() {
+  const { t } = useStudyRoomLocale()
   const { draft, items, setDraft, addTodo, toggleTodo } = useTodoList()
 
   const handleSubmit = (event) => {
@@ -12,26 +14,38 @@ export function TodoPanel() {
     <section className="floating-widget todo-widget">
       <div className="floating-widget__header">
         <div>
-          <p className="floating-widget__eyebrow">Task Capture</p>
-          <h2 className="floating-widget__title">Current todos</h2>
+          <p className="floating-widget__eyebrow">
+            {t('studyRoom.todo.eyebrow', {}, 'Task Capture')}
+          </p>
+          <h2 className="floating-widget__title">
+            {t('studyRoom.todo.title', {}, 'Current todos')}
+          </h2>
         </div>
         <span className="floating-widget__badge">{items.length}</span>
       </div>
 
       <p className="floating-widget__copy">
-        Compact local task list for the current study session.
+        {t(
+          'studyRoom.todo.intro',
+          {},
+          'Compact local task list for the current study session.',
+        )}
       </p>
 
       <form className="widget-inline-form" onSubmit={handleSubmit}>
         <input
           className="input"
           type="text"
-          placeholder="Add a small study task"
+          placeholder={t(
+            'studyRoom.todo.inputPlaceholder',
+            {},
+            'Add a small study task',
+          )}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
         />
         <button type="submit" className="button button--ghost">
-          Add
+          {t('common.add', {}, 'Add')}
         </button>
       </form>
 
@@ -48,13 +62,17 @@ export function TodoPanel() {
                 className="button button--ghost"
                 onClick={() => toggleTodo(item.id)}
               >
-                {item.done ? 'Undo' : 'Done'}
+                {item.done
+                  ? t('common.undo', {}, 'Undo')
+                  : t('common.done', {}, 'Done')}
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="floating-widget__empty">No tasks yet.</div>
+        <div className="floating-widget__empty">
+          {t('studyRoom.todo.empty', {}, 'No tasks yet.')}
+        </div>
       )}
     </section>
   )

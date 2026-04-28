@@ -34,8 +34,8 @@ cards:
   - slug: study-room
     title: Study Room
     year: 2026
-    status: Product design and scaffold phase
-    summary: A dedicated focus environment designed around timers, ambient music, small-task capture, and a calm interface that can support long study sessions without unnecessary friction.
+    status: Integrated flagship application foundation
+    summary: A scene-first focus environment that now sits beside the portal as a true sister application, combining Pomodoro flow, immersive video ambience, compact task tools, and a future shared account/backend contract.
     cover_image: /shared-assets/images/gallery/photo5.png
     gallery:
       - /shared-assets/images/gallery/photo5.png
@@ -51,6 +51,7 @@ cards:
       - Ambient Music
       - Productivity
     links:
+      demo: /study-app/
       article: /posts/building-my-study-room/
   - slug: portfolio-content-system
     title: Portfolio Content System

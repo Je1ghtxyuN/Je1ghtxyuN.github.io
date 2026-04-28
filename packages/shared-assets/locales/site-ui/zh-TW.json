@@ -1,0 +1,316 @@
+{
+  "meta": {
+    "localeLabel": "繁體中文"
+  },
+  "brand": {
+    "name": "Je1ghtxyuN",
+    "portalTagline": "以靜態優先寫作、互動實驗與長期平台建設為核心的個人網站。",
+    "studyRoomName": "Study Room",
+    "studyRoomShortDescription": "一個圍繞番茄鐘流程、場景氛圍與低干擾學習工具打造的沉浸式專注空間。",
+    "contactEmailLabel": "電子郵件",
+    "contactLocationLabel": "位置"
+  },
+  "common": {
+    "language": "語言",
+    "local": "本地",
+    "future": "未來",
+    "close": "關閉",
+    "start": "開始",
+    "pause": "暫停",
+    "reset": "重設",
+    "exit": "離開",
+    "save": "儲存",
+    "enabled": "已開啟",
+    "muted": "靜音",
+    "play": "播放",
+    "previous": "上一首",
+    "next": "下一首",
+    "track": "曲目",
+    "volume": "音量",
+    "add": "新增",
+    "done": "完成",
+    "undo": "還原",
+    "comingSoon": "即將推出",
+    "resumeFocus": "繼續專注"
+  },
+  "portal": {
+    "languageSelectorLabel": "語言",
+    "nav": {
+      "home": "首頁",
+      "archives": "封存",
+      "categories": "分類",
+      "portfolio": "作品集",
+      "studyRoom": "Study Room",
+      "contact": "聯絡",
+      "about": "關於"
+    },
+    "shortcuts": {
+      "blog": {
+        "label": "部落格",
+        "description": "瀏覽文章索引並快速進入最新內容。"
+      },
+      "portfolio": {
+        "label": "作品集",
+        "description": "查看專案卡片與長期案例研究雛形。"
+      },
+      "studyRoom": {
+        "label": "Study Room",
+        "description": "直接進入已整合的旗艦專注應用。"
+      },
+      "contact": {
+        "label": "聯絡",
+        "description": "透過入口網站聯絡頁面發起交流。"
+      }
+    },
+    "home": {
+      "shortcutsTitle": "探索入口網站",
+      "shortcutsDescription": "快速進入寫作、專案展示、已整合的 Study Room 與聯絡入口。",
+      "recentPostsTitle": "最近寫作",
+      "recentPostsIntro": "來自入口網站發布面的最新內容。",
+      "portfolioPreviewTitle": "精選專案",
+      "footerTitle": "保持聯絡",
+      "footerIntro": "讓公開入口網站資訊與共享資料都能在同一個地方維護。"
+    },
+    "footer": {
+      "socialLinks": "社群連結",
+      "contact": "聯絡資訊"
+    },
+    "about": {
+      "title": "關於我",
+      "skillsTitle": "技能",
+      "skillsIntro": "此結構已預留，後續可透過資料檔案持續細化。",
+      "experienceTitle": "經歷",
+      "experienceIntro": "經歷時間線目前由 site_profile.yml 提供初始內容。",
+      "emptySkills": "尚未設定技能項目。",
+      "emptyExperience": "尚未設定經歷項目。"
+    },
+    "portfolio": {
+      "title": "作品集",
+      "empty": "尚未設定專案卡片。"
+    },
+    "studyRoom": {
+      "title": "Study Room",
+      "ctaLabel": "進入 Study Room",
+      "ctaNote": "Study Room 現在透過 /study-app/ 以獨立應用開啟，但仍屬於同一產品家族。",
+      "featuresTitle": "整合能力",
+      "featuresIntro": "這個獨立專注應用現在已納入與入口網站一致的公開站點契約中。",
+      "empty": "尚未設定 Study Room 功能項目。"
+    },
+    "contact": {
+      "title": "聯絡",
+      "channelsTitle": "聯絡管道",
+      "bestForLabel": "適合交流",
+      "messageChecklistTitle": "來信建議包含",
+      "messageChecklistIntro": "清楚的訊息通常會包含：",
+      "checklist": {
+        "who": "你是誰",
+        "topic": "聯絡主題是什麼",
+        "context": "相關連結或背景資訊",
+        "reply": "希望我如何回覆你"
+      },
+      "formTitle": "聯絡表單",
+      "formLegend": "傳送訊息",
+      "nameLabel": "姓名",
+      "emailLabel": "電子郵件",
+      "topicLabel": "主題",
+      "messageLabel": "內容",
+      "namePlaceholder": "你的名字",
+      "emailPlaceholder": "you@example.com",
+      "topicPlaceholder": "專案、合作，或只是打個招呼",
+      "messagePlaceholder": "簡單介紹自己並寫下你的訊息",
+      "sendButton": "傳送訊息",
+      "notesTitle": "說明",
+      "notes": {
+        "formspreeReady": "目前的表單結構已為 Formspree 風格提交做好準備，只差最終端點。",
+        "placeholderEndpoint": "端點目前仍是占位值，公開上線前必須替換。",
+        "futureBackend": "長期來看，這個流程可能會遷移到自託管後端，而不是持續停留在 Formspree。"
+      }
+    },
+    "searchPlaceholder": "搜尋文章、頁面與專案筆記..."
+  },
+  "studyRoom": {
+    "chrome": {
+      "brandText": "Study Room",
+      "panelGroupLabel": "Study Room 面板"
+    },
+    "panelOverlay": {
+      "eyebrow": "面板模式",
+      "close": "關閉"
+    },
+    "panels": {
+      "todo": {
+        "title": "任務面板",
+        "description": "小任務記錄以覆蓋層方式存在，不再長期佔據主畫面。"
+      },
+      "music": {
+        "title": "音樂面板",
+        "description": "環境音播放保持可用，但不會擠壓主要專注場景。"
+      },
+      "statistics": {
+        "title": "統計面板",
+        "description": "會話計數與未來進度檢視現在位於獨立覆蓋層中。"
+      },
+      "settings": {
+        "title": "設定面板",
+        "description": "計時器設定與共享偏好透過浮動面板開啟，而不是單獨的儀表板頁面。"
+      }
+    },
+    "timer": {
+      "idleStart": "開始",
+      "resumeFocus": "繼續專注",
+      "workChip": "工作",
+      "shortBreakChip": "短休息",
+      "longBreakChip": "長休息",
+      "longBreakNext": "下一次就是長休息",
+      "longBreakIn": "再 {count} 次進入長休息",
+      "automaticReturn": "將自動回到工作",
+      "completedPomodoros": "已完成番茄鐘 {count}",
+      "longBreakEvery": "每 {count} 次進入長休息",
+      "status": {
+        "work": {
+          "idle": "準備專注",
+          "paused": "專注已暫停",
+          "running": "專注進行中"
+        },
+        "shortBreak": {
+          "idle": "準備短休息",
+          "paused": "休息已暫停",
+          "running": "輕柔恢復中"
+        },
+        "longBreak": {
+          "idle": "準備長休息",
+          "paused": "恢復已暫停",
+          "running": "深度恢復中"
+        }
+      },
+      "hint": {
+        "work": "目前正在專注會話",
+        "shortBreak": "進入輕鬆休息時間",
+        "longBreak": "進入長時恢復間隔"
+      },
+      "metadataTone": {
+        "work": "深度工作視窗",
+        "shortBreak": "柔和恢復視窗",
+        "longBreak": "平靜重置視窗"
+      }
+    },
+    "cues": {
+      "eyebrow": "氛圍切換",
+      "focusComplete": "專注完成",
+      "shortBreak": "短休息",
+      "longBreak": "長休息",
+      "backToFocus": "回到專注",
+      "workSession": "工作會話"
+    },
+    "settings": {
+      "titleEyebrow": "Study Room 偏好",
+      "title": "顯示與行為",
+      "intro": "這個設定中心用來控制場景、計時器與本地學習運行時的表現，而不會影響底層番茄鐘引擎。",
+      "languageEyebrow": "語言設定",
+      "languageTitle": "介面語言",
+      "languageIntro": "這個選擇會更新 Study Room 以及未來連動介面的共享 UI 文案。",
+      "sceneEyebrow": "場景設定",
+      "sceneTitle": "學習環境",
+      "sceneIntro": "現在可切換目前場景。自訂上傳將在後續階段接入這裡。",
+      "customUploadsTitle": "自訂上傳",
+      "customUploadsCopy": "未來的自託管場景上傳會在這裡管理，而不會取代目前的影片場景註冊表。",
+      "displayEyebrow": "計時器顯示設定",
+      "displayTitle": "呈現方式",
+      "displayIntro": "改變計時器在學習場景中的位置與存在感，但不影響計時進度與引擎邏輯。",
+      "displayModes": {
+        "center_focus": {
+          "label": "中心專注",
+          "description": "沉浸式置中計時器仍作為主要專注表面。"
+        },
+        "minimal_overlay": {
+          "label": "極簡覆蓋",
+          "description": "更小的覆蓋層能顯示計時器，同時讓場景維持主角地位。"
+        },
+        "corner_embed": {
+          "label": "角落嵌入",
+          "description": "低干擾角落計時器僅保留最必要的學習控制。"
+        }
+      },
+      "timerEyebrow": "計時行為設定",
+      "timerTitle": "番茄鐘引擎",
+      "timerIntro": "自動輪轉保持啟用，同時會話時長與節奏仍允許使用者調整。",
+      "workMinutes": "工作時長",
+      "shortBreakMinutes": "短休息時長",
+      "longBreakMinutes": "長休息時長",
+      "longBreakInterval": "每隔幾次進入長休息",
+      "completionBellTitle": "完成提示鈴",
+      "completionBellCopy": "僅在計時器自然進入下一階段時播放。",
+      "saveTimer": "儲存計時設定",
+      "audioEyebrow": "音訊架構占位",
+      "audioTitle": "雲端音樂整合即將到來",
+      "audioCopy": "目前環境音仍透過本地音源提供。未來的雲端提供方將接入音樂來源抽象，而不會取代現有播放控制器。"
+    },
+    "music": {
+      "eyebrow": "環境音樂",
+      "trackLabel": "曲目",
+      "playback": {
+        "idle": "閒置",
+        "playing": "播放中",
+        "paused": "已暫停"
+      },
+      "source": {
+        "localLabel": "本地曲庫",
+        "localDescription": "內建本地環境音讓目前的 Study Room 保持自包含並具備離線可用性。",
+        "cloudFutureLabel": "雲端音樂",
+        "cloudFutureDescription": "雲端音樂整合即將到來。"
+      },
+      "tracks": {
+        "deep-focus-placeholder": {
+          "title": "深度專注占位曲目",
+          "note": "靜音本地占位資源，用來驗證音訊控制器流程。"
+        },
+        "late-night-placeholder": {
+          "title": "深夜占位曲目",
+          "note": "未來用於封裝本地環境音的預留位置。"
+        }
+      },
+      "errors": {
+        "blocked": "在瀏覽器收到使用者手勢之前，播放可能會被阻擋。",
+        "enableSound": "請先開啟聲音，再啟動環境播放。"
+      }
+    },
+    "todo": {
+      "eyebrow": "任務記錄",
+      "title": "目前待辦",
+      "intro": "面向目前學習會話的輕量本地任務列表。",
+      "inputPlaceholder": "新增一個小型學習任務",
+      "empty": "還沒有任務。"
+    },
+    "statistics": {
+      "eyebrow": "統計",
+      "title": "會話計數",
+      "intro": "Reducer 已經在追蹤完成會話，因此這個功能具備穩定的未來持久化與分析介面。",
+      "completedPomodoros": "已完成番茄鐘",
+      "completedBreaks": "已完成休息",
+      "futureCopy": "未來後端同步可以儲存會話歷史、連續紀錄與按使用者維度聚合的學習摘要，而不需要改動計時器的完成回報方式。"
+    },
+    "auth": {
+      "eyebrow": "驗證占位",
+      "title": "未來帳號層",
+      "intro": "保留這個位置是為了以後加入帳號關聯的 Study Room 狀態，而不必重塑核心頁面結構。",
+      "sessionHandoff": "會話交接",
+      "protectedPresets": "受保護預設",
+      "tokenStorage": "後端 Token 儲存",
+      "futureCopy": "未來後端服務將接管登入、會話驗證與使用者關聯學習資料。這裡不會依賴 Firebase 時代的瀏覽器直連驗證。"
+    },
+    "scenes": {
+      "coastalCafe": {
+        "name": "海岸咖啡館",
+        "description": "更適合白天輕量專注的明亮露天咖啡館循環場景。"
+      },
+      "retroDesk": {
+        "name": "復古書桌",
+        "description": "帶有 CRT 氛圍的溫暖夜間書桌循環場景。"
+      },
+      "aquariumRoom": {
+        "name": "水族館房間",
+        "description": "帶有水族箱微光、適合深夜深度工作的室內循環場景。"
+      }
+    }
+  }
+}

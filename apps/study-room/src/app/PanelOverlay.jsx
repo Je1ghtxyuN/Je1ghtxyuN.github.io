@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
+import { useStudyRoomLocale } from '../i18n/useStudyRoomLocale.js'
 
 export function PanelOverlay({ title, description, onClose, children }) {
+  const { t } = useStudyRoomLocale()
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -20,7 +23,7 @@ export function PanelOverlay({ title, description, onClose, children }) {
       <button
         type="button"
         className="panel-overlay__backdrop"
-        aria-label="Close panel"
+        aria-label={t('studyRoom.panelOverlay.close', {}, 'Close')}
         onClick={onClose}
       />
 
@@ -32,7 +35,9 @@ export function PanelOverlay({ title, description, onClose, children }) {
       >
         <header className="panel-overlay__header">
           <div>
-            <p className="panel-overlay__eyebrow">Panel Mode</p>
+            <p className="panel-overlay__eyebrow">
+              {t('studyRoom.panelOverlay.eyebrow', {}, 'Panel Mode')}
+            </p>
             <h2 className="panel-overlay__title">{title}</h2>
             {description ? (
               <p className="panel-overlay__copy">{description}</p>
@@ -44,7 +49,7 @@ export function PanelOverlay({ title, description, onClose, children }) {
             className="button button--ghost panel-overlay__close"
             onClick={onClose}
           >
-            Close
+            {t('studyRoom.panelOverlay.close', {}, 'Close')}
           </button>
         </header>
 

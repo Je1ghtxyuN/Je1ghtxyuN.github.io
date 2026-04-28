@@ -1,11 +1,14 @@
 import { AppRouter } from './app/AppRouter.jsx'
+import { StudyRoomLocaleProvider } from './i18n/StudyRoomLocaleProvider.jsx'
 import { StudyRoomProvider } from './state/StudyRoomProvider.jsx'
 import './App.css'
 
 function App() {
   return (
     <StudyRoomProvider>
-      <AppRouter />
+      <StudyRoomLocaleProvider>
+        <AppRouter />
+      </StudyRoomLocaleProvider>
     </StudyRoomProvider>
   )
 }

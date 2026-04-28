@@ -1,0 +1,316 @@
+{
+  "meta": {
+    "localeLabel": "English"
+  },
+  "brand": {
+    "name": "Je1ghtxyuN",
+    "portalTagline": "Static-first writing, interactive experiments, and long-term platform design.",
+    "studyRoomName": "Study Room",
+    "studyRoomShortDescription": "Immersive focus environment with Pomodoro flow, ambient scenes, and low-friction session tools.",
+    "contactEmailLabel": "Email",
+    "contactLocationLabel": "Location"
+  },
+  "common": {
+    "language": "Language",
+    "local": "Local",
+    "future": "Future",
+    "close": "Close",
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Reset",
+    "exit": "Exit",
+    "save": "Save",
+    "enabled": "Enabled",
+    "muted": "Muted",
+    "play": "Play",
+    "previous": "Previous",
+    "next": "Next",
+    "track": "Track",
+    "volume": "Volume",
+    "add": "Add",
+    "done": "Done",
+    "undo": "Undo",
+    "comingSoon": "Coming Soon",
+    "resumeFocus": "Resume Focus"
+  },
+  "portal": {
+    "languageSelectorLabel": "Language",
+    "nav": {
+      "home": "Home",
+      "archives": "Archives",
+      "categories": "Categories",
+      "portfolio": "Portfolio",
+      "studyRoom": "Study Room",
+      "contact": "Contact",
+      "about": "About"
+    },
+    "shortcuts": {
+      "blog": {
+        "label": "Blog",
+        "description": "Browse the generated post index and jump into the latest articles."
+      },
+      "portfolio": {
+        "label": "Portfolio",
+        "description": "Review project cards and long-term case study seeds."
+      },
+      "studyRoom": {
+        "label": "Study Room",
+        "description": "Enter the integrated flagship focus application directly."
+      },
+      "contact": {
+        "label": "Contact",
+        "description": "Reach out through the portal contact surface."
+      }
+    },
+    "home": {
+      "shortcutsTitle": "Explore The Portal",
+      "shortcutsDescription": "Fast paths into writing, project showcases, the integrated Study Room, and contact entry.",
+      "recentPostsTitle": "Recent Writing",
+      "recentPostsIntro": "Latest posts from the portal publishing surface.",
+      "portfolioPreviewTitle": "Selected Projects",
+      "footerTitle": "Stay Connected",
+      "footerIntro": "Keep the public portal and shared profile details easy to update from one place."
+    },
+    "footer": {
+      "socialLinks": "Social Links",
+      "contact": "Contact"
+    },
+    "about": {
+      "title": "About Me",
+      "skillsTitle": "Skills",
+      "skillsIntro": "Placeholder structure prepared for future refinement through data editing.",
+      "experienceTitle": "Experience",
+      "experienceIntro": "Experience timeline seeded from site_profile.yml.",
+      "emptySkills": "No skills configured yet.",
+      "emptyExperience": "No experience entries configured yet."
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "empty": "No portfolio cards configured yet."
+    },
+    "studyRoom": {
+      "title": "Study Room",
+      "ctaLabel": "Enter Study Room",
+      "ctaNote": "The Study Room opens at /study-app/ as a standalone application under the same platform identity.",
+      "featuresTitle": "Integrated Features",
+      "featuresIntro": "The dedicated focus application now belongs to the same public platform contract as the portal.",
+      "empty": "No Study Room features configured yet."
+    },
+    "contact": {
+      "title": "Contact",
+      "channelsTitle": "Contact Channels",
+      "bestForLabel": "Best for",
+      "messageChecklistTitle": "What To Include In Your Message",
+      "messageChecklistIntro": "The clearest messages usually include:",
+      "checklist": {
+        "who": "who you are",
+        "topic": "what you are reaching out about",
+        "context": "useful links or context",
+        "reply": "how you would like me to reply"
+      },
+      "formTitle": "Contact Form",
+      "formLegend": "Send a message",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "topicLabel": "Topic",
+      "messageLabel": "Message",
+      "namePlaceholder": "Your name",
+      "emailPlaceholder": "you@example.com",
+      "topicPlaceholder": "Project, collaboration, or a quick hello",
+      "messagePlaceholder": "A short introduction and your message",
+      "sendButton": "Send Message",
+      "notesTitle": "Notes",
+      "notes": {
+        "formspreeReady": "This form structure is ready for Formspree-style submission once the final endpoint is added.",
+        "placeholderEndpoint": "The endpoint is still a placeholder and must be replaced before public launch.",
+        "futureBackend": "In the long term, this flow may move behind the self-hosted backend service instead of staying on Formspree."
+      }
+    },
+    "searchPlaceholder": "Search articles, pages, and project notes..."
+  },
+  "studyRoom": {
+    "chrome": {
+      "brandText": "Study Room",
+      "panelGroupLabel": "Study Room Panels"
+    },
+    "panelOverlay": {
+      "eyebrow": "Panel Mode",
+      "close": "Close"
+    },
+    "panels": {
+      "todo": {
+        "title": "Todo Panel",
+        "description": "Small task capture stays available as an overlay instead of permanently occupying the layout."
+      },
+      "music": {
+        "title": "Music Panel",
+        "description": "Ambient playback remains available without crowding the main focus scene."
+      },
+      "statistics": {
+        "title": "Statistics Panel",
+        "description": "Session counters and future progress views now live in a dedicated overlay surface."
+      },
+      "settings": {
+        "title": "Settings Panel",
+        "description": "Timer configuration and shared preferences open as a floating panel instead of a separate dashboard route."
+      }
+    },
+    "timer": {
+      "idleStart": "Start",
+      "resumeFocus": "Resume Focus",
+      "workChip": "Work",
+      "shortBreakChip": "Short Break",
+      "longBreakChip": "Long Break",
+      "longBreakNext": "Long Break Next",
+      "longBreakIn": "Long Break In {count}",
+      "automaticReturn": "Automatic Return To Work",
+      "completedPomodoros": "Completed Pomodoros {count}",
+      "longBreakEvery": "Long break every {count}",
+      "status": {
+        "work": {
+          "idle": "Focus Ready",
+          "paused": "Focus Held",
+          "running": "Focused Flow"
+        },
+        "shortBreak": {
+          "idle": "Short Break Ready",
+          "paused": "Break Held",
+          "running": "Gentle Reset"
+        },
+        "longBreak": {
+          "idle": "Long Break Ready",
+          "paused": "Recovery Held",
+          "running": "Deep Recovery"
+        }
+      },
+      "hint": {
+        "work": "Focus Session Running",
+        "shortBreak": "Gentle Break Time",
+        "longBreak": "Long Recovery Interval"
+      },
+      "metadataTone": {
+        "work": "Deep Work Window",
+        "shortBreak": "Soft Recovery Window",
+        "longBreak": "Calm Reset Window"
+      }
+    },
+    "cues": {
+      "eyebrow": "Atmosphere Shift",
+      "focusComplete": "Focus Complete",
+      "shortBreak": "Short Break",
+      "longBreak": "Long Break",
+      "backToFocus": "Back To Focus",
+      "workSession": "Work Session"
+    },
+    "settings": {
+      "titleEyebrow": "Study Room Preferences",
+      "title": "Display and behavior",
+      "intro": "This settings center controls how the scene, timer, and local study runtime feel without touching the underlying Pomodoro engine.",
+      "languageEyebrow": "Language Settings",
+      "languageTitle": "Interface language",
+      "languageIntro": "This choice updates shared UI labels across the Study Room and future connected surfaces.",
+      "sceneEyebrow": "Scene Settings",
+      "sceneTitle": "Study environments",
+      "sceneIntro": "Select the active scene now. Custom uploads will attach here in a later pass.",
+      "customUploadsTitle": "Custom uploads",
+      "customUploadsCopy": "Future self-hosted scene uploads will be managed here without replacing the current video-scene registry.",
+      "displayEyebrow": "Timer Display Settings",
+      "displayTitle": "Presentation mode",
+      "displayIntro": "Change how the timer sits on top of the study scene without altering the timer engine or session progress.",
+      "displayModes": {
+        "center_focus": {
+          "label": "Center Focus",
+          "description": "The immersive centered timer remains the primary focus surface."
+        },
+        "minimal_overlay": {
+          "label": "Minimal Overlay",
+          "description": "A smaller overlay keeps the timer visible while letting the scene dominate."
+        },
+        "corner_embed": {
+          "label": "Corner Embed",
+          "description": "An unobtrusive corner timer shows only the essential study controls."
+        }
+      },
+      "timerEyebrow": "Timer Behavior Settings",
+      "timerTitle": "Pomodoro engine",
+      "timerIntro": "Automatic rollover stays active while the durations and cadence stay user-configurable.",
+      "workMinutes": "Work minutes",
+      "shortBreakMinutes": "Short break",
+      "longBreakMinutes": "Long break",
+      "longBreakInterval": "Long break every",
+      "completionBellTitle": "Completion bell",
+      "completionBellCopy": "Plays only when the timer naturally rolls into the next Pomodoro phase.",
+      "saveTimer": "Save Timer Settings",
+      "audioEyebrow": "Audio Architecture Placeholder",
+      "audioTitle": "Cloud music integration coming soon",
+      "audioCopy": "Ambient playback is still running through the local source provider. A future cloud provider will plug into the music-source abstraction without replacing the existing playback controller."
+    },
+    "music": {
+      "eyebrow": "Ambient Music",
+      "trackLabel": "Track",
+      "playback": {
+        "idle": "Idle",
+        "playing": "Playing",
+        "paused": "Paused"
+      },
+      "source": {
+        "localLabel": "Local Library",
+        "localDescription": "Bundled local ambience keeps the current Study Room self-contained and offline-safe.",
+        "cloudFutureLabel": "Cloud Music",
+        "cloudFutureDescription": "Cloud music integration coming soon."
+      },
+      "tracks": {
+        "deep-focus-placeholder": {
+          "title": "Deep Focus Placeholder",
+          "note": "Silent local placeholder used to exercise the audio controller."
+        },
+        "late-night-placeholder": {
+          "title": "Late Night Placeholder",
+          "note": "Future local bundled ambience slot for packaged Study Room audio."
+        }
+      },
+      "errors": {
+        "blocked": "Playback is blocked until the browser receives a user gesture.",
+        "enableSound": "Enable sound before starting ambient playback."
+      }
+    },
+    "todo": {
+      "eyebrow": "Task Capture",
+      "title": "Current todos",
+      "intro": "Compact local task list for the current study session.",
+      "inputPlaceholder": "Add a small study task",
+      "empty": "No tasks yet."
+    },
+    "statistics": {
+      "eyebrow": "Statistics",
+      "title": "Session counters",
+      "intro": "The reducer already tracks completed sessions so this feature has a stable surface for future persistence and analytics.",
+      "completedPomodoros": "Completed Pomodoros",
+      "completedBreaks": "Completed breaks",
+      "futureCopy": "Future backend sync can store session history, streaks, and per-user study summaries without changing how the timer feature reports completion."
+    },
+    "auth": {
+      "eyebrow": "Auth Placeholder",
+      "title": "Future account layer",
+      "intro": "This slot is intentionally present now so account-linked Study Room state can be added later without reshaping the core pages.",
+      "sessionHandoff": "Session handoff",
+      "protectedPresets": "Protected presets",
+      "tokenStorage": "Backend token storage",
+      "futureCopy": "The backend service will eventually own login, session validation, and user-linked study data. Nothing here relies on Firebase-era browser auth."
+    },
+    "scenes": {
+      "coastalCafe": {
+        "name": "Coastal Cafe",
+        "description": "Bright open-air cafe loop for lighter daytime focus sessions."
+      },
+      "retroDesk": {
+        "name": "Retro Desk",
+        "description": "Warmer CRT desk loop with a denser night-study atmosphere."
+      },
+      "aquariumRoom": {
+        "name": "Aquarium Room",
+        "description": "Quiet indoor loop with aquarium glow for late-night deep work."
+      }
+    }
+  }
+}

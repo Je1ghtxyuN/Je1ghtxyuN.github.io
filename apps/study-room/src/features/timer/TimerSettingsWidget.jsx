@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useStudyRoomState, useStudyRoomActions } from '../../state/useStudyRoom.js'
 import { secondsToMinutes } from './timerUtils.js'
 
 export function TimerSettingsWidget() {
   const { preferences, timer } = useStudyRoomState()
   const { setPreference, setTimerConfiguration } = useStudyRoomActions()
+  const { t } = useStudyRoomLocale()
   const [workMinutes, setWorkMinutes] = useState(
     String(secondsToMinutes(timer.durations.work)),
   )
@@ -33,19 +35,32 @@ export function TimerSettingsWidget() {
     <section className="settings-group">
       <div className="settings-group__header">
         <div>
-          <p className="floating-widget__eyebrow">Timer Behavior Settings</p>
-          <h3 className="floating-widget__title">Pomodoro engine</h3>
+          <p className="floating-widget__eyebrow">
+            {t(
+              'studyRoom.settings.timerEyebrow',
+              {},
+              'Timer Behavior Settings',
+            )}
+          </p>
+          <h3 className="floating-widget__title">
+            {t('studyRoom.settings.timerTitle', {}, 'Pomodoro engine')}
+          </h3>
         </div>
         <p className="floating-widget__meta">
-          Automatic rollover stays active while the durations and cadence stay
-          user-configurable.
+          {t(
+            'studyRoom.settings.timerIntro',
+            {},
+            'Automatic rollover stays active while the durations and cadence stay user-configurable.',
+          )}
         </p>
       </div>
 
       <form className="settings-form" onSubmit={handleSubmit}>
         <div className="settings-form__grid">
           <div className="field">
-            <label htmlFor="settings-work-minutes">Work minutes</label>
+            <label htmlFor="settings-work-minutes">
+              {t('studyRoom.settings.workMinutes', {}, 'Work minutes')}
+            </label>
             <input
               id="settings-work-minutes"
               className="input"
@@ -58,7 +73,9 @@ export function TimerSettingsWidget() {
           </div>
 
           <div className="field">
-            <label htmlFor="settings-short-break-minutes">Short break</label>
+            <label htmlFor="settings-short-break-minutes">
+              {t('studyRoom.settings.shortBreakMinutes', {}, 'Short break')}
+            </label>
             <input
               id="settings-short-break-minutes"
               className="input"
@@ -71,7 +88,9 @@ export function TimerSettingsWidget() {
           </div>
 
           <div className="field">
-            <label htmlFor="settings-long-break-minutes">Long break</label>
+            <label htmlFor="settings-long-break-minutes">
+              {t('studyRoom.settings.longBreakMinutes', {}, 'Long break')}
+            </label>
             <input
               id="settings-long-break-minutes"
               className="input"
@@ -84,7 +103,13 @@ export function TimerSettingsWidget() {
           </div>
 
           <div className="field">
-            <label htmlFor="settings-long-break-interval">Long break every</label>
+            <label htmlFor="settings-long-break-interval">
+              {t(
+                'studyRoom.settings.longBreakInterval',
+                {},
+                'Long break every',
+              )}
+            </label>
             <input
               id="settings-long-break-interval"
               className="input"
@@ -99,10 +124,19 @@ export function TimerSettingsWidget() {
 
         <div className="settings-row">
           <div>
-            <strong>Completion bell</strong>
+            <strong>
+              {t(
+                'studyRoom.settings.completionBellTitle',
+                {},
+                'Completion bell',
+              )}
+            </strong>
             <p className="floating-widget__meta">
-              Plays only when the timer naturally rolls into the next Pomodoro
-              phase.
+              {t(
+                'studyRoom.settings.completionBellCopy',
+                {},
+                'Plays only when the timer naturally rolls into the next Pomodoro phase.',
+              )}
             </p>
           </div>
           <button
@@ -110,13 +144,15 @@ export function TimerSettingsWidget() {
             className={`button ${preferences.soundEnabled ? 'button--active' : 'button--ghost'}`}
             onClick={() => setPreference('soundEnabled', !preferences.soundEnabled)}
           >
-            {preferences.soundEnabled ? 'Enabled' : 'Muted'}
+            {preferences.soundEnabled
+              ? t('common.enabled', {}, 'Enabled')
+              : t('common.muted', {}, 'Muted')}
           </button>
         </div>
 
         <div className="settings-form__actions">
           <button type="submit" className="button button--primary">
-            Save Timer Settings
+            {t('studyRoom.settings.saveTimer', {}, 'Save Timer Settings')}
           </button>
         </div>
       </form>

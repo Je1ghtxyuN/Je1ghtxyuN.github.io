@@ -1,74 +1,57 @@
-import {
-  TIMER_SESSION_TYPES,
-  timerSessionLabels,
-} from '../../state/studyRoomReducer.js'
-
-const SESSION_COPY = Object.freeze({
-  [TIMER_SESSION_TYPES.work]: Object.freeze({
-    status: Object.freeze({
-      idle: 'Focus Ready',
-      paused: 'Focus Held',
-      running: 'Focused Flow',
-    }),
-    hintText: 'Focus Session Running',
-    metadataTone: 'Deep Work Window',
-  }),
-  [TIMER_SESSION_TYPES.shortBreak]: Object.freeze({
-    status: Object.freeze({
-      idle: 'Short Break Ready',
-      paused: 'Break Held',
-      running: 'Gentle Reset',
-    }),
-    hintText: 'Gentle Break Time',
-    metadataTone: 'Soft Recovery Window',
-  }),
-  [TIMER_SESSION_TYPES.longBreak]: Object.freeze({
-    status: Object.freeze({
-      idle: 'Long Break Ready',
-      paused: 'Recovery Held',
-      running: 'Deep Recovery',
-    }),
-    hintText: 'Long Recovery Interval',
-    metadataTone: 'Calm Reset Window',
-  }),
-})
-
-function getSessionCopy(sessionType = TIMER_SESSION_TYPES.work) {
-  return SESSION_COPY[sessionType] ?? SESSION_COPY[TIMER_SESSION_TYPES.work]
-}
+import { TIMER_SESSION_TYPES } from '../../state/studyRoomReducer.js'
 
 export function getSessionPresentation(
   sessionType = TIMER_SESSION_TYPES.work,
   timerStatus = 'idle',
+  t,
 ) {
-  const sessionCopy = getSessionCopy(sessionType)
+  const sessionKey =
+    sessionType === TIMER_SESSION_TYPES.shortBreak
+      ? 'shortBreak'
+      : sessionType === TIMER_SESSION_TYPES.longBreak
+        ? 'longBreak'
+        : 'work'
 
   return {
-    statusText: sessionCopy.status[timerStatus] ?? sessionCopy.status.idle,
-    hintText: sessionCopy.hintText,
-    metadataTone: sessionCopy.metadataTone,
-    sessionLabel:
-      timerSessionLabels[sessionType] ?? timerSessionLabels[TIMER_SESSION_TYPES.work],
+    statusText: t(
+      `studyRoom.timer.status.${sessionKey}.${timerStatus}`,
+      {},
+      t(
+        `studyRoom.timer.status.${sessionKey}.idle`,
+        {},
+        'Focus Ready',
+      ),
+    ),
+    hintText: t(
+      `studyRoom.timer.hint.${sessionKey}`,
+      {},
+      'Focus Session Running',
+    ),
+    metadataTone: t(
+      `studyRoom.timer.metadataTone.${sessionKey}`,
+      {},
+      'Deep Work Window',
+    ),
   }
 }
 
-export function getAutomaticTransitionCue(transition) {
+export function getAutomaticTransitionCue(transition, t) {
   if (!transition) return null
 
   if (transition.fromSessionType === TIMER_SESSION_TYPES.work) {
     return {
-      title: 'Focus Complete',
+      title: t('studyRoom.cues.focusComplete', {}, 'Focus Complete'),
       subtitle:
         transition.toSessionType === TIMER_SESSION_TYPES.longBreak
-          ? 'Long Break'
-          : 'Short Break',
+          ? t('studyRoom.cues.longBreak', {}, 'Long Break')
+          : t('studyRoom.cues.shortBreak', {}, 'Short Break'),
       sessionType: transition.toSessionType,
     }
   }
 
   return {
-    title: 'Back To Focus',
-    subtitle: timerSessionLabels[TIMER_SESSION_TYPES.work],
+    title: t('studyRoom.cues.backToFocus', {}, 'Back To Focus'),
+    subtitle: t('studyRoom.cues.workSession', {}, 'Work Session'),
     sessionType: TIMER_SESSION_TYPES.work,
   }
 }

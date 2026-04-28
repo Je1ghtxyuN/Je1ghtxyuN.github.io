@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import {
   useStudyRoomActions,
   useStudyRoomState,
@@ -13,6 +14,7 @@ const getTrackIndex = (tracks, trackId) => {
 export function useAmbientMusicController() {
   const { preferences } = useStudyRoomState()
   const { setPreference } = useStudyRoomActions()
+  const { t } = useStudyRoomLocale()
   const audioRef = useRef(null)
   const playbackStateRef = useRef('idle')
   const [playbackState, setPlaybackState] = useState('idle')
@@ -61,9 +63,15 @@ export function useAmbientMusicController() {
 
     void audio.play().catch(() => {
       setPlaybackState('paused')
-      setPlaybackError('Playback is blocked until the browser receives a user gesture.')
+      setPlaybackError(
+        t(
+          'studyRoom.music.errors.blocked',
+          {},
+          'Playback is blocked until the browser receives a user gesture.',
+        ),
+      )
     })
-  }, [currentTrack.id, currentTrack.src])
+  }, [currentTrack.id, currentTrack.src, t])
 
   useEffect(() => {
     if (preferences.soundEnabled) return
@@ -80,7 +88,13 @@ export function useAmbientMusicController() {
     const audio = audioRef.current
 
     if (!audio || !preferences.soundEnabled) {
-      setPlaybackError('Enable sound before starting ambient playback.')
+      setPlaybackError(
+        t(
+          'studyRoom.music.errors.enableSound',
+          {},
+          'Enable sound before starting ambient playback.',
+        ),
+      )
       return
     }
 
@@ -90,7 +104,13 @@ export function useAmbientMusicController() {
       setPlaybackError('')
     } catch {
       setPlaybackState('paused')
-      setPlaybackError('Playback is blocked until the browser receives a user gesture.')
+      setPlaybackError(
+        t(
+          'studyRoom.music.errors.blocked',
+          {},
+          'Playback is blocked until the browser receives a user gesture.',
+        ),
+      )
     }
   }
 
@@ -116,8 +136,26 @@ export function useAmbientMusicController() {
 
   return {
     musicSourceType: trackSource.type,
-    musicSourceLabel: trackSource.label,
-    musicSourceDescription: trackSource.description,
+    musicSourceLabel:
+      trackSource.type === MUSIC_SOURCE_TYPES.cloudFuture
+        ? t(
+            'studyRoom.music.source.cloudFutureLabel',
+            {},
+            'Cloud Music',
+          )
+        : t('studyRoom.music.source.localLabel', {}, 'Local Library'),
+    musicSourceDescription:
+      trackSource.type === MUSIC_SOURCE_TYPES.cloudFuture
+        ? t(
+            'studyRoom.music.source.cloudFutureDescription',
+            {},
+            'Cloud music integration coming soon.',
+          )
+        : t(
+            'studyRoom.music.source.localDescription',
+            {},
+            'Bundled local ambience keeps the current Study Room self-contained and offline-safe.',
+          ),
     tracks,
     currentTrack,
     playbackState,

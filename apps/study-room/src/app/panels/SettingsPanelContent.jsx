@@ -1,4 +1,5 @@
 import { TimerSettingsWidget } from '../../features/timer/index.js'
+import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { STUDY_SCENES } from '../../lib/studyScene.js'
 import { TIMER_DISPLAY_MODES } from '../../state/studyRoomReducer.js'
 import {
@@ -6,56 +7,135 @@ import {
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
 
-const TIMER_DISPLAY_MODE_OPTIONS = [
-  {
-    id: TIMER_DISPLAY_MODES.centerFocus,
-    label: 'Center Focus',
-    description:
-      'The immersive centered timer remains the primary focus surface.',
-  },
-  {
-    id: TIMER_DISPLAY_MODES.minimalOverlay,
-    label: 'Minimal Overlay',
-    description:
-      'A smaller overlay keeps the timer visible while letting the scene dominate.',
-  },
-  {
-    id: TIMER_DISPLAY_MODES.cornerEmbed,
-    label: 'Corner Embed',
-    description:
-      'An unobtrusive corner timer shows only the essential study controls.',
-  },
-]
-
 export function SettingsPanelContent() {
   const { preferences } = useStudyRoomState()
   const { setPreference } = useStudyRoomActions()
+  const { locale, setLocale, supportedLocales, t } = useStudyRoomLocale()
+  const timerDisplayModeOptions = [
+    {
+      id: TIMER_DISPLAY_MODES.centerFocus,
+      label: t(
+        'studyRoom.settings.displayModes.center_focus.label',
+        {},
+        'Center Focus',
+      ),
+      description: t(
+        'studyRoom.settings.displayModes.center_focus.description',
+        {},
+        'The immersive centered timer remains the primary focus surface.',
+      ),
+    },
+    {
+      id: TIMER_DISPLAY_MODES.minimalOverlay,
+      label: t(
+        'studyRoom.settings.displayModes.minimal_overlay.label',
+        {},
+        'Minimal Overlay',
+      ),
+      description: t(
+        'studyRoom.settings.displayModes.minimal_overlay.description',
+        {},
+        'A smaller overlay keeps the timer visible while letting the scene dominate.',
+      ),
+    },
+    {
+      id: TIMER_DISPLAY_MODES.cornerEmbed,
+      label: t(
+        'studyRoom.settings.displayModes.corner_embed.label',
+        {},
+        'Corner Embed',
+      ),
+      description: t(
+        'studyRoom.settings.displayModes.corner_embed.description',
+        {},
+        'An unobtrusive corner timer shows only the essential study controls.',
+      ),
+    },
+  ]
 
   return (
     <div className="panel-stack">
       <section className="floating-widget">
         <div className="floating-widget__header">
           <div>
-            <p className="floating-widget__eyebrow">Study Room Preferences</p>
-            <h3 className="floating-widget__title">Display and behavior</h3>
+            <p className="floating-widget__eyebrow">
+              {t(
+                'studyRoom.settings.titleEyebrow',
+                {},
+                'Study Room Preferences',
+              )}
+            </p>
+            <h3 className="floating-widget__title">
+              {t(
+                'studyRoom.settings.title',
+                {},
+                'Display and behavior',
+              )}
+            </h3>
           </div>
-          <span className="floating-widget__badge">Local</span>
+          <span className="floating-widget__badge">
+            {t('common.local', {}, 'Local')}
+          </span>
         </div>
 
         <p className="floating-widget__meta">
-          This settings center controls how the scene, timer, and local study
-          runtime feel without touching the underlying Pomodoro engine.
+          {t(
+            'studyRoom.settings.intro',
+            {},
+            'This settings center controls how the scene, timer, and local study runtime feel without touching the underlying Pomodoro engine.',
+          )}
         </p>
 
         <div className="settings-group">
           <div className="settings-group__header">
             <div>
-              <p className="floating-widget__eyebrow">Scene Settings</p>
-              <h4 className="floating-widget__title">Study environments</h4>
+              <p className="floating-widget__eyebrow">
+                {t('studyRoom.settings.languageEyebrow', {}, 'Language Settings')}
+              </p>
+              <h4 className="floating-widget__title">
+                {t('studyRoom.settings.languageTitle', {}, 'Interface language')}
+              </h4>
             </div>
             <p className="floating-widget__meta">
-              Select the active scene now. Custom uploads will attach here in a
-              later pass.
+              {t(
+                'studyRoom.settings.languageIntro',
+                {},
+                'This choice updates shared UI labels across the Study Room and future connected surfaces.',
+              )}
+            </p>
+          </div>
+
+          <div className="settings-choice-grid">
+            {supportedLocales.map((item) => (
+              <button
+                key={item.code}
+                type="button"
+                className={`settings-choice${locale === item.code ? ' settings-choice--active' : ''}`}
+                onClick={() => setLocale(item.code)}
+              >
+                <span className="settings-choice__label">{item.label}</span>
+                <span className="settings-choice__copy">{item.code}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="settings-group">
+          <div className="settings-group__header">
+            <div>
+              <p className="floating-widget__eyebrow">
+                {t('studyRoom.settings.sceneEyebrow', {}, 'Scene Settings')}
+              </p>
+              <h4 className="floating-widget__title">
+                {t('studyRoom.settings.sceneTitle', {}, 'Study environments')}
+              </h4>
+            </div>
+            <p className="floating-widget__meta">
+              {t(
+                'studyRoom.settings.sceneIntro',
+                {},
+                'Select the active scene now. Custom uploads will attach here in a later pass.',
+              )}
             </p>
           </div>
 
@@ -67,38 +147,76 @@ export function SettingsPanelContent() {
                 className={`scene-selector__option${preferences.selectedSceneId === scene.id ? ' scene-selector__option--active' : ''}`}
                 onClick={() => setPreference('selectedSceneId', scene.id)}
               >
-                <span className="scene-selector__label">{scene.name}</span>
-                <span className="scene-selector__meta">{scene.description}</span>
+                <span className="scene-selector__label">
+                  {t(
+                    `studyRoom.scenes.${scene.localeKey}.name`,
+                    {},
+                    scene.name,
+                  )}
+                </span>
+                <span className="scene-selector__meta">
+                  {t(
+                    `studyRoom.scenes.${scene.localeKey}.description`,
+                    {},
+                    scene.description,
+                  )}
+                </span>
               </button>
             ))}
           </div>
 
           <div className="settings-row settings-row--placeholder">
             <div>
-              <strong>Custom uploads</strong>
+              <strong>
+                {t(
+                  'studyRoom.settings.customUploadsTitle',
+                  {},
+                  'Custom uploads',
+                )}
+              </strong>
               <p className="floating-widget__meta">
-                Future self-hosted scene uploads will be managed here without
-                replacing the current video-scene registry.
+                {t(
+                  'studyRoom.settings.customUploadsCopy',
+                  {},
+                  'Future self-hosted scene uploads will be managed here without replacing the current video-scene registry.',
+                )}
               </p>
             </div>
-            <span className="floating-widget__badge">Coming Soon</span>
+            <span className="floating-widget__badge">
+              {t('common.comingSoon', {}, 'Coming Soon')}
+            </span>
           </div>
         </div>
 
         <div className="settings-group">
           <div className="settings-group__header">
             <div>
-              <p className="floating-widget__eyebrow">Timer Display Settings</p>
-              <h4 className="floating-widget__title">Presentation mode</h4>
+              <p className="floating-widget__eyebrow">
+                {t(
+                  'studyRoom.settings.displayEyebrow',
+                  {},
+                  'Timer Display Settings',
+                )}
+              </p>
+              <h4 className="floating-widget__title">
+                {t(
+                  'studyRoom.settings.displayTitle',
+                  {},
+                  'Presentation mode',
+                )}
+              </h4>
             </div>
             <p className="floating-widget__meta">
-              Change how the timer sits on top of the study scene without
-              altering the timer engine or session progress.
+              {t(
+                'studyRoom.settings.displayIntro',
+                {},
+                'Change how the timer sits on top of the study scene without altering the timer engine or session progress.',
+              )}
             </p>
           </div>
 
           <div className="settings-choice-grid">
-            {TIMER_DISPLAY_MODE_OPTIONS.map((option) => (
+            {timerDisplayModeOptions.map((option) => (
               <button
                 key={option.id}
                 type="button"
@@ -118,16 +236,32 @@ export function SettingsPanelContent() {
       <section className="floating-widget settings-placeholder-card">
         <div className="floating-widget__header">
           <div>
-            <p className="floating-widget__eyebrow">Audio Architecture Placeholder</p>
-            <h3 className="floating-widget__title">Cloud music integration coming soon</h3>
+            <p className="floating-widget__eyebrow">
+              {t(
+                'studyRoom.settings.audioEyebrow',
+                {},
+                'Audio Architecture Placeholder',
+              )}
+            </p>
+            <h3 className="floating-widget__title">
+              {t(
+                'studyRoom.settings.audioTitle',
+                {},
+                'Cloud music integration coming soon',
+              )}
+            </h3>
           </div>
-          <span className="floating-widget__badge">Future</span>
+          <span className="floating-widget__badge">
+            {t('common.future', {}, 'Future')}
+          </span>
         </div>
 
         <p className="floating-widget__meta">
-          Ambient playback is still running through the local source provider.
-          A future cloud provider will plug into the music-source abstraction
-          without replacing the existing playback controller.
+          {t(
+            'studyRoom.settings.audioCopy',
+            {},
+            'Ambient playback is still running through the local source provider. A future cloud provider will plug into the music-source abstraction without replacing the existing playback controller.',
+          )}
         </p>
       </section>
     </div>

@@ -1,0 +1,316 @@
+{
+  "meta": {
+    "localeLabel": "日本語"
+  },
+  "brand": {
+    "name": "Je1ghtxyuN",
+    "portalTagline": "静的ファーストな執筆、インタラクティブ実験、長期的なプラットフォーム設計のための個人サイト。",
+    "studyRoomName": "Study Room",
+    "studyRoomShortDescription": "ポモドーロ進行、雰囲気シーン、低干渉の学習ツールを組み合わせた没入型フォーカス空間。",
+    "contactEmailLabel": "メール",
+    "contactLocationLabel": "場所"
+  },
+  "common": {
+    "language": "言語",
+    "local": "ローカル",
+    "future": "今後",
+    "close": "閉じる",
+    "start": "開始",
+    "pause": "一時停止",
+    "reset": "リセット",
+    "exit": "終了",
+    "save": "保存",
+    "enabled": "有効",
+    "muted": "ミュート",
+    "play": "再生",
+    "previous": "前へ",
+    "next": "次へ",
+    "track": "トラック",
+    "volume": "音量",
+    "add": "追加",
+    "done": "完了",
+    "undo": "元に戻す",
+    "comingSoon": "近日公開",
+    "resumeFocus": "集中を再開"
+  },
+  "portal": {
+    "languageSelectorLabel": "言語",
+    "nav": {
+      "home": "ホーム",
+      "archives": "アーカイブ",
+      "categories": "カテゴリ",
+      "portfolio": "ポートフォリオ",
+      "studyRoom": "Study Room",
+      "contact": "連絡",
+      "about": "About"
+    },
+    "shortcuts": {
+      "blog": {
+        "label": "ブログ",
+        "description": "生成された記事一覧から最新の執筆へすぐ移動できます。"
+      },
+      "portfolio": {
+        "label": "ポートフォリオ",
+        "description": "プロジェクトカードと長期ケーススタディの種を確認できます。"
+      },
+      "studyRoom": {
+        "label": "Study Room",
+        "description": "統合されたフラッグシップ集中アプリへ直接入ります。"
+      },
+      "contact": {
+        "label": "連絡",
+        "description": "ポータルの連絡ページからメッセージを送れます。"
+      }
+    },
+    "home": {
+      "shortcutsTitle": "ポータルを探索",
+      "shortcutsDescription": "執筆、プロジェクト紹介、統合された Study Room、連絡先への高速導線です。",
+      "recentPostsTitle": "最近の執筆",
+      "recentPostsIntro": "ポータル公開面からの最新記事です。",
+      "portfolioPreviewTitle": "注目プロジェクト",
+      "footerTitle": "つながる",
+      "footerIntro": "公開ポータル情報と共有プロフィール情報を一か所から更新しやすく保ちます。"
+    },
+    "footer": {
+      "socialLinks": "ソーシャルリンク",
+      "contact": "連絡先"
+    },
+    "about": {
+      "title": "About Me",
+      "skillsTitle": "スキル",
+      "skillsIntro": "この構造は将来のデータ編集でさらに洗練できるように準備されています。",
+      "experienceTitle": "経験",
+      "experienceIntro": "経験タイムラインは現在 site_profile.yml から供給されています。",
+      "emptySkills": "スキル項目はまだ設定されていません。",
+      "emptyExperience": "経験項目はまだ設定されていません。"
+    },
+    "portfolio": {
+      "title": "ポートフォリオ",
+      "empty": "ポートフォリオカードはまだ設定されていません。"
+    },
+    "studyRoom": {
+      "title": "Study Room",
+      "ctaLabel": "Study Room に入る",
+      "ctaNote": "Study Room は /study-app/ で独立アプリとして開きますが、同じプラットフォーム製品群の一部です。",
+      "featuresTitle": "統合機能",
+      "featuresIntro": "この専用フォーカスアプリは、ポータルと同じ公開サイト契約の一部になりました。",
+      "empty": "Study Room の機能はまだ設定されていません。"
+    },
+    "contact": {
+      "title": "連絡",
+      "channelsTitle": "連絡チャネル",
+      "bestForLabel": "向いている内容",
+      "messageChecklistTitle": "メッセージに含めると良いもの",
+      "messageChecklistIntro": "分かりやすいメッセージには通常次の内容が含まれます：",
+      "checklist": {
+        "who": "あなたが誰か",
+        "topic": "何について連絡しているか",
+        "context": "参考リンクや文脈",
+        "reply": "どのように返信してほしいか"
+      },
+      "formTitle": "連絡フォーム",
+      "formLegend": "メッセージを送る",
+      "nameLabel": "名前",
+      "emailLabel": "メール",
+      "topicLabel": "件名",
+      "messageLabel": "メッセージ",
+      "namePlaceholder": "あなたの名前",
+      "emailPlaceholder": "you@example.com",
+      "topicPlaceholder": "プロジェクト、協力、または簡単な挨拶",
+      "messagePlaceholder": "簡単な自己紹介とメッセージを書いてください",
+      "sendButton": "メッセージを送信",
+      "notesTitle": "メモ",
+      "notes": {
+        "formspreeReady": "このフォーム構造は、最終エンドポイントが決まれば Formspree 形式の送信に対応できます。",
+        "placeholderEndpoint": "エンドポイントはまだプレースホルダーなので、公開前に差し替える必要があります。",
+        "futureBackend": "長期的には、このフローは Formspree ではなく自前バックエンドの背後へ移行する可能性があります。"
+      }
+    },
+    "searchPlaceholder": "記事、ページ、プロジェクトノートを検索..."
+  },
+  "studyRoom": {
+    "chrome": {
+      "brandText": "Study Room",
+      "panelGroupLabel": "Study Room パネル"
+    },
+    "panelOverlay": {
+      "eyebrow": "パネルモード",
+      "close": "閉じる"
+    },
+    "panels": {
+      "todo": {
+        "title": "Todo パネル",
+        "description": "小さなタスク記録は常設レイアウトではなくオーバーレイとして利用できます。"
+      },
+      "music": {
+        "title": "音楽パネル",
+        "description": "アンビエント再生は利用可能なまま、主シーンを圧迫しません。"
+      },
+      "statistics": {
+        "title": "統計パネル",
+        "description": "セッションカウンタと将来の進捗表示は専用オーバーレイに配置されます。"
+      },
+      "settings": {
+        "title": "設定パネル",
+        "description": "タイマー設定と共有プリファレンスは別ダッシュボードではなく浮遊パネルから開きます。"
+      }
+    },
+    "timer": {
+      "idleStart": "開始",
+      "resumeFocus": "集中を再開",
+      "workChip": "作業",
+      "shortBreakChip": "短い休憩",
+      "longBreakChip": "長い休憩",
+      "longBreakNext": "次は長い休憩",
+      "longBreakIn": "長い休憩まであと {count} 回",
+      "automaticReturn": "自動で作業に戻ります",
+      "completedPomodoros": "完了したポモドーロ {count}",
+      "longBreakEvery": "{count} 回ごとに長い休憩",
+      "status": {
+        "work": {
+          "idle": "集中準備完了",
+          "paused": "集中を一時停止中",
+          "running": "集中フロー"
+        },
+        "shortBreak": {
+          "idle": "短い休憩の準備完了",
+          "paused": "休憩を一時停止中",
+          "running": "やさしいリセット"
+        },
+        "longBreak": {
+          "idle": "長い休憩の準備完了",
+          "paused": "回復を一時停止中",
+          "running": "深い回復"
+        }
+      },
+      "hint": {
+        "work": "フォーカスセッション進行中",
+        "shortBreak": "やさしい休憩時間",
+        "longBreak": "長めの回復インターバル"
+      },
+      "metadataTone": {
+        "work": "ディープワーク時間帯",
+        "shortBreak": "ソフトリカバリー時間帯",
+        "longBreak": "静かなリセット時間帯"
+      }
+    },
+    "cues": {
+      "eyebrow": "空気感の切り替え",
+      "focusComplete": "集中完了",
+      "shortBreak": "短い休憩",
+      "longBreak": "長い休憩",
+      "backToFocus": "集中へ戻る",
+      "workSession": "作業セッション"
+    },
+    "settings": {
+      "titleEyebrow": "Study Room 設定",
+      "title": "表示と挙動",
+      "intro": "この設定センターでは、基盤のポモドーロエンジンを変えずに、シーン・タイマー・ローカル学習ランタイムの感触を調整できます。",
+      "languageEyebrow": "言語設定",
+      "languageTitle": "UI 言語",
+      "languageIntro": "この選択は Study Room と将来連携する UI ラベルを更新します。",
+      "sceneEyebrow": "シーン設定",
+      "sceneTitle": "学習環境",
+      "sceneIntro": "現在のシーンを選択できます。カスタムアップロードは後続フェーズでここに接続されます。",
+      "customUploadsTitle": "カスタムアップロード",
+      "customUploadsCopy": "将来の自前ホスティングシーンアップロードは、現在の動画シーン登録を置き換えずにここで管理します。",
+      "displayEyebrow": "タイマー表示設定",
+      "displayTitle": "表示モード",
+      "displayIntro": "シーン上でのタイマーの見え方を変えますが、タイマーエンジンやセッション進行は変わりません。",
+      "displayModes": {
+        "center_focus": {
+          "label": "センターフォーカス",
+          "description": "没入感のある中央タイマーが主役の集中面として残ります。"
+        },
+        "minimal_overlay": {
+          "label": "最小オーバーレイ",
+          "description": "より小さなオーバーレイで、シーンを主役のままタイマーを表示します。"
+        },
+        "corner_embed": {
+          "label": "コーナー埋め込み",
+          "description": "最小限の学習操作だけを表示する控えめなコーナータイマーです。"
+        }
+      },
+      "timerEyebrow": "タイマー挙動設定",
+      "timerTitle": "ポモドーロエンジン",
+      "timerIntro": "自動ロールオーバーは維持したまま、時間と周期はユーザーが調整できます。",
+      "workMinutes": "作業時間",
+      "shortBreakMinutes": "短い休憩",
+      "longBreakMinutes": "長い休憩",
+      "longBreakInterval": "長い休憩の間隔",
+      "completionBellTitle": "完了ベル",
+      "completionBellCopy": "タイマーが自然に次のポモドーロ段階へ移るときだけ鳴ります。",
+      "saveTimer": "タイマー設定を保存",
+      "audioEyebrow": "音楽アーキテクチャのプレースホルダー",
+      "audioTitle": "クラウド音楽連携は今後追加予定",
+      "audioCopy": "アンビエント再生はまだローカル音源プロバイダ経由で動作しています。将来のクラウドプロバイダは既存の再生コントローラを置き換えずに音源抽象へ接続されます。"
+    },
+    "music": {
+      "eyebrow": "アンビエント音楽",
+      "trackLabel": "トラック",
+      "playback": {
+        "idle": "待機中",
+        "playing": "再生中",
+        "paused": "一時停止中"
+      },
+      "source": {
+        "localLabel": "ローカルライブラリ",
+        "localDescription": "同梱ローカル環境音により、現在の Study Room は自己完結かつオフライン安全です。",
+        "cloudFutureLabel": "クラウド音楽",
+        "cloudFutureDescription": "クラウド音楽連携は今後追加予定です。"
+      },
+      "tracks": {
+        "deep-focus-placeholder": {
+          "title": "ディープフォーカス仮トラック",
+          "note": "音声コントローラ動作確認用の無音ローカルプレースホルダーです。"
+        },
+        "late-night-placeholder": {
+          "title": "深夜プレースホルダー",
+          "note": "将来のローカル同梱アンビエンス枠のための予約スロットです。"
+        }
+      },
+      "errors": {
+        "blocked": "ブラウザがユーザー操作を受け取るまで、再生がブロックされることがあります。",
+        "enableSound": "アンビエント再生を始める前にサウンドを有効にしてください。"
+      }
+    },
+    "todo": {
+      "eyebrow": "タスク記録",
+      "title": "現在の Todo",
+      "intro": "現在の学習セッション向けの軽量ローカルタスクリストです。",
+      "inputPlaceholder": "小さな学習タスクを追加",
+      "empty": "まだタスクはありません。"
+    },
+    "statistics": {
+      "eyebrow": "統計",
+      "title": "セッションカウンタ",
+      "intro": "Reducer は完了セッションをすでに追跡しているため、この機能は将来の永続化や分析に向けた安定した面を持っています。",
+      "completedPomodoros": "完了したポモドーロ",
+      "completedBreaks": "完了した休憩",
+      "futureCopy": "将来のバックエンド同期では、タイマーの完了報告方式を変えずに、セッション履歴・連続記録・ユーザー別学習サマリーを保存できます。"
+    },
+    "auth": {
+      "eyebrow": "認証プレースホルダー",
+      "title": "将来のアカウント層",
+      "intro": "この枠は、後からアカウント連携された Study Room 状態を追加してもコアページ構造を崩さないために残しています。",
+      "sessionHandoff": "セッション引き継ぎ",
+      "protectedPresets": "保護されたプリセット",
+      "tokenStorage": "バックエンドトークン保存",
+      "futureCopy": "将来はバックエンドサービスがログイン、セッション検証、ユーザー連携学習データを管理します。ここは Firebase 時代のブラウザ直結認証に依存しません。"
+    },
+    "scenes": {
+      "coastalCafe": {
+        "name": "海辺のカフェ",
+        "description": "昼間の軽い集中に合う、明るいオープンカフェのループシーン。"
+      },
+      "retroDesk": {
+        "name": "レトロデスク",
+        "description": "CRT の雰囲気を持つ、夜向けの暖かいデスクループシーン。"
+      },
+      "aquariumRoom": {
+        "name": "アクアリウムルーム",
+        "description": "水槽の光がある、深夜の集中作業向け静かな室内ループシーン。"
+      }
+    }
+  }
+}

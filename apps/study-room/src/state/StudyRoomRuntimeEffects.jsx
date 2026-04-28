@@ -9,6 +9,7 @@ export function StudyRoomRuntimeEffects() {
   const lastHandledTransitionIdRef = useRef(0)
   const { preferences, timer } = state
   const {
+    locale,
     selectedSceneId,
     selectedTrackId,
     soundEnabled,
@@ -20,6 +21,7 @@ export function StudyRoomRuntimeEffects() {
   useEffect(() => {
     writePersistedStudyRoomState({
       preferences: {
+        locale,
         selectedSceneId,
         selectedTrackId,
         soundEnabled,
@@ -39,6 +41,7 @@ export function StudyRoomRuntimeEffects() {
     durations.longBreak,
     durations.shortBreak,
     durations.work,
+    locale,
     longBreakInterval,
     selectedSceneId,
     selectedTrackId,

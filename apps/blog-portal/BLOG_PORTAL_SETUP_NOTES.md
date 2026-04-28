@@ -207,3 +207,72 @@ Custom portal pages added in this pass:
 This portal pass reserves structure for future Giscus and Formspree integration because that is the current requested implementation direction.
 
 However, the architecture memory still records a preference for self-hosted comments and contact ownership in the long term. That decision should be revisited before production rollout.
+
+## Study Room Integration Contract
+
+The portal and the Study Room now behave as one product family with two different web runtimes.
+
+Current routing contract:
+
+- `/` stays the Hexo portal home
+- `/study-room/` stays a portal-owned landing and explanation page
+- `/study-app/` is the standalone Study Room application mount
+
+Public CTA rule:
+
+- homepage shortcut cards now send Study Room traffic directly to `/study-app/`
+- the Study Room portfolio card uses `/study-app/` for its live demo link
+- the dedicated `/study-room/` page acts as an informational handoff surface and uses `/study-app/` as its primary entry CTA
+
+The route assumptions come from:
+
+- `packages/shared-config/site-identity.json`
+- `apps/blog-portal/scripts/portal-renderer.js`
+- `apps/blog-portal/scripts/portal-data-sync.js`
+
+Portal content should not hardcode `http://localhost:5173` anymore.
+
+## Shared Identity And I18n
+
+The portal now consumes a shared site contract instead of keeping product wording in isolated theme files.
+
+Shared sources:
+
+- identity and route contract: `packages/shared-config/site-identity.json`
+- shared locale dictionaries: `packages/shared-assets/locales/site-ui/*.json`
+
+Portal-side wiring:
+
+- `scripts/portal-shared-config.js` reads the shared identity config and the default locale bundle
+- `scripts/portal-data-sync.js` injects the locale bootstrap config into every generated page
+- `source/js/portal-i18n.js` loads locale JSON, stores the active locale in `localStorage.site-locale`, updates translated DOM nodes, and renders the language switcher
+- `scripts/portal-renderer.js` adds `data-i18n` attributes to controlled labels so the client locale script can swap UI text without duplicating article content
+
+Default behavior:
+
+- the default locale comes from `site-identity.json`
+- the portal checks `?lang=`, then `localStorage.site-locale`, then the browser language
+- only shared UI text is translated
+- blog post bodies are not duplicated per locale in this phase
+
+Currently translated portal UI includes:
+
+- navigation labels
+- homepage section labels and shortcut descriptions
+- about, portfolio, contact, and Study Room static labels
+- contact form labels and placeholders
+- search placeholder text
+
+## Adding A New Language
+
+To add another shared site language:
+
+1. add the new locale code and label to `packages/shared-config/site-identity.json`
+2. create `packages/shared-assets/locales/site-ui/<locale>.json`
+3. copy the current locale key structure and translate only the shared UI keys
+4. keep article bodies in their original language unless a later publishing strategy explicitly adds multilingual post duplication
+
+Portal note:
+
+- the portal locale switcher will automatically list the new locale if it exists in `site-identity.json`
+- missing portal keys fall back to the default locale text

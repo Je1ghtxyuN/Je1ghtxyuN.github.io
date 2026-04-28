@@ -1,7 +1,8 @@
 .type-portal-home #page,
 .type-portal-about #page,
 .type-portal-portfolio #page,
-.type-portal-study-room #page {
+.type-portal-study-room #page,
+.type-portal-contact #page {
   background: transparent;
   box-shadow: none;
 }
@@ -9,14 +10,16 @@
 .type-portal-home #page .page-title,
 .type-portal-about #page .page-title,
 .type-portal-portfolio #page .page-title,
-.type-portal-study-room #page .page-title {
+.type-portal-study-room #page .page-title,
+.type-portal-contact #page .page-title {
   display: none;
 }
 
 .type-portal-home #article-container,
 .type-portal-about #article-container,
 .type-portal-portfolio #article-container,
-.type-portal-study-room #article-container {
+.type-portal-study-room #article-container,
+.type-portal-contact #article-container {
   margin: 0;
   padding: 0;
   background: transparent;
@@ -277,6 +280,36 @@
   gap: 1rem;
 }
 
+.portal-locale-switcher {
+  position: fixed;
+  top: 5.2rem;
+  right: 1rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: rgba(18, 22, 28, 0.76);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--card-box-shadow);
+}
+
+.portal-locale-switcher__label {
+  font-size: 0.82rem;
+  color: var(--font-color);
+  opacity: 0.82;
+}
+
+.portal-locale-switcher__select {
+  min-width: 110px;
+  border: 0;
+  background: transparent;
+  color: var(--font-color);
+  font: inherit;
+}
+
 .portal-empty-state {
   padding: 1.2rem;
 }
@@ -291,5 +324,11 @@
   .portal-post-card__meta {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .portal-locale-switcher {
+    top: auto;
+    bottom: 1rem;
+    right: 0.75rem;
   }
 }
