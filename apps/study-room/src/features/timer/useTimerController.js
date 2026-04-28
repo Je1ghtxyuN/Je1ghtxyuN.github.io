@@ -20,6 +20,6 @@ export function useTimerController() {
     pauseTimer: actions.pauseTimer,
     resetTimer: actions.resetTimer,
     setSession: actions.setSession,
-    setDurations: actions.setDurations,
+    setTimerConfiguration: actions.setTimerConfiguration,
   }
 }

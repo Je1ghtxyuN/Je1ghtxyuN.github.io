@@ -68,11 +68,30 @@ Current design rules:
 
 - the background is rendered at the root app shell level
 - it uses `position: fixed` and does not participate in normal layout flow
-- the background scene is configurable through a scene object that now anticipates both image and future video/live scene inputs
-- a dark gradient and soft glow overlay sit above the image so timer text and chrome remain readable
-- focus mode uses a stronger cinematic overlay so the scene becomes more emotionally centered instead of being hidden behind large UI blocks
+- the background scene is configurable through `src/lib/studyScene.js`
+- each scene now carries a stable identity plus `mediaType`, `mediaSrc`, poster image, `idleOverlayStrength`, `focusOverlayStrength`, `ambientGlow`, and future media fields
+- the current code now ships three real local loop-video scenes sourced from `packages/shared-assets/videos/`:
+  - `coastal-cafe` -> `1.mp4`
+  - `retro-desk` -> `2.mp4`
+  - `aquarium-room` -> `3.mp4`
+- `BackgroundLayer.jsx` treats the media itself as the protagonist and only adds cinematic overlay, vignette, grain, and glow layers for readability and atmosphere
+- focus mode uses a stronger cinematic overlay and ambient glow instead of hiding the scene behind a large timer card
+- video scenes autoplay muted, loop, play inline, and fade in over their own poster frame so scene changes stay smooth
 
 This allows the Study Room to grow into a more atmospheric experience without pushing visual concerns into feature components.
+
+## Atmosphere System
+
+This pass formalizes the difference between a structural background and a real scene system.
+
+Current atmosphere rules:
+
+- scene identity is reducer-friendly and stored through shared preferences via `selectedSceneId`
+- scene switching happens immediately and does not require route changes
+- background media is designed to accept either static illustration or future video/live wallpaper fields
+- overlays are strength-based so focus and idle states can reuse the same scene definition without duplicating theme logic
+- subtle animation lives in CSS and decorates the scene rather than becoming foreground UI motion
+- focus mode now adds gentle vignette pulse, faint overlay drift, and lightweight grain motion without introducing heavy animation libraries
 
 ## Mode-Based Interaction Model
 
@@ -122,13 +141,15 @@ Current reducer domains:
   - `status`
   - `remainingSeconds`
   - `durations`
+  - `longBreakInterval`
   - `lastTickAt`
-  - completed work and break counters
+  - `completedWorkCycles`
+  - `completedBreakSessions`
+  - `lastAutoTransition`
 
 - `preferences`
-  - `autoStartBreaks`
-  - `autoStartWork`
   - `soundEnabled`
+  - `selectedSceneId`
   - `selectedTrackId`
   - `volume`
 
@@ -154,9 +175,59 @@ Important mechanics:
 - `timer/start` records a `lastTickAt` timestamp
 - `useTimerEngine()` runs a lightweight interval while the timer is active
 - `timer/tick` computes elapsed whole seconds from timestamps rather than assuming perfect interval timing
-- when a session finishes, the reducer switches to the next session type and respects the auto-start preferences
+- the timer now behaves as a real Pomodoro state machine with `work`, `shortBreak`, and `longBreak`
+- when a work session finishes naturally:
+  - `completedWorkCycles` increments
+  - if the completed cycle count hits `longBreakInterval`, the reducer auto-rolls into `longBreak`
+  - otherwise it auto-rolls into `shortBreak`
+- when any break session finishes naturally, the reducer auto-rolls back into `work`
+- manual session switching and timer resets are intentionally separate reducer branches so they do not count as automatic Pomodoro completion
 
 This keeps the timer deterministic and easier to extend for future persistence or sync.
+
+## Bell Trigger Rules
+
+The Study Room now includes a single local completion bell sourced from `packages/shared-assets/se/BreakOrWork.mp3`.
+
+Important rules:
+
+- the bell plays only when the reducer records an automatic rollover in the `timer/tick` completion path
+- this means the bell fires for:
+  - work -> short break
+  - work -> long break
+  - short break -> work
+  - long break -> work
+- the bell never fires for:
+  - manual session switching
+  - timer reset
+  - duration edits
+  - start/pause interaction
+
+Implementation boundary:
+
+- reducer state records `lastAutoTransition`
+- `StudyRoomRuntimeEffects.jsx` observes that transition id and plays the bell only once if `preferences.soundEnabled` is enabled
+
+## Local Persistence
+
+Local persistence now exists and is intentionally scoped to user-facing preferences plus timer configuration.
+
+Persisted fields:
+
+- `preferences.selectedSceneId`
+- `preferences.soundEnabled`
+- `preferences.selectedTrackId`
+- `preferences.volume`
+- timer work duration
+- timer short-break duration
+- timer long-break duration
+- timer `longBreakInterval`
+
+Persistence flow:
+
+- `StudyRoomProvider.jsx` hydrates initial state from local storage through `studyRoomStorage.js`
+- `StudyRoomRuntimeEffects.jsx` writes the persisted subset back whenever one of those persisted fields changes
+- per-second countdown state is not persisted, which keeps the local save model simple and avoids storing noisy runtime values
 
 ## Panels Replace Persistent Widgets
 
@@ -197,8 +268,8 @@ The timer is no longer presented as a heavy widget card.
 
 Current behavior:
 
-- idle mode shows a small elegant timer entry with a single primary action
-- focus mode shows the timer as lightweight scene text plus a subtle control rail
+- idle mode shows a very small scene-entry timer near the upper-center interaction band
+- focus mode shows the timer as lightweight scene text plus a subtle control rail and low-opacity scene metadata
 - statistics and configuration are no longer embedded into the main focus view
 
 The goal is that the user reads the timer while still visually remaining inside the atmosphere of the scene.
@@ -220,7 +291,7 @@ For this pass, track sources are silent local placeholder data URIs. That keeps 
 
 The interaction model now uses subtle motion instead of abrupt layout swaps:
 
-- idle to focus: timer scales up slightly and settles into a lighter scene overlay
+- idle to focus: timer scales up slightly and settles into a lighter scene overlay while the background overlay darkens
 - focus to idle: the reverse motion returns the timer to a compact entry state
 - panel open/close: overlay uses fade plus a light upward slide
 
@@ -264,6 +335,11 @@ Implemented in this pass:
 - reducer-owned `uiMode` interaction system
 - overlay panels that replace always-visible secondary widgets
 - scene-first chrome and timer overlay presentation
+- selectable real local loop-video scene system with immediate switching
+- atmospheric timer overlay treatment
+- professional three-phase Pomodoro state machine
+- local bell cue on automatic completion rollover only
+- local persistence for scene selection, sound, track selection, volume, durations, and long-break interval
 - background scene structure prepared for future live or animated scene support
 
 Still intentionally not final:

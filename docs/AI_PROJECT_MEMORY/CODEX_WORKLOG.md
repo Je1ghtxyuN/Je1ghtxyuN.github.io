@@ -399,3 +399,88 @@ Append new dated sessions below this line.
   - panel contents still use the shared floating surface language and may need another pass later to feel even more scene-native
 - next recommended step:
   - add richer scene assets and session-complete ambience behavior so the new scene-first shell starts feeling like a real study atmosphere instead of a structural mockup
+
+### Session 2026-04-28 — Study Room Atmosphere Implementation Pass
+
+- objectives:
+  - keep the idle/focus/panel interaction model stable while making the scene itself feel like the main product surface
+  - replace the single placeholder background treatment with a real multi-scene architecture
+  - make timer and chrome presentation more atmospheric and less widget-like
+- actions taken:
+  - refactored `src/lib/studyScene.js` into a real scene registry with selectable `night-desk` and `rain-room` definitions
+  - added scene identity, overlay-strength, glow, and future media fields so live wallpaper support can slot into the same structure later
+  - updated `BackgroundLayer.jsx` to consume scene definitions through background image, overlay strength, glow, vignette, and future video-ready media fields
+  - wired `selectedSceneId` into shared preferences and app-shell scene resolution so scene switching is immediate and reducer-friendly
+  - added a scene selector to the settings panel
+  - refined the timer into a lighter atmospheric overlay with focus-status micro text instead of a boxed centerpiece
+  - rebalanced the top chrome into a centered symmetric micro-toolbar
+  - rewrote the Study Room CSS around clearer background presence, lighter overlays, and subtle ambient animation
+  - verified the Study Room app with successful lint and build runs after importing shared scene images across app boundaries
+- files changed:
+  - updated `apps/study-room/src/lib/studyScene.js`
+  - updated `apps/study-room/src/components/BackgroundLayer.jsx`
+  - updated `apps/study-room/src/state/studyRoomReducer.js`
+  - updated `apps/study-room/src/app/AppShell.jsx`
+  - updated `apps/study-room/src/app/pages/StudyPage.jsx`
+  - updated `apps/study-room/src/app/StudyChromeWidget.jsx`
+  - updated `apps/study-room/src/app/panels/SettingsPanelContent.jsx`
+  - updated `apps/study-room/src/features/timer/TimerPanel.jsx`
+  - updated `apps/study-room/src/App.css`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - scene selection is now a first-class shared preference and should remain compatible with future local persistence and backend sync
+  - the timer should read as atmospheric text inside the scene rather than a dominant card surface
+  - scene media must stay extensible enough for future illustration packs, looped video, or live wallpaper support without changing UI mode architecture
+- risks or blockers:
+  - the current placeholder scene assets are serviceable for architecture validation but are not yet the final emotional-quality study illustrations
+  - importing large shared images directly into the Study Room bundle increased build output size and may need later optimization or asset-specific variants
+- next recommended step:
+  - introduce better study-scene source assets plus mode-aware ambience behavior such as session-complete cues, optional rain/audio sync, and user-selectable scene persistence
+
+### Session 2026-04-28 — Real Video Scene Integration And Pomodoro Engine Upgrade
+
+- objectives:
+  - replace placeholder primary scenes with real local loop videos
+  - upgrade the timer into a professional three-phase Pomodoro state machine
+  - add local persistence and a strict bell-on-auto-completion rule without breaking the scene-first shell
+- actions taken:
+  - detected and wired `packages/shared-assets/videos/1.mp4`, `2.mp4`, and `3.mp4` as the new primary Study Room scenes
+  - generated and copied local poster frames from those videos into `packages/shared-assets/videos/1-poster.png`, `2-poster.png`, and `3-poster.png` for smoother scene fallback and fade-in
+  - refactored `src/lib/studyScene.js` so scene definitions are now video-first and data-driven through `mediaType` and `mediaSrc`
+  - updated `BackgroundLayer.jsx` to support inline loop-video playback with poster fallback and smooth opacity reveal
+  - replaced the old work/break reducer flow with `work`, `shortBreak`, and `longBreak` automatic rollover logic plus `completedWorkCycles` and `longBreakInterval`
+  - added `lastAutoTransition` tracking so bell playback can distinguish automatic completion from manual timer actions
+  - added provider-level runtime effects for local persistence and bell playback
+  - persisted scene selection, sound preference, selected track, volume, timer durations, and long-break interval through local storage
+  - upgraded the settings panel and timer presentation so the new Pomodoro state machine is editable and visible without changing the scene-first interaction philosophy
+  - verified the Study Room app with successful lint and build runs after bundling the real videos and bell asset
+- files changed:
+  - added `apps/study-room/src/state/studyRoomStorage.js`
+  - added `apps/study-room/src/state/StudyRoomRuntimeEffects.jsx`
+  - updated `apps/study-room/src/state/StudyRoomProvider.jsx`
+  - updated `apps/study-room/src/state/studyRoomReducer.js`
+  - updated `apps/study-room/src/state/useStudyRoom.js`
+  - updated `apps/study-room/src/lib/studyScene.js`
+  - updated `apps/study-room/src/components/BackgroundLayer.jsx`
+  - updated `apps/study-room/src/features/timer/useTimerController.js`
+  - updated `apps/study-room/src/features/timer/TimerPanel.jsx`
+  - updated `apps/study-room/src/features/timer/TimerSettingsWidget.jsx`
+  - updated `apps/study-room/src/features/study-statistics/StudyStatisticsPanel.jsx`
+  - updated `apps/study-room/src/app/panels/SettingsPanelContent.jsx`
+  - updated `apps/study-room/src/App.css`
+  - added `packages/shared-assets/videos/1-poster.png`
+  - added `packages/shared-assets/videos/2-poster.png`
+  - added `packages/shared-assets/videos/3-poster.png`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - automatic timer completion is now always responsible for Pomodoro phase rollover; manual session changes remain separate and non-counting
+  - the bell cue is tied only to `lastAutoTransition` so manual UI actions can never accidentally trigger it
+  - local persistence intentionally stores configuration and media preferences, but not live countdown progress
+  - real loop videos are now the primary scene medium and static images are reduced to poster/fallback responsibility
+- risks or blockers:
+  - the three real local videos bundle successfully, but their current build sizes are large and will likely need later compression, streaming strategy, or alternate-quality variants for production
+  - ambient music remains placeholder-only, so the Study Room still lacks final-grade audio ambience despite the new bell cue and real scene loops
+- next recommended step:
+  - optimize the bundled study-scene media and then deepen the atmosphere layer with mode-aware ambience, better scene metadata, and optional persisted last-used playback state

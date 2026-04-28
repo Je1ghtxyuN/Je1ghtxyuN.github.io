@@ -20,9 +20,9 @@ export function StudyStatisticsPanel() {
       <div className="widget-metrics">
         <div className="widget-metric">
           <span className="widget-metric__value">
-            {timer.completedWorkSessions}
+            {timer.completedWorkCycles}
           </span>
-          <span className="widget-metric__label">Completed work sessions</span>
+          <span className="widget-metric__label">Completed Pomodoros</span>
         </div>
 
         <div className="widget-metric">

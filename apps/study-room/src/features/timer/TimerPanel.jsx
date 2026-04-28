@@ -2,6 +2,7 @@ import { useTimerController } from './useTimerController.js'
 
 export function TimerPanel({
   mode = 'idle',
+  sceneLabel = 'Coastal Cafe',
   timerStatus,
   onEnterFocus,
   onExitFocus,
@@ -15,6 +16,25 @@ export function TimerPanel({
     resetTimer,
     setSession,
   } = useTimerController()
+  const focusStatusText =
+    timer.status === 'running' ? 'Pomodoro Running' : 'Pomodoro Ready'
+  const sceneMetaText = `${sceneLabel} Active`
+  const workSessionsUntilLongBreak =
+    timer.longBreakInterval -
+    (timer.completedWorkCycles % timer.longBreakInterval)
+  const nextBreakHint =
+    timer.sessionType === 'work'
+      ? workSessionsUntilLongBreak === 1
+        ? 'Long Break Next'
+        : `Long Break In ${workSessionsUntilLongBreak}`
+      : 'Automatic Return To Work'
+
+  const handleIdleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onEnterFocus()
+    }
+  }
 
   if (mode === 'idle') {
     const handleIdlePrimaryAction = () => {
@@ -29,8 +49,11 @@ export function TimerPanel({
       <section
         className="scene-timer scene-timer--idle"
         onClick={onEnterFocus}
+        role="button"
+        tabIndex={0}
+        onKeyDown={handleIdleKeyDown}
       >
-        <p className="scene-timer__label">Timer</p>
+        <p className="scene-timer__ambient">{sceneLabel}</p>
         <div className="scene-timer__clock scene-timer__clock--idle">
           {formattedRemaining}
         </div>
@@ -59,8 +82,11 @@ export function TimerPanel({
 
   return (
     <section className="scene-timer scene-timer--focus">
-      <p className="scene-timer__label">{sessionLabel}</p>
+      <p className="scene-timer__status">{focusStatusText}</p>
       <div className="scene-timer__clock">{formattedRemaining}</div>
+      <p className="scene-timer__ambient scene-timer__ambient--focus">
+        {sessionLabel} · {sceneMetaText} · {nextBreakHint}
+      </p>
 
       <div className="scene-timer__session-switch">
         <button
@@ -72,10 +98,17 @@ export function TimerPanel({
         </button>
         <button
           type="button"
-          className={`scene-timer__chip${timer.sessionType === 'break' ? ' scene-timer__chip--active' : ''}`}
-          onClick={() => setSession('break')}
+          className={`scene-timer__chip${timer.sessionType === 'shortBreak' ? ' scene-timer__chip--active' : ''}`}
+          onClick={() => setSession('shortBreak')}
         >
-          Break
+          Short Break
+        </button>
+        <button
+          type="button"
+          className={`scene-timer__chip${timer.sessionType === 'longBreak' ? ' scene-timer__chip--active' : ''}`}
+          onClick={() => setSession('longBreak')}
+        >
+          Long Break
         </button>
       </div>
 
@@ -102,6 +135,11 @@ export function TimerPanel({
           Exit
         </button>
       </div>
+
+      <p className="scene-timer__status scene-timer__status--secondary">
+        Completed Pomodoros {timer.completedWorkCycles} · Long break every{' '}
+        {timer.longBreakInterval}
+      </p>
     </section>
   )
 }

@@ -5,6 +5,7 @@ import { AmbientMusicPanel } from '../../features/ambient-music/index.js'
 import { StudyStatisticsPanel } from '../../features/study-statistics/index.js'
 import { TimerPanel } from '../../features/timer/index.js'
 import { TodoPanel } from '../../features/todo/index.js'
+import { getStudyScene } from '../../lib/studyScene.js'
 import { StudyLayout } from '../../layouts/StudyLayout.jsx'
 import {
   useStudyRoomActions,
@@ -35,10 +36,11 @@ const PANEL_DEFINITIONS = {
 }
 
 export function StudyPage() {
-  const { timer, ui } = useStudyRoomState()
+  const { preferences, timer, ui } = useStudyRoomState()
   const { closePanel, enterFocusMode, enterIdleMode, openPanel } =
     useStudyRoomActions()
   const displayMode = ui.mode === 'panel' ? ui.previousMode : ui.mode
+  const activeScene = getStudyScene(preferences.selectedSceneId)
   const activePanelDefinition = ui.activePanel
     ? PANEL_DEFINITIONS[ui.activePanel]
     : null
@@ -65,17 +67,11 @@ export function StudyPage() {
         center={
           <TimerPanel
             mode={displayMode}
+            sceneLabel={activeScene.label}
             timerStatus={timer.status}
             onEnterFocus={enterFocusMode}
             onExitFocus={enterIdleMode}
           />
-        }
-        footer={
-          displayMode === 'focus' ? (
-            <p className="scene-hint">
-              Click the scene to return to idle.
-            </p>
-          ) : null
         }
         onSceneClick={displayMode === 'focus' ? enterIdleMode : undefined}
       />

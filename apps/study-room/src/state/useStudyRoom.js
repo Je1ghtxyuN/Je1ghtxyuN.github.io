@@ -40,8 +40,8 @@ export function useStudyRoomActions() {
     setSession(sessionType) {
       dispatch({ type: 'timer/set-session', sessionType })
     },
-    setDurations(durations) {
-      dispatch({ type: 'timer/set-durations', durations, now: Date.now() })
+    setTimerConfiguration(config) {
+      dispatch({ type: 'timer/set-config', config, now: Date.now() })
     },
     setPreference(key, value) {
       dispatch({ type: 'preferences/set', key, value })

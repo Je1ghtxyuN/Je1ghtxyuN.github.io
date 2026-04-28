@@ -3,31 +3,39 @@ import { useStudyRoomState, useStudyRoomActions } from '../../state/useStudyRoom
 import { secondsToMinutes } from './timerUtils.js'
 
 export function TimerSettingsWidget() {
-  const { timer } = useStudyRoomState()
-  const { setDurations } = useStudyRoomActions()
+  const { preferences, timer } = useStudyRoomState()
+  const { setPreference, setTimerConfiguration } = useStudyRoomActions()
   const [workMinutes, setWorkMinutes] = useState(
     String(secondsToMinutes(timer.durations.work)),
   )
-  const [breakMinutes, setBreakMinutes] = useState(
-    String(secondsToMinutes(timer.durations.break)),
+  const [shortBreakMinutes, setShortBreakMinutes] = useState(
+    String(secondsToMinutes(timer.durations.shortBreak)),
+  )
+  const [longBreakMinutes, setLongBreakMinutes] = useState(
+    String(secondsToMinutes(timer.durations.longBreak)),
+  )
+  const [longBreakInterval, setLongBreakInterval] = useState(
+    String(timer.longBreakInterval),
   )
 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    setDurations({
+    setTimerConfiguration({
       workMinutes,
-      breakMinutes,
+      shortBreakMinutes,
+      longBreakMinutes,
+      longBreakInterval,
     })
   }
 
   return (
     <section className="floating-widget settings-widget">
       <p className="floating-widget__eyebrow">Timer Configuration</p>
-      <h2 className="floating-widget__title">Session lengths</h2>
+      <h2 className="floating-widget__title">Pomodoro engine</h2>
       <p className="floating-widget__copy">
-        Duration controls moved out of the center timer so the main study view
-        can stay compact and immersive.
+        Automatic rollover now runs as a three-phase Pomodoro cycle:
+        work, short break, and long break.
       </p>
 
       <form className="widget-form" onSubmit={handleSubmit}>
@@ -46,21 +54,64 @@ export function TimerSettingsWidget() {
           </div>
 
           <div className="field">
-            <label htmlFor="settings-break-minutes">Break minutes</label>
+            <label htmlFor="settings-short-break-minutes">Short break</label>
             <input
-              id="settings-break-minutes"
+              id="settings-short-break-minutes"
               className="input"
               type="number"
               min="1"
               max="180"
-              value={breakMinutes}
-              onChange={(event) => setBreakMinutes(event.target.value)}
+              value={shortBreakMinutes}
+              onChange={(event) => setShortBreakMinutes(event.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="settings-long-break-minutes">Long break</label>
+            <input
+              id="settings-long-break-minutes"
+              className="input"
+              type="number"
+              min="1"
+              max="180"
+              value={longBreakMinutes}
+              onChange={(event) => setLongBreakMinutes(event.target.value)}
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="settings-long-break-interval">Long break every</label>
+            <input
+              id="settings-long-break-interval"
+              className="input"
+              type="number"
+              min="2"
+              max="12"
+              value={longBreakInterval}
+              onChange={(event) => setLongBreakInterval(event.target.value)}
             />
           </div>
         </div>
 
+        <div className="settings-widget__toggle">
+          <div>
+            <strong>Completion bell</strong>
+            <p className="floating-widget__meta">
+              Plays only when the timer naturally rolls into the next Pomodoro
+              phase.
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`button ${preferences.soundEnabled ? 'button--active' : 'button--ghost'}`}
+            onClick={() => setPreference('soundEnabled', !preferences.soundEnabled)}
+          >
+            {preferences.soundEnabled ? 'Enabled' : 'Muted'}
+          </button>
+        </div>
+
         <button type="submit" className="button button--primary">
-          Apply Durations
+          Apply Timer Settings
         </button>
       </form>
     </section>

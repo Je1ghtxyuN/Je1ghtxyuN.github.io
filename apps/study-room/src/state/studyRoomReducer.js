@@ -1,13 +1,23 @@
-const DEFAULT_DURATIONS_MINUTES = Object.freeze({
-  work: 25,
-  break: 5,
+import { DEFAULT_SCENE_ID } from '../lib/studyScene.js'
+
+export const TIMER_SESSION_TYPES = Object.freeze({
+  work: 'work',
+  shortBreak: 'shortBreak',
+  longBreak: 'longBreak',
 })
 
+const DEFAULT_DURATIONS_MINUTES = Object.freeze({
+  work: 25,
+  shortBreak: 5,
+  longBreak: 15,
+})
+
+const DEFAULT_LONG_BREAK_INTERVAL = 4
+
 const DEFAULT_PREFERENCES = Object.freeze({
-  autoStartBreaks: false,
-  autoStartWork: false,
   soundEnabled: true,
   selectedTrackId: 'deep-focus-placeholder',
+  selectedSceneId: DEFAULT_SCENE_ID,
   volume: 0.45,
 })
 
@@ -15,6 +25,13 @@ const DEFAULT_UI_STATE = Object.freeze({
   mode: 'idle',
   activePanel: null,
   previousMode: 'idle',
+})
+
+const MANUAL_SESSION_TYPE_MAP = Object.freeze({
+  work: TIMER_SESSION_TYPES.work,
+  break: TIMER_SESSION_TYPES.shortBreak,
+  shortBreak: TIMER_SESSION_TYPES.shortBreak,
+  longBreak: TIMER_SESSION_TYPES.longBreak,
 })
 
 const minutesToSeconds = (minutes) => Math.round(minutes * 60)
@@ -27,6 +44,14 @@ const clampMinutes = (value, fallback) => {
   return Math.min(180, Math.max(1, parsed))
 }
 
+const clampInterval = (value, fallback = DEFAULT_LONG_BREAK_INTERVAL) => {
+  const parsed = Number(value)
+
+  if (!Number.isFinite(parsed)) return fallback
+
+  return Math.min(12, Math.max(2, Math.round(parsed)))
+}
+
 const clampVolume = (value, fallback = DEFAULT_PREFERENCES.volume) => {
   const parsed = Number(value)
 
@@ -35,41 +60,72 @@ const clampVolume = (value, fallback = DEFAULT_PREFERENCES.volume) => {
   return Math.min(1, Math.max(0, parsed))
 }
 
-const normalizeDurations = (durations = {}) => {
+const normalizeTimerConfiguration = (timerConfig = {}) => {
   const workMinutes = clampMinutes(
-    durations.workMinutes,
+    timerConfig.workMinutes,
     DEFAULT_DURATIONS_MINUTES.work,
   )
-  const breakMinutes = clampMinutes(
-    durations.breakMinutes,
-    DEFAULT_DURATIONS_MINUTES.break,
+  const shortBreakMinutes = clampMinutes(
+    timerConfig.shortBreakMinutes,
+    DEFAULT_DURATIONS_MINUTES.shortBreak,
+  )
+  const longBreakMinutes = clampMinutes(
+    timerConfig.longBreakMinutes,
+    DEFAULT_DURATIONS_MINUTES.longBreak,
   )
 
   return {
-    work: minutesToSeconds(workMinutes),
-    break: minutesToSeconds(breakMinutes),
+    durations: {
+      work: minutesToSeconds(workMinutes),
+      shortBreak: minutesToSeconds(shortBreakMinutes),
+      longBreak: minutesToSeconds(longBreakMinutes),
+    },
+    longBreakInterval: clampInterval(timerConfig.longBreakInterval),
   }
 }
 
-const getNextSessionType = (sessionType) =>
-  sessionType === 'work' ? 'break' : 'work'
+const normalizePreferences = (preferences = {}) => ({
+  soundEnabled:
+    typeof preferences.soundEnabled === 'boolean'
+      ? preferences.soundEnabled
+      : DEFAULT_PREFERENCES.soundEnabled,
+  selectedTrackId:
+    typeof preferences.selectedTrackId === 'string' &&
+    preferences.selectedTrackId.trim()
+      ? preferences.selectedTrackId
+      : DEFAULT_PREFERENCES.selectedTrackId,
+  selectedSceneId:
+    typeof preferences.selectedSceneId === 'string' &&
+    preferences.selectedSceneId.trim()
+      ? preferences.selectedSceneId
+      : DEFAULT_PREFERENCES.selectedSceneId,
+  volume: clampVolume(preferences.volume),
+})
 
-export const createInitialStudyRoomState = () => {
-  const durations = normalizeDurations()
+const normalizeManualSessionType = (sessionType) =>
+  MANUAL_SESSION_TYPE_MAP[sessionType] ?? TIMER_SESSION_TYPES.work
+
+const isBreakSession = (sessionType) =>
+  sessionType === TIMER_SESSION_TYPES.shortBreak ||
+  sessionType === TIMER_SESSION_TYPES.longBreak
+
+export const createInitialStudyRoomState = (persistedState = null) => {
+  const timerConfig = normalizeTimerConfiguration(persistedState?.timerConfig)
 
   return {
     timer: {
-      sessionType: 'work',
+      sessionType: TIMER_SESSION_TYPES.work,
       status: 'idle',
-      remainingSeconds: durations.work,
-      durations,
+      remainingSeconds: timerConfig.durations.work,
+      durations: timerConfig.durations,
+      longBreakInterval: timerConfig.longBreakInterval,
       lastTickAt: null,
-      completedWorkSessions: 0,
+      completedWorkCycles: 0,
       completedBreakSessions: 0,
+      lastAutoTransitionId: 0,
+      lastAutoTransition: null,
     },
-    preferences: {
-      ...DEFAULT_PREFERENCES,
-    },
+    preferences: normalizePreferences(persistedState?.preferences),
     ui: {
       ...DEFAULT_UI_STATE,
     },
@@ -112,22 +168,24 @@ export function studyRoomReducer(state, action) {
         },
       }
 
-    case 'timer/set-session':
+    case 'timer/set-session': {
+      const sessionType = normalizeManualSessionType(action.sessionType)
+
       return {
         ...state,
         timer: {
           ...state.timer,
-          sessionType: action.sessionType === 'break' ? 'break' : 'work',
+          sessionType,
           status: 'idle',
-          remainingSeconds:
-            state.timer.durations[action.sessionType === 'break' ? 'break' : 'work'],
+          remainingSeconds: state.timer.durations[sessionType],
           lastTickAt: null,
         },
       }
+    }
 
-    case 'timer/set-durations': {
-      const durations = normalizeDurations(action.durations)
-      const activeSessionDuration = durations[state.timer.sessionType]
+    case 'timer/set-config': {
+      const timerConfig = normalizeTimerConfiguration(action.config)
+      const activeSessionDuration = timerConfig.durations[state.timer.sessionType]
       const remainingSeconds =
         state.timer.status === 'running'
           ? Math.min(state.timer.remainingSeconds, activeSessionDuration)
@@ -137,7 +195,8 @@ export function studyRoomReducer(state, action) {
         ...state,
         timer: {
           ...state.timer,
-          durations,
+          durations: timerConfig.durations,
+          longBreakInterval: timerConfig.longBreakInterval,
           remainingSeconds,
           lastTickAt: state.timer.status === 'running' ? action.now ?? Date.now() : null,
         },
@@ -168,28 +227,44 @@ export function studyRoomReducer(state, action) {
         }
       }
 
-      // When a session finishes, we move to the next phase and respect the
-      // future-facing auto-start preferences instead of hardcoding one behavior.
-      const nextSessionType = getNextSessionType(state.timer.sessionType)
-      const completedWorkSessions =
-        state.timer.completedWorkSessions + (state.timer.sessionType === 'work' ? 1 : 0)
+      const completedSessionType = state.timer.sessionType
+      const completedWorkCycles =
+        state.timer.completedWorkCycles +
+        (completedSessionType === TIMER_SESSION_TYPES.work ? 1 : 0)
       const completedBreakSessions =
-        state.timer.completedBreakSessions + (state.timer.sessionType === 'break' ? 1 : 0)
-      const shouldAutoStart =
-        nextSessionType === 'break'
-          ? state.preferences.autoStartBreaks
-          : state.preferences.autoStartWork
+        state.timer.completedBreakSessions +
+        (isBreakSession(completedSessionType) ? 1 : 0)
+
+      // Automatic rollover only happens in the countdown-completion path.
+      // Manual session changes and resets use dedicated reducer branches above,
+      // which keeps bell cues and Pomodoro progression tied only to natural
+      // timer completion.
+      const nextSessionType =
+        completedSessionType === TIMER_SESSION_TYPES.work
+          ? completedWorkCycles % state.timer.longBreakInterval === 0
+            ? TIMER_SESSION_TYPES.longBreak
+            : TIMER_SESSION_TYPES.shortBreak
+          : TIMER_SESSION_TYPES.work
+
+      const nextAutoTransitionId = state.timer.lastAutoTransitionId + 1
 
       return {
         ...state,
         timer: {
           ...state.timer,
           sessionType: nextSessionType,
-          status: shouldAutoStart ? 'running' : 'idle',
+          status: 'running',
           remainingSeconds: state.timer.durations[nextSessionType],
-          lastTickAt: shouldAutoStart ? now : null,
-          completedWorkSessions,
+          lastTickAt: now,
+          completedWorkCycles,
           completedBreakSessions,
+          lastAutoTransitionId: nextAutoTransitionId,
+          lastAutoTransition: {
+            id: nextAutoTransitionId,
+            fromSessionType: completedSessionType,
+            toSessionType: nextSessionType,
+            completedAt: now,
+          },
         },
       }
     }
@@ -256,6 +331,7 @@ export function studyRoomReducer(state, action) {
 }
 
 export const timerSessionLabels = Object.freeze({
-  work: 'Work Session',
-  break: 'Break Session',
+  [TIMER_SESSION_TYPES.work]: 'Work Session',
+  [TIMER_SESSION_TYPES.shortBreak]: 'Short Break',
+  [TIMER_SESSION_TYPES.longBreak]: 'Long Break',
 })
