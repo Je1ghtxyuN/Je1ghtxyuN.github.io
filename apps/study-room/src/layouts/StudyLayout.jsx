@@ -13,13 +13,16 @@ function StudyLayoutZone({ area, children }) {
 
 export function StudyLayout({
   variant = 'idle',
+  timerDisplayMode = 'center_focus',
   chrome,
   center,
   footer,
   onSceneClick,
 }) {
   return (
-    <main className={`study-layout study-layout--${variant}`}>
+    <main
+      className={`study-layout study-layout--${variant} study-layout--timer-display-${timerDisplayMode}`}
+    >
       {variant === 'focus' && onSceneClick ? (
         <button
           type="button"

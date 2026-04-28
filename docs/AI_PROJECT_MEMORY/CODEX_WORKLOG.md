@@ -287,6 +287,41 @@ Append new dated sessions below this line.
 - next recommended step:
   - begin the next Study Room pass by deepening the timer/session UX and deciding whether local persistence should be added before backend APIs exist
 
+### Session 2026-04-28 — Study Room Ambience Intelligence Pass
+
+- objectives:
+  - add session-aware atmosphere reactivity without changing the existing Pomodoro engine or scene-first layout philosophy
+  - introduce cinematic automatic-transition cues tied only to natural countdown completion
+  - refine timer presentation behavior across the three persisted display modes
+- actions taken:
+  - expanded `src/lib/studyScene.js` so each scene now carries `reactiveAtmosphere` data for `work`, `shortBreak`, and `longBreak`
+  - added `resolveStudyScenePresentation()` to compute final background overlay, glow, vignette, motion, and media-filter values from the selected scene plus the current session/mode
+  - updated `AppShell.jsx` and `BackgroundLayer.jsx` so root-level scene rendering now reacts to `selectedSceneId`, `sessionType`, and focus/idle mode without changing the underlying video assets
+  - added `src/app/SessionTransitionCue.jsx` for short cinematic rollover copy such as `Focus Complete`, `Short Break`, and `Back To Focus`
+  - kept the bell logic unchanged so sound still fires only on automatic reducer rollover
+  - added `src/features/timer/sessionPresentation.js` to centralize timer tone, hint, and auto-transition copy
+  - refined `TimerPanel.jsx` and `App.css` so `center_focus`, `minimal_overlay`, and `corner_embed` each respond more gracefully to focus/idle state and current session type
+  - verified the Study Room app with successful `npm run lint` and `npm run build`
+- files changed:
+  - updated `apps/study-room/src/lib/studyScene.js`
+  - updated `apps/study-room/src/components/BackgroundLayer.jsx`
+  - updated `apps/study-room/src/app/AppShell.jsx`
+  - added `apps/study-room/src/app/SessionTransitionCue.jsx`
+  - updated `apps/study-room/src/features/timer/TimerPanel.jsx`
+  - added `apps/study-room/src/features/timer/sessionPresentation.js`
+  - updated `apps/study-room/src/App.css`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - session-aware ambience belongs in the scene layer, not inside timer logic or unrelated panel components
+  - automatic transition cues remain a separate shell-level overlay and are intentionally driven only by `lastAutoTransition`
+  - timer display mode continues to affect only presentation, but now also receives session-aware opacity and metadata refinement
+- risks or blockers:
+  - build output is now functionally correct, but the local loop videos remain very large and will still need compression/streaming strategy before production deployment
+  - scene reactivity is ready for smarter assets, but the current visual ceiling is still limited by the available local loop videos
+- next recommended step:
+  - begin a media-optimization and scene-asset quality pass, then consider optional scene-aware audio or completion-transition ambience so the emotional feedback layer grows without bloating the UI
+
 ### Session 2026-04-28 — Study Room Immersive UI Foundation Pass
 
 - objectives:
@@ -484,3 +519,45 @@ Append new dated sessions below this line.
   - ambient music remains placeholder-only, so the Study Room still lacks final-grade audio ambience despite the new bell cue and real scene loops
 - next recommended step:
   - optimize the bundled study-scene media and then deepen the atmosphere layer with mode-aware ambience, better scene metadata, and optional persisted last-used playback state
+
+### Session 2026-04-28 — Study Room Productization Preferences Pass
+
+- objectives:
+  - add product-level flexibility to timer presentation without changing the Pomodoro engine
+  - turn the settings panel into a real user preferences surface
+  - prepare the ambient music feature for future cloud provider integration while keeping current local playback intact
+- actions taken:
+  - added persisted `timerDisplayMode` support with `center_focus`, `minimal_overlay`, and `corner_embed` modes
+  - updated `StudyLayout` and `TimerPanel` so timer presentation now changes through CSS/layout classes instead of duplicate timer logic
+  - reworked the settings panel into grouped sections for scene settings, timer display settings, timer behavior settings, and future audio architecture
+  - refactored `TimerSettingsWidget` into a compact embedded settings section instead of a standalone stacked card
+  - expanded local persistence to include the new timer display preference
+  - split ambient music into a track-source abstraction (`musicSources.js`) plus the existing playback controller
+  - kept current playback on the local source provider while documenting the future cloud provider attachment point
+  - verified the Study Room app with successful lint and build runs
+- files changed:
+  - updated `apps/study-room/src/state/studyRoomReducer.js`
+  - updated `apps/study-room/src/state/studyRoomStorage.js`
+  - updated `apps/study-room/src/state/StudyRoomRuntimeEffects.jsx`
+  - updated `apps/study-room/src/layouts/StudyLayout.jsx`
+  - updated `apps/study-room/src/app/pages/StudyPage.jsx`
+  - updated `apps/study-room/src/features/timer/TimerPanel.jsx`
+  - updated `apps/study-room/src/features/timer/TimerSettingsWidget.jsx`
+  - updated `apps/study-room/src/app/panels/SettingsPanelContent.jsx`
+  - added `apps/study-room/src/features/ambient-music/musicSources.js`
+  - updated `apps/study-room/src/features/ambient-music/tracks.js`
+  - updated `apps/study-room/src/features/ambient-music/useAmbientMusicController.js`
+  - updated `apps/study-room/src/features/ambient-music/AmbientMusicPanel.jsx`
+  - updated `apps/study-room/src/features/ambient-music/index.js`
+  - updated `apps/study-room/src/App.css`
+  - updated `apps/study-room/STUDY_ROOM_ARCHITECTURE_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - timer display choice is now a user preference and should stay presentation-only
+  - the settings surface now acts as the product-owned control center for scene and timer behavior preferences
+  - future cloud music work should plug into the new source-provider layer instead of being mixed directly into the playback controller
+- risks or blockers:
+  - corner and minimal timer modes are intentionally conservative first-pass presentations and may still need real-world tuning after longer usage
+  - the ambient music provider abstraction is ready, but the actual cloud service integration remains unimplemented by design
+- next recommended step:
+  - refine the current display modes with user-facing polish and then begin the first real cloud-music planning pass or media-optimization pass, depending on priority

@@ -3,10 +3,10 @@ import {
   useStudyRoomActions,
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
-import { AMBIENT_TRACKS } from './tracks.js'
+import { getAmbientTrackSource, MUSIC_SOURCE_TYPES } from './musicSources.js'
 
-const getTrackIndex = (trackId) => {
-  const index = AMBIENT_TRACKS.findIndex((track) => track.id === trackId)
+const getTrackIndex = (tracks, trackId) => {
+  const index = tracks.findIndex((track) => track.id === trackId)
   return index >= 0 ? index : 0
 }
 
@@ -17,9 +17,11 @@ export function useAmbientMusicController() {
   const playbackStateRef = useRef('idle')
   const [playbackState, setPlaybackState] = useState('idle')
   const [playbackError, setPlaybackError] = useState('')
+  const trackSource = getAmbientTrackSource(MUSIC_SOURCE_TYPES.local)
+  const tracks = trackSource.getTracks()
 
-  const selectedTrackIndex = getTrackIndex(preferences.selectedTrackId)
-  const currentTrack = AMBIENT_TRACKS[selectedTrackIndex]
+  const selectedTrackIndex = getTrackIndex(tracks, preferences.selectedTrackId)
+  const currentTrack = tracks[selectedTrackIndex]
 
   useEffect(() => {
     const audio = new Audio()
@@ -108,12 +110,15 @@ export function useAmbientMusicController() {
 
   const goToTrack = (direction) => {
     const nextIndex =
-      (selectedTrackIndex + direction + AMBIENT_TRACKS.length) % AMBIENT_TRACKS.length
-    selectTrack(AMBIENT_TRACKS[nextIndex].id)
+      (selectedTrackIndex + direction + tracks.length) % tracks.length
+    selectTrack(tracks[nextIndex].id)
   }
 
   return {
-    tracks: AMBIENT_TRACKS,
+    musicSourceType: trackSource.type,
+    musicSourceLabel: trackSource.label,
+    musicSourceDescription: trackSource.description,
+    tracks,
     currentTrack,
     playbackState,
     playbackError,

@@ -2,6 +2,7 @@ import { useAmbientMusicController } from './useAmbientMusicController.js'
 
 export function AmbientMusicPanel() {
   const {
+    musicSourceLabel,
     tracks,
     currentTrack,
     playbackState,
@@ -21,6 +22,7 @@ export function AmbientMusicPanel() {
         <div>
           <p className="floating-widget__eyebrow">Ambient Music</p>
           <h2 className="floating-widget__title">{currentTrack.title}</h2>
+          <p className="floating-widget__meta">{musicSourceLabel}</p>
         </div>
         <span className="floating-widget__badge">{playbackState}</span>
       </div>

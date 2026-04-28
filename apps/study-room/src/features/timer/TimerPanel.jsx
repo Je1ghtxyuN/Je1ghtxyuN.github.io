@@ -1,24 +1,64 @@
+import { TIMER_DISPLAY_MODES } from '../../state/studyRoomReducer.js'
+import { getSessionPresentation } from './sessionPresentation.js'
 import { useTimerController } from './useTimerController.js'
+
+function getTimerDisplayConfig(timerDisplayMode, mode) {
+  switch (timerDisplayMode) {
+    case TIMER_DISPLAY_MODES.minimalOverlay:
+      return {
+        showStatusLine: mode === 'focus',
+        showSessionSwitch: mode === 'focus',
+        showSecondaryStatus: false,
+        showFocusHint: mode === 'focus',
+        isCompactControls: true,
+        isCornerPresentation: false,
+      }
+
+    case TIMER_DISPLAY_MODES.cornerEmbed:
+      return {
+        showStatusLine: false,
+        showSessionSwitch: false,
+        showSecondaryStatus: false,
+        showFocusHint: mode === 'focus',
+        isCompactControls: true,
+        isCornerPresentation: true,
+      }
+
+    case TIMER_DISPLAY_MODES.centerFocus:
+    default:
+      return {
+        showStatusLine: mode === 'focus',
+        showSessionSwitch: mode === 'focus',
+        showSecondaryStatus: mode === 'focus',
+        showFocusHint: mode === 'focus',
+        isCompactControls: false,
+        isCornerPresentation: false,
+      }
+  }
+}
 
 export function TimerPanel({
   mode = 'idle',
   sceneLabel = 'Coastal Cafe',
+  timerDisplayMode = TIMER_DISPLAY_MODES.centerFocus,
   timerStatus,
   onEnterFocus,
   onExitFocus,
 }) {
   const {
     timer,
-    sessionLabel,
     formattedRemaining,
     startTimer,
     pauseTimer,
     resetTimer,
     setSession,
   } = useTimerController()
-  const focusStatusText =
-    timer.status === 'running' ? 'Pomodoro Running' : 'Pomodoro Ready'
-  const sceneMetaText = `${sceneLabel} Active`
+  const sessionPresentation = getSessionPresentation(
+    timer.sessionType,
+    timer.status,
+  )
+  const focusStatusText = sessionPresentation.statusText
+  const sceneMetaText = `${sceneLabel} · ${sessionPresentation.metadataTone}`
   const workSessionsUntilLongBreak =
     timer.longBreakInterval -
     (timer.completedWorkCycles % timer.longBreakInterval)
@@ -28,6 +68,18 @@ export function TimerPanel({
         ? 'Long Break Next'
         : `Long Break In ${workSessionsUntilLongBreak}`
       : 'Automatic Return To Work'
+  const displayConfig = getTimerDisplayConfig(timerDisplayMode, mode)
+  const panelClassName = [
+    'scene-timer',
+    `scene-timer--${mode}`,
+    `scene-timer--display-${timerDisplayMode}`,
+    `scene-timer--session-${timer.sessionType}`,
+    `scene-timer--status-${timer.status}`,
+    displayConfig.isCompactControls ? 'scene-timer--compact-controls' : '',
+    displayConfig.isCornerPresentation ? 'scene-timer--corner-presentation' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   const handleIdleKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -47,7 +99,7 @@ export function TimerPanel({
 
     return (
       <section
-        className="scene-timer scene-timer--idle"
+        className={panelClassName}
         onClick={onEnterFocus}
         role="button"
         tabIndex={0}
@@ -81,36 +133,43 @@ export function TimerPanel({
   }
 
   return (
-    <section className="scene-timer scene-timer--focus">
-      <p className="scene-timer__status">{focusStatusText}</p>
+    <section className={panelClassName}>
+      {displayConfig.showStatusLine ? (
+        <p className="scene-timer__status">{focusStatusText}</p>
+      ) : null}
       <div className="scene-timer__clock">{formattedRemaining}</div>
       <p className="scene-timer__ambient scene-timer__ambient--focus">
-        {sessionLabel} · {sceneMetaText} · {nextBreakHint}
+        {sceneMetaText} · {nextBreakHint}
       </p>
+      {displayConfig.showFocusHint ? (
+        <p className="scene-timer__hint">{sessionPresentation.hintText}</p>
+      ) : null}
 
-      <div className="scene-timer__session-switch">
-        <button
-          type="button"
-          className={`scene-timer__chip${timer.sessionType === 'work' ? ' scene-timer__chip--active' : ''}`}
-          onClick={() => setSession('work')}
-        >
-          Work
-        </button>
-        <button
-          type="button"
-          className={`scene-timer__chip${timer.sessionType === 'shortBreak' ? ' scene-timer__chip--active' : ''}`}
-          onClick={() => setSession('shortBreak')}
-        >
-          Short Break
-        </button>
-        <button
-          type="button"
-          className={`scene-timer__chip${timer.sessionType === 'longBreak' ? ' scene-timer__chip--active' : ''}`}
-          onClick={() => setSession('longBreak')}
-        >
-          Long Break
-        </button>
-      </div>
+      {displayConfig.showSessionSwitch ? (
+        <div className="scene-timer__session-switch">
+          <button
+            type="button"
+            className={`scene-timer__chip${timer.sessionType === 'work' ? ' scene-timer__chip--active' : ''}`}
+            onClick={() => setSession('work')}
+          >
+            Work
+          </button>
+          <button
+            type="button"
+            className={`scene-timer__chip${timer.sessionType === 'shortBreak' ? ' scene-timer__chip--active' : ''}`}
+            onClick={() => setSession('shortBreak')}
+          >
+            Short Break
+          </button>
+          <button
+            type="button"
+            className={`scene-timer__chip${timer.sessionType === 'longBreak' ? ' scene-timer__chip--active' : ''}`}
+            onClick={() => setSession('longBreak')}
+          >
+            Long Break
+          </button>
+        </div>
+      ) : null}
 
       <div className="scene-timer__actions">
         <button
@@ -136,10 +195,12 @@ export function TimerPanel({
         </button>
       </div>
 
-      <p className="scene-timer__status scene-timer__status--secondary">
-        Completed Pomodoros {timer.completedWorkCycles} · Long break every{' '}
-        {timer.longBreakInterval}
-      </p>
+      {displayConfig.showSecondaryStatus ? (
+        <p className="scene-timer__status scene-timer__status--secondary">
+          Completed Pomodoros {timer.completedWorkCycles} · Long break every{' '}
+          {timer.longBreakInterval}
+        </p>
+      ) : null}
     </section>
   )
 }

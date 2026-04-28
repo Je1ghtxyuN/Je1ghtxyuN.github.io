@@ -36,7 +36,7 @@ function createSilentWavDataUri(durationSeconds = 1) {
 
 const silentLoopSource = createSilentWavDataUri()
 
-export const AMBIENT_TRACKS = Object.freeze([
+export const LOCAL_AMBIENT_TRACKS = Object.freeze([
   {
     id: 'deep-focus-placeholder',
     title: 'Deep Focus Placeholder',

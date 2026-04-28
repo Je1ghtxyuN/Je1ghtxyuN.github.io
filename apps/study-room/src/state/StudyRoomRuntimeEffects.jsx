@@ -8,15 +8,22 @@ export function StudyRoomRuntimeEffects() {
   const bellAudioRef = useRef(null)
   const lastHandledTransitionIdRef = useRef(0)
   const { preferences, timer } = state
-  const { selectedSceneId, selectedTrackId, soundEnabled, volume } = preferences
+  const {
+    selectedSceneId,
+    selectedTrackId,
+    soundEnabled,
+    timerDisplayMode,
+    volume,
+  } = preferences
   const { durations, longBreakInterval, lastAutoTransition } = timer
 
   useEffect(() => {
     writePersistedStudyRoomState({
       preferences: {
         selectedSceneId,
-        soundEnabled,
         selectedTrackId,
+        soundEnabled,
+        timerDisplayMode,
         volume,
       },
       timer: {
@@ -36,6 +43,7 @@ export function StudyRoomRuntimeEffects() {
     selectedSceneId,
     selectedTrackId,
     soundEnabled,
+    timerDisplayMode,
     volume,
   ])
 

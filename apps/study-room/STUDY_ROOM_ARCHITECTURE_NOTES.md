@@ -70,11 +70,13 @@ Current design rules:
 - it uses `position: fixed` and does not participate in normal layout flow
 - the background scene is configurable through `src/lib/studyScene.js`
 - each scene now carries a stable identity plus `mediaType`, `mediaSrc`, poster image, `idleOverlayStrength`, `focusOverlayStrength`, `ambientGlow`, and future media fields
+- each scene now also carries `reactiveAtmosphere` definitions so the same video can respond differently during work, short-break, and long-break states
 - the current code now ships three real local loop-video scenes sourced from `packages/shared-assets/videos/`:
   - `coastal-cafe` -> `1.mp4`
   - `retro-desk` -> `2.mp4`
   - `aquarium-room` -> `3.mp4`
 - `BackgroundLayer.jsx` treats the media itself as the protagonist and only adds cinematic overlay, vignette, grain, and glow layers for readability and atmosphere
+- `AppShell.jsx` now resolves a scene presentation object from the selected scene, current Pomodoro session type, and current UI mode before passing it into `BackgroundLayer.jsx`
 - focus mode uses a stronger cinematic overlay and ambient glow instead of hiding the scene behind a large timer card
 - video scenes autoplay muted, loop, play inline, and fade in over their own poster frame so scene changes stay smooth
 
@@ -90,8 +92,19 @@ Current atmosphere rules:
 - scene switching happens immediately and does not require route changes
 - background media is designed to accept either static illustration or future video/live wallpaper fields
 - overlays are strength-based so focus and idle states can reuse the same scene definition without duplicating theme logic
+- session-aware ambience is now part of the contract:
+  - `work` uses slightly tighter overlays, lower brightness, firmer vignette, and faster motion timing
+  - `shortBreak` softens the darkness and glow behavior so the scene relaxes briefly
+  - `longBreak` is the calmest state, with the lightest overlays and slowest motion feel
+- `resolveStudyScenePresentation()` is the key helper that combines:
+  - selected scene identity
+  - current `sessionType`
+  - current `uiMode`
+  - future scene-pack overrides
 - subtle animation lives in CSS and decorates the scene rather than becoming foreground UI motion
 - focus mode now adds gentle vignette pulse, faint overlay drift, and lightweight grain motion without introducing heavy animation libraries
+
+This keeps visual reactivity scene-driven instead of scattering conditionals across unrelated UI components.
 
 ## Mode-Based Interaction Model
 
@@ -151,6 +164,7 @@ Current reducer domains:
   - `soundEnabled`
   - `selectedSceneId`
   - `selectedTrackId`
+  - `timerDisplayMode`
   - `volume`
 
 - `ui`
@@ -208,6 +222,26 @@ Implementation boundary:
 - reducer state records `lastAutoTransition`
 - `StudyRoomRuntimeEffects.jsx` observes that transition id and plays the bell only once if `preferences.soundEnabled` is enabled
 
+## Automatic Transition Cue Layer
+
+The Study Room now has a separate cinematic cue overlay for natural session rollover.
+
+Rules:
+
+- cue text appears only when the reducer records an automatic transition in `lastAutoTransition`
+- manual session switching, reset, duration edits, and focus-mode changes do not trigger it
+- the cue is intentionally lightweight and fades on its own after a short display window
+
+Implementation boundary:
+
+- `src/app/SessionTransitionCue.jsx` watches `lastAutoTransition`
+- the component maps transition direction to cinematic copy such as:
+  - `Focus Complete`
+  - `Short Break`
+  - `Long Break`
+  - `Back To Focus`
+- the overlay lives at the app-shell level so it can appear regardless of whether the user is in focus mode or idle mode when the timer completes
+
 ## Local Persistence
 
 Local persistence now exists and is intentionally scoped to user-facing preferences plus timer configuration.
@@ -217,6 +251,7 @@ Persisted fields:
 - `preferences.selectedSceneId`
 - `preferences.soundEnabled`
 - `preferences.selectedTrackId`
+- `preferences.timerDisplayMode`
 - `preferences.volume`
 - timer work duration
 - timer short-break duration
@@ -228,6 +263,29 @@ Persistence flow:
 - `StudyRoomProvider.jsx` hydrates initial state from local storage through `studyRoomStorage.js`
 - `StudyRoomRuntimeEffects.jsx` writes the persisted subset back whenever one of those persisted fields changes
 - per-second countdown state is not persisted, which keeps the local save model simple and avoids storing noisy runtime values
+
+## Timer Display Mode System
+
+The timer engine now has a presentation-only preference layer called `timerDisplayMode`.
+
+Supported modes:
+
+- `center_focus`
+  - keeps the immersive centered timer as the dominant focus surface
+- `minimal_overlay`
+  - keeps the timer visible in a smaller overlay that competes less with the video scene
+- `corner_embed`
+  - pushes the timer into a low-obstruction corner treatment with only essential controls visible
+
+Important rule:
+
+- these modes change only presentation and positioning
+- timer state, Pomodoro rollover, bell rules, and focus/panel mode logic remain unchanged
+- the Study Room preserves timer state while the user switches display mode
+- the current phase also adds session-aware refinement on top of each display mode:
+  - `center_focus` keeps the richest metadata and control treatment in focus mode
+  - `minimal_overlay` reduces width and visual weight so the scene stays dominant
+  - `corner_embed` stays readable while remaining the quietest on-screen timer option
 
 ## Panels Replace Persistent Widgets
 
@@ -270,6 +328,7 @@ Current behavior:
 
 - idle mode shows a very small scene-entry timer near the upper-center interaction band
 - focus mode shows the timer as lightweight scene text plus a subtle control rail and low-opacity scene metadata
+- focus mode now also carries a very small session-aware ambient hint line such as `Focus Session Running` or `Long Recovery Interval`
 - statistics and configuration are no longer embedded into the main focus view
 
 The goal is that the user reads the timer while still visually remaining inside the atmosphere of the scene.
@@ -280,12 +339,19 @@ The ambient music feature is intentionally local-first.
 
 Current architecture:
 
-- a small track catalog lives in `src/features/ambient-music/tracks.js`
-- `useAmbientMusicController()` owns the browser `Audio` instance
+- a local track catalog lives in `src/features/ambient-music/tracks.js`
+- `musicSources.js` now owns the track-source abstraction
+- `useAmbientMusicController()` owns the browser `Audio` instance and playback transport
 - playback state is managed inside the feature
 - shared preferences store the selected track id and volume
 
 For this pass, track sources are silent local placeholder data URIs. That keeps the player logic real without introducing final audio asset policy decisions too early.
+
+Future cloud integration point:
+
+- `musicSources.js` already separates source-provider selection from playback transport
+- a future NetEase or other cloud-backed provider should attach there under a new `musicSourceType`
+- the goal is to swap catalog/data origin without rewriting the playback controller or the rest of the Study Room UI
 
 ## Mode Transitions
 
@@ -340,6 +406,8 @@ Implemented in this pass:
 - professional three-phase Pomodoro state machine
 - local bell cue on automatic completion rollover only
 - local persistence for scene selection, sound, track selection, volume, durations, and long-break interval
+- persisted timer display preference with multiple visual timer modes
+- product-style grouped settings center for scene, timer display, timer behavior, and future music architecture
 - background scene structure prepared for future live or animated scene support
 
 Still intentionally not final:

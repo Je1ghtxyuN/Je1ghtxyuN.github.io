@@ -57,6 +57,7 @@ export function StudyPage() {
     <>
       <StudyLayout
         variant={displayMode}
+        timerDisplayMode={preferences.timerDisplayMode}
         chrome={
           <StudyChromeWidget
             mode={displayMode}
@@ -68,6 +69,7 @@ export function StudyPage() {
           <TimerPanel
             mode={displayMode}
             sceneLabel={activeScene.label}
+            timerDisplayMode={preferences.timerDisplayMode}
             timerStatus={timer.status}
             onEnterFocus={enterFocusMode}
             onExitFocus={enterIdleMode}

@@ -6,6 +6,12 @@ export const TIMER_SESSION_TYPES = Object.freeze({
   longBreak: 'longBreak',
 })
 
+export const TIMER_DISPLAY_MODES = Object.freeze({
+  centerFocus: 'center_focus',
+  minimalOverlay: 'minimal_overlay',
+  cornerEmbed: 'corner_embed',
+})
+
 const DEFAULT_DURATIONS_MINUTES = Object.freeze({
   work: 25,
   shortBreak: 5,
@@ -18,6 +24,7 @@ const DEFAULT_PREFERENCES = Object.freeze({
   soundEnabled: true,
   selectedTrackId: 'deep-focus-placeholder',
   selectedSceneId: DEFAULT_SCENE_ID,
+  timerDisplayMode: TIMER_DISPLAY_MODES.centerFocus,
   volume: 0.45,
 })
 
@@ -99,6 +106,10 @@ const normalizePreferences = (preferences = {}) => ({
     preferences.selectedSceneId.trim()
       ? preferences.selectedSceneId
       : DEFAULT_PREFERENCES.selectedSceneId,
+  timerDisplayMode:
+    Object.values(TIMER_DISPLAY_MODES).includes(preferences.timerDisplayMode)
+      ? preferences.timerDisplayMode
+      : DEFAULT_PREFERENCES.timerDisplayMode,
   volume: clampVolume(preferences.volume),
 })
 

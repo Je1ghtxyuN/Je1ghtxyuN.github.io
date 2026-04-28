@@ -30,16 +30,20 @@ export function TimerSettingsWidget() {
   }
 
   return (
-    <section className="floating-widget settings-widget">
-      <p className="floating-widget__eyebrow">Timer Configuration</p>
-      <h2 className="floating-widget__title">Pomodoro engine</h2>
-      <p className="floating-widget__copy">
-        Automatic rollover now runs as a three-phase Pomodoro cycle:
-        work, short break, and long break.
-      </p>
+    <section className="settings-group">
+      <div className="settings-group__header">
+        <div>
+          <p className="floating-widget__eyebrow">Timer Behavior Settings</p>
+          <h3 className="floating-widget__title">Pomodoro engine</h3>
+        </div>
+        <p className="floating-widget__meta">
+          Automatic rollover stays active while the durations and cadence stay
+          user-configurable.
+        </p>
+      </div>
 
-      <form className="widget-form" onSubmit={handleSubmit}>
-        <div className="widget-form__grid">
+      <form className="settings-form" onSubmit={handleSubmit}>
+        <div className="settings-form__grid">
           <div className="field">
             <label htmlFor="settings-work-minutes">Work minutes</label>
             <input
@@ -93,7 +97,7 @@ export function TimerSettingsWidget() {
           </div>
         </div>
 
-        <div className="settings-widget__toggle">
+        <div className="settings-row">
           <div>
             <strong>Completion bell</strong>
             <p className="floating-widget__meta">
@@ -110,9 +114,11 @@ export function TimerSettingsWidget() {
           </button>
         </div>
 
-        <button type="submit" className="button button--primary">
-          Apply Timer Settings
-        </button>
+        <div className="settings-form__actions">
+          <button type="submit" className="button button--primary">
+            Save Timer Settings
+          </button>
+        </div>
       </form>
     </section>
   )
