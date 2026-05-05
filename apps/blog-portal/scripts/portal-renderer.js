@@ -1,14 +1,13 @@
 const { url_for: urlFor } = require('hexo-util')
 const {
   getDefaultLocaleText,
-  siteIdentity,
+  studyRoomAppPath,
+  resolveStudyRoomPublicUrl,
 } = require('./portal-shared-config')
 
 module.exports = function createPortalRenderer(hexo) {
   const resolveInternalUrl = urlFor.bind(hexo)
-  const studyRoomAppPath = siteIdentity.routes?.studyRoomAppPath || '/study-app/'
-  const studyRoomLandingPath =
-    siteIdentity.routes?.studyRoomLandingPath || '/study-room/'
+  const studyRoomPublicUrl = resolveStudyRoomPublicUrl(hexo)
 
   // Keep homepage behavior in code rather than data files so build output stays
   // deterministic across CMS edits and future content migrations.
@@ -19,7 +18,7 @@ module.exports = function createPortalRenderer(hexo) {
     DEFAULT_DESCRIPTION: 'Details for this section are still being prepared.',
     DEFAULT_IMAGE_PATH: '/shared-assets/images/background.jpg',
     DEFAULT_AVATAR_PATH: '/shared-assets/images/profile.jpg',
-    STUDY_ROOM_APP_URL: studyRoomAppPath,
+    STUDY_ROOM_APP_URL: studyRoomPublicUrl,
   })
 
   const escapeHtml = (value = '') =>
@@ -111,6 +110,13 @@ module.exports = function createPortalRenderer(hexo) {
     return isExternalPath(path, explicitExternal) ? path : resolveInternalUrl(path)
   }
 
+  const resolveStudyRoomEntryPath = (path) =>
+    path === studyRoomAppPath ? PORTAL_CONFIG.STUDY_ROOM_APP_URL : path
+
+  const shouldOpenInNewTab = (path, explicitExternal = false) =>
+    isExternalPath(path, explicitExternal) &&
+    path !== PORTAL_CONFIG.STUDY_ROOM_APP_URL
+
   const getLocaleText = (keyPath, fallback = '') =>
     getDefaultLocaleText(keyPath, fallback)
 
@@ -167,7 +173,15 @@ module.exports = function createPortalRenderer(hexo) {
       { label: 'Article', url: links.article },
     ]
       .filter((item) => item.url)
-      .map((item) => ({ ...item, external: isExternalPath(item.url) }))
+      .map((item) => {
+        const resolvedUrl = resolveStudyRoomEntryPath(item.url)
+        return {
+          ...item,
+          url: resolvedUrl,
+          external: isExternalPath(resolvedUrl),
+          newTab: shouldOpenInNewTab(resolvedUrl),
+        }
+      })
   }
 
   // The portal now links to the shared mounted Study Room path directly so the
@@ -273,8 +287,8 @@ module.exports = function createPortalRenderer(hexo) {
                   {
                     class: 'portal-button',
                     href: resolveHref(link.url, link.external),
-                    target: link.external ? '_blank' : null,
-                    rel: link.external ? 'noopener noreferrer' : null,
+                    target: link.newTab ? '_blank' : null,
+                    rel: link.newTab ? 'noopener noreferrer' : null,
                   },
                   escapeHtml(link.label || linkLabel)
                 )
@@ -414,6 +428,7 @@ module.exports = function createPortalRenderer(hexo) {
         { class: 'portal-card-grid portal-card-grid--shortcuts' },
         shortcutItems
           .map((item) => {
+            const resolvedPath = resolveStudyRoomEntryPath(item.path)
             const shortcutKey =
               item.path === '/blog/'
                 ? 'blog'
@@ -429,10 +444,14 @@ module.exports = function createPortalRenderer(hexo) {
               'a',
               {
                 class: 'portal-card portal-shortcut-card',
-                href: resolveHref(item.path, item.external),
-                'data-portal-shortcut-path': item.path,
-                target: isExternalPath(item.path, item.external) ? '_blank' : null,
-                rel: isExternalPath(item.path, item.external) ? 'noopener noreferrer' : null,
+                href: resolveHref(resolvedPath, item.external),
+                'data-portal-shortcut-path': resolvedPath,
+                target: shouldOpenInNewTab(resolvedPath, item.external)
+                  ? '_blank'
+                  : null,
+                rel: shouldOpenInNewTab(resolvedPath, item.external)
+                  ? 'noopener noreferrer'
+                  : null,
               },
               `${item.icon ? renderTag('i', { class: item.icon }, '') : ''}${renderTag(
                 'h3',
@@ -966,8 +985,8 @@ module.exports = function createPortalRenderer(hexo) {
               class: 'portal-button portal-button--primary',
               href: resolveHref(appUrl, isExternalPath(appUrl)),
               'data-study-room-entry': appUrl,
-              target: isExternalPath(appUrl) ? '_blank' : null,
-              rel: isExternalPath(appUrl) ? 'noopener noreferrer' : null,
+              target: shouldOpenInNewTab(appUrl) ? '_blank' : null,
+              rel: shouldOpenInNewTab(appUrl) ? 'noopener noreferrer' : null,
             },
             escapeHtml(
               fallbackText(

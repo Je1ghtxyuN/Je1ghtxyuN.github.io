@@ -111,9 +111,10 @@ function mergeReactiveAtmosphere(overrides = {}) {
 }
 
 function createSceneDefinition(scene) {
+  const { reactiveAtmosphere: sceneAtmosphere, ...sceneRest } = scene
   const media = {
     ...DEFAULT_MEDIA_BEHAVIOR,
-    ...(scene.media ?? {}),
+    ...(sceneRest.media ?? {}),
   }
 
   return Object.freeze({
@@ -133,8 +134,8 @@ function createSceneDefinition(scene) {
     videoLoop: media.loop,
     videoMuted: media.muted,
     videoPlaysInline: media.playsInline,
-    reactiveAtmosphere: mergeReactiveAtmosphere(scene.reactiveAtmosphere),
-    ...scene,
+    reactiveAtmosphere: mergeReactiveAtmosphere(sceneAtmosphere),
+    ...sceneRest,
   })
 }
 
@@ -270,6 +271,7 @@ export function resolveStudyScenePresentation(
       : 'work'
   const modeKey = uiMode === 'focus' ? 'focus' : 'idle'
   const reactiveAtmosphere = activeScene.reactiveAtmosphere[sessionKey]
+  const overlayShift = reactiveAtmosphere.overlayShift?.[modeKey] ?? 0
   const baseOverlayStrength =
     modeKey === 'focus'
       ? activeScene.focusOverlayStrength
@@ -279,7 +281,7 @@ export function resolveStudyScenePresentation(
     sessionType: sessionKey,
     uiMode: modeKey,
     overlayStrength: clampDecimal(
-      baseOverlayStrength + reactiveAtmosphere.overlayShift[modeKey],
+      baseOverlayStrength + overlayShift,
       baseOverlayStrength,
     ),
     highlightOpacity: clampDecimal(

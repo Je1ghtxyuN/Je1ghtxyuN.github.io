@@ -1,8 +1,9 @@
-import { loadRuntimeConfig } from "./config/runtime.js";
-import { routeModules } from "./http/routes/index.js";
+import { serve } from '@hono/node-server'
+import { env } from './config/env.js'
+import { createApp } from './app.js'
 
-const config = loadRuntimeConfig();
+const app = createApp()
 
-console.log(
-  `[backend-api scaffold] runtime prepared on port ${config.port} with ${routeModules.length} route module placeholders.`
-);
+serve({ fetch: app.fetch, port: env.PORT }, (info) => {
+  console.log(`[backend-api] listening on http://localhost:${info.port}`)
+})

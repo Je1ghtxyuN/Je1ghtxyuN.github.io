@@ -1,11 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   getStudyScene,
   resolveStudyScenePresentation,
 } from '../lib/studyScene.js'
 
+const VIDEO_VISIBILITY_TIMEOUT_MS = 4000
+
 function BackgroundVideo({ scene }) {
   const [isVisible, setIsVisible] = useState(false)
+  const timerRef = useRef(null)
+
+  const markVisible = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+    setIsVisible(true)
+  }
+
+  useEffect(() => {
+    timerRef.current = setTimeout(() => {
+      markVisible()
+    }, VIDEO_VISIBILITY_TIMEOUT_MS)
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [scene.mediaSrc])
 
   return (
     <video
@@ -16,7 +40,8 @@ function BackgroundVideo({ scene }) {
       playsInline={scene.videoPlaysInline ?? true}
       preload="auto"
       poster={scene.posterImage || scene.backgroundImage}
-      onCanPlay={() => setIsVisible(true)}
+      onCanPlay={markVisible}
+      onLoadedData={markVisible}
     >
       <source src={scene.mediaSrc} type={scene.videoType || 'video/mp4'} />
     </video>

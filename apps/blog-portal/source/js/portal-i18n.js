@@ -19,6 +19,10 @@
     : []
   const navMap = config.navMap || {}
   const localeCache = new Map()
+  let activeLocale = defaultLocale
+  let activeBundle = null
+  let activeFallbackBundle = null
+  let searchObserver = null
 
   function getNestedValue(target, keyPath) {
     if (!target || !keyPath) return undefined
@@ -56,16 +60,24 @@
     return defaultLocale
   }
 
+  function readStoredLocale() {
+    try {
+      return window.localStorage.getItem(storageKey)
+    } catch {
+      return null
+    }
+  }
+
+  function writeStoredLocale(locale) {
+    try {
+      window.localStorage.setItem(storageKey, locale)
+    } catch {
+      // Ignore persistence errors so locale switching still works for the session.
+    }
+  }
+
   function resolveInitialLocale() {
-    const queryLocale = new URLSearchParams(window.location.search).get('lang')
-
-    if (queryLocale) return normalizeLocale(queryLocale)
-
-    const storedLocale = window.localStorage.getItem(storageKey)
-
-    if (storedLocale) return normalizeLocale(storedLocale)
-
-    return normalizeLocale(window.navigator.language)
+    return normalizeLocale(readStoredLocale() || defaultLocale)
   }
 
   async function loadLocaleBundle(locale) {
@@ -164,11 +176,30 @@
 
     document
       .querySelectorAll(
-        '#local-search input, .search-dialog-input, .local-search-box--input',
+        '#local-search input, .local-search-input input, .search-dialog-input, .local-search-box--input',
       )
       .forEach((input) => {
         input.setAttribute('placeholder', placeholder)
+        input.setAttribute('data-i18n-placeholder', 'portal.searchPlaceholder')
       })
+  }
+
+  function applyCurrentLocaleToDynamicUi() {
+    if (!activeBundle || !activeFallbackBundle) return
+    applySearchPlaceholder(activeBundle, activeFallbackBundle)
+  }
+
+  function ensureSearchObserver() {
+    if (searchObserver || !window.MutationObserver) return
+
+    searchObserver = new MutationObserver(() => {
+      applyCurrentLocaleToDynamicUi()
+    })
+
+    searchObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+    })
   }
 
   function ensureLocaleSwitcher() {
@@ -197,25 +228,28 @@
 
   async function applyLocale(locale) {
     const normalizedLocale = normalizeLocale(locale)
-    const [fallbackBundle, activeBundle] = await Promise.all([
+    const [fallbackLocaleBundle, nextLocaleBundle] = await Promise.all([
       loadLocaleBundle(defaultLocale),
       loadLocaleBundle(normalizedLocale),
     ])
 
-    window.localStorage.setItem(storageKey, normalizedLocale)
+    activeLocale = normalizedLocale
+    activeFallbackBundle = fallbackLocaleBundle
+    activeBundle = nextLocaleBundle
+    writeStoredLocale(normalizedLocale)
     document.documentElement.lang = normalizedLocale
 
-    applyDataTranslations(activeBundle, fallbackBundle)
-    applyNavigationTranslations(activeBundle, fallbackBundle)
-    applySearchPlaceholder(activeBundle, fallbackBundle)
+    applyDataTranslations(nextLocaleBundle, fallbackLocaleBundle)
+    applyNavigationTranslations(nextLocaleBundle, fallbackLocaleBundle)
+    applySearchPlaceholder(nextLocaleBundle, fallbackLocaleBundle)
 
     const switcher = ensureLocaleSwitcher()
     const label = switcher.querySelector('.portal-locale-switcher__label')
     const select = switcher.querySelector('.portal-locale-switcher__select')
 
     label.textContent = translate(
-      activeBundle,
-      fallbackBundle,
+      nextLocaleBundle,
+      fallbackLocaleBundle,
       'portal.languageSelectorLabel',
       'Language',
     )
@@ -229,5 +263,10 @@
     void applyLocale(event.target.value)
   })
 
+  document.addEventListener('pjax:complete', () => {
+    void applyLocale(activeLocale)
+  })
+
+  ensureSearchObserver()
   void applyLocale(resolveInitialLocale())
 })()

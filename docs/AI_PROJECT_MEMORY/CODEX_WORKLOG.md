@@ -1,6 +1,6 @@
 # Codex Worklog
 
-Last updated: 2026-04-28
+Last updated: 2026-05-05
 Status: persistent append-only engineering progress journal
 
 ## Usage Rule
@@ -599,3 +599,221 @@ Append new dated sessions below this line.
   - the ambient music provider abstraction is ready, but the actual cloud service integration remains unimplemented by design
 - next recommended step:
   - refine the current display modes with user-facing polish and then begin the first real cloud-music planning pass or media-optimization pass, depending on priority
+
+### Session 2026-04-29 — Cross-App Integration Fix And UX Simplification Pass
+
+- objectives:
+  - fix locale synchronization so the portal and Study Room truly share one locale source
+  - restore a usable one-click Study Room entry during both local preview and production output
+  - document the real cause of `/study-app/` 404 behavior and the required deployment contract
+- actions taken:
+  - centralized the portal-side Study Room public URL decision in `apps/blog-portal/scripts/portal-shared-config.js`
+  - restored environment-aware portal linking so `hexo server` points Study Room CTAs at `http://localhost:5173`, while generated output keeps `/study-app/`
+  - updated theme-menu sync so the main portal navigation now points directly to the Study Room app instead of the explanatory landing page
+  - kept `/study-room/` as an optional portal-owned landing page for SEO and explanation instead of the primary user flow
+  - tightened portal locale bootstrap so it now reads only the shared `site-locale` storage key and falls back to the shared default locale instead of browser-language heuristics
+  - strengthened `portal-i18n.js` search placeholder handling so translated placeholder text is re-applied when Butterfly search UI is inserted dynamically
+  - verified production output still points to `/study-app/` without leaking `localhost:5173`
+  - verified local preview portal output points to `http://localhost:5173`
+  - updated deployment and portal notes with local-testing instructions, `/study-app/` hosting requirements, and single-key locale-sync rules
+- files changed:
+  - updated `apps/blog-portal/scripts/portal-shared-config.js`
+  - updated `apps/blog-portal/scripts/portal-data-sync.js`
+  - updated `apps/blog-portal/scripts/portal-renderer.js`
+  - updated `apps/blog-portal/source/js/portal-i18n.js`
+  - updated `apps/blog-portal/source/_data/navigation.yml`
+  - updated `apps/blog-portal/_config.butterfly.yml`
+  - updated `docs/DEPLOYMENT_CONTRACT.md`
+  - updated `apps/blog-portal/BLOG_PORTAL_SETUP_NOTES.md`
+  - updated `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md`
+- decisions made:
+  - `site-locale` is the only shared locale storage key and now acts as the effective locale source for both apps
+  - the main user flow to the Study Room should be one click from the portal, while `/study-room/` remains optional supporting content
+  - the `Cannot GET /study-app/` failure is treated as a deployment mounting/fallback problem, not a frontend route-design problem
+- risks or blockers:
+  - the deployment contract is clearer now, but production still requires an actual reverse-proxy or static host rule that mounts `apps/study-room/dist/` at `/study-app/` with SPA fallback
+  - runtime locale translation in the portal still operates at the shared-UI layer only and does not make article bodies multilingual
+- next recommended step:
+  - run a real browser QA pass across portal search, locale switching, and Study Room entry, then begin backend-phase integration planning so cross-app identity can eventually extend beyond static assets and local storage
+
+## 2026-05-05 — Fix local integrated preview: /study-app/ served by single Hexo server
+
+- session: local-preview-integration
+- objectives:
+  - make `localhost:4000/study-app/` serve the Study Room SPA from a single Hexo server process
+  - establish a repeatable build+sync workflow so study-room dist is mounted into portal source
+- root cause:
+  - `apps/study-room/dist/` (Vite build output) was never copied into `apps/blog-portal/source/`
+  - Hexo only serves files from its `source/` directory; without the dist files there, `/study-app/` returned 404
+- actions taken:
+  - built study-room with `npm run build` (Vite, base=`/study-app/`)
+  - copied `dist/*` into `apps/blog-portal/source/study-app/`
+  - added `study-app/**` to `skip_render` in `apps/blog-portal/_config.yml` so Hexo copies those files as-is without processing
+  - added `source/study-app/` to `apps/blog-portal/.gitignore` so build artifacts are not committed
+  - created `scripts/sync-study-app.sh` at repo root — one-command build+sync script
+  - fixed initial mistake: shell `.sh` file was placed in `apps/blog-portal/scripts/` which Hexo tried to load as JS; moved to repo root `scripts/`
+- files changed:
+  - created `scripts/sync-study-app.sh` (repo root — build and sync script)
+  - updated `apps/blog-portal/_config.yml` (added `skip_render: study-app/**`)
+  - updated `apps/blog-portal/.gitignore` (added `source/study-app/`)
+  - created `apps/blog-portal/source/study-app/` (copied build artifacts, gitignored)
+- verification (curl results):
+  - `curl localhost:4000/` → 200, portal homepage HTML (Butterfly theme)
+  - `curl localhost:4000/study-app/` → 200, study-room SPA index.html
+  - `curl localhost:4000/study-app/assets/index-BJ429heq.js` → 200
+  - `curl localhost:4000/study-app/assets/index-BPV2UKAU.css` → 200
+- decisions made:
+  - `skip_render` is the correct Hexo mechanism for excluding SPA build artifacts from processing
+  - sync script lives at repo root `scripts/` to avoid Hexo's JS script loading from `apps/blog-portal/scripts/`
+  - `source/study-app/` is gitignored since it's a derived build artifact
+- risks or blockers:
+  - `source/study-app/` must be re-synced after any study-room code change (run `bash scripts/sync-study-app.sh`)
+  - large video assets in study-room dist (~44MB) inflate the portal source directory; acceptable for local dev, production deploys handle this separately
+- next recommended step:
+  - run browser QA pass on `localhost:4000/study-app/` to verify full SPA functionality (timer, scenes, settings)
+
+### Session 2026-05-05 — Fix Portal Study Room Links To Use /study-app/ In All Modes
+
+- objectives:
+  - remove the `localhost:5173` dev shortcut logic from portal Study Room links
+  - make all local portal CTAs consistently point to `/study-app/` since integrated preview is now the default
+  - verify no `localhost:5173` references remain in generated HTML
+- actions taken:
+  - analyzed `portal-shared-config.js` and found `resolveStudyRoomPublicUrl()` returns `localhost:5173` when `hexo.env.cmd === 'server'`
+  - simplified `resolveStudyRoomPublicUrl()` to always return `studyRoomAppPath` (`/study-app/`)
+  - removed unused `studyRoomDevUrl` constant and its export
+  - updated `BLOG_PORTAL_SETUP_NOTES.md` to reflect unified local/production behavior
+  - verified with Hexo server that all Study Room links now use `/study-app/`
+- files changed:
+  - updated `apps/blog-portal/scripts/portal-shared-config.js` (removed dev URL logic)
+  - updated `apps/blog-portal/BLOG_PORTAL_SETUP_NOTES.md` (updated dev vs prod documentation)
+- verification results:
+  - `curl localhost:4000/` → 200, homepage HTML
+  - grep for `localhost:5173` in generated HTML → 0 matches
+  - grep for `href="/study-app/"` → 4 matches (nav menu, sidebar menu, shortcut card, portfolio card)
+  - `curl localhost:4000/study-app/` → 200, Study Room SPA
+- decisions made:
+  - local integrated preview is now the default mode; no more dev/prod URL switching for Study Room links
+  - the `resolveStudyRoomPublicUrl()` function signature is preserved for backward compatibility but always returns `/study-app/`
+- risks or blockers:
+  - if someone needs to run Study Room separately on `localhost:5173` again, they would need to manually change the URL or restore the old logic
+- next recommended step:
+  - run browser QA pass to verify clicking Study Room links from portal actually loads the SPA correctly
+
+### Session 2026-05-05 — Fix Study Room Video Playback Under /study-app/
+
+- objectives:
+  - fix background videos not playing and scene 3 causing a black page when served from `/study-app/` through Hexo
+  - add resilience to the BackgroundVideo component so videos become visible even when autoplay or canplay is delayed
+- root cause:
+  - Hexo's built-in server does not support HTTP Range requests (returns 200 instead of 206 Partial Content)
+  - some browsers require Range requests for video autoplay to fire `canplay` reliably
+  - the original `BackgroundVideo` component relied solely on `onCanPlay` to set visibility, with no timeout or fallback
+- actions taken:
+  - read and analyzed `BackgroundLayer.jsx`, `studyScene.js`, video file integrity, and Hexo serving behavior
+  - confirmed all three video files (1.mp4, 2.mp4, 3.mp4) are valid H.264 MP4s with correct magic bytes
+  - confirmed all assets serve with correct MIME types and HTTP 200 from Hexo
+  - confirmed JS bundle contains correct `/study-app/` paths for all video/poster assets
+  - refactored `BackgroundVideo` into a stateful component with:
+    - `onLoadedData` handler as an additional visibility trigger
+    - 4-second timeout fallback (`VIDEO_VISIBILITY_TIMEOUT_MS`) ensuring video becomes visible even if events never fire
+    - proper cleanup via `useEffect`/`useRef` to prevent stale timers on scene switch
+    - CSS class toggle (`background-layer__video--visible`) for opacity transition
+  - rebuilt study-room, synced to portal source, and verified lint passes
+- files changed:
+  - updated `apps/study-room/src/components/BackgroundLayer.jsx` (resilient BackgroundVideo component)
+  - rebuilt `apps/blog-portal/source/study-app/` (synced dist artifacts)
+- verification results:
+  - `npm run lint` passes
+  - `npm run build` succeeds
+  - all three video files serve correctly from Hexo (200, correct content-type)
+  - MD5 checksums match between source, dist, and served files
+  - CSS variables for poster images generate correctly for all scenes
+- decisions made:
+  - the 4-second timeout is a safety net, not the primary path; `onLoadedData` and `onCanPlay` still fire first when possible
+  - the fix is component-level resilience, not a Hexo server workaround — the approach works regardless of server Range request support
+- risks or blockers:
+  - Hexo's lack of Range request support remains a limitation for large video files; production should use nginx or equivalent
+  - the specific "black page on scene 3" may need further investigation if the current fix does not fully resolve it in browser testing
+- next recommended step:
+  - run browser QA pass on all three scenes under `localhost:4000/study-app/` to confirm videos play and scene switching works correctly
+
+### Session 2026-05-05 — Fix Aquarium Scene Runtime Crash (overlayShift undefined)
+
+- objectives:
+  - fix `TypeError: undefined is not an object (evaluating 'reactiveAtmosphere.overlayShift[modeKey]')` crash when switching to the aquarium scene
+  - make `createSceneDefinition` correctly preserve deep-merged `reactiveAtmosphere` instead of overwriting it
+- root cause:
+  - `createSceneDefinition()` in `studyScene.js` line 136 called `mergeReactiveAtmosphere(scene.reactiveAtmosphere)` to deep-merge scene overrides with defaults
+  - BUT line 138 did `...scene` which overwrote the merged result with the ORIGINAL partial `scene.reactiveAtmosphere`
+  - scenes 1 (coastal-cafe) and 2 (retro-desk) survived because their `reactiveAtmosphere.work` overrides included explicit `overlayShift` objects
+  - scene 3 (aquarium-room) crashed because its `reactiveAtmosphere.work` was `{ glowOpacity: 0.72 }` only — no `overlayShift`
+  - the spread destroyed the deep-merged result, leaving `overlayShift` undefined on the `work` session
+- actions taken:
+  - destructured `reactiveAtmosphere` out of `scene` before the final spread: `const { reactiveAtmosphere: sceneAtmosphere, ...sceneRest } = scene`
+  - used `mergeReactiveAtmosphere(sceneAtmosphere)` in the returned object and spread `...sceneRest` (which no longer contains `reactiveAtmosphere`)
+  - added defensive optional chaining in `resolveStudyScenePresentation`: `reactiveAtmosphere.overlayShift?.[modeKey] ?? 0`
+  - rebuilt study-room, synced to portal source, lint passes, build passes
+- files changed:
+  - updated `apps/study-room/src/lib/studyScene.js` (fixed `createSceneDefinition` and defensive `resolveStudyScenePresentation`)
+- verification results:
+  - `npm run lint` passes
+  - `npm run build` succeeds (318.95 kB JS)
+  - aquarium scene's `reactiveAtmosphere.work` now correctly contains `overlayShift: { idle: 0.05, focus: 0.08 }` from defaults plus `glowOpacity: 0.72` from scene override
+- decisions made:
+  - the primary fix is structural (prevent spread from overwriting merged data), not just defensive optional chaining
+  - the defensive `?. ?? 0` fallback in `resolveStudyScenePresentation` is belt-and-suspenders for any future scene that might still miss `overlayShift`
+- why aquarium was uniquely broken:
+  - it was the only scene whose `reactiveAtmosphere.work` override omitted `overlayShift`; scenes 1 and 2 happened to include it, masking the bug
+- next recommended step:
+  - browser QA pass to confirm aquarium scene renders correctly and scene switching no longer crashes
+
+### Session 2026-05-06 — Phase 6.5.1 Backend Runtime Bootstrap
+
+- objectives:
+  - convert apps/backend-api from an empty placeholder scaffold into a minimal runnable HTTP server
+  - establish Hono as the backend framework
+  - implement validated env loading, error handling middleware, and a health check endpoint
+  - verify the server boots and responds to HTTP requests
+- actions taken:
+  - installed dependencies: hono, @hono/node-server, dotenv, zod
+  - created src/config/env.js with zod-validated env loading (PORT, DATABASE_URL, SESSION_SECRET)
+  - created src/app.js as Hono app factory with logger, CORS, error handler, and route mounting
+  - created src/middleware/errorHandler.js as global error handling middleware
+  - created src/routes/health.js with GET /health returning { ok: true, service: "backend-api" }
+  - rewrote src/index.js to use @hono/node-server serve() with the Hono app
+  - removed obsolete src/config/runtime.js (replaced by env.js)
+  - removed obsolete src/http/routes/index.js and empty src/http/ directory
+  - preserved module placeholder folders: src/modules/auth/, src/modules/site-config/, src/modules/study-data/
+  - preserved src/db/README.md placeholder
+  - updated package.json with dependencies and corrected scripts (dev with --watch, start without)
+  - fixed bug: env.port → env.PORT (zod schema key is uppercase)
+- files changed:
+  - updated apps/backend-api/package.json (added deps, fixed scripts)
+  - added apps/backend-api/package-lock.json
+  - created apps/backend-api/src/config/env.js
+  - created apps/backend-api/src/app.js
+  - created apps/backend-api/src/middleware/errorHandler.js
+  - created apps/backend-api/src/routes/health.js
+  - updated apps/backend-api/src/index.js (rewritten to Hono server)
+  - updated apps/backend-api/.env.example
+  - removed apps/backend-api/src/config/runtime.js
+  - removed apps/backend-api/src/http/routes/index.js
+  - removed apps/backend-api/src/http/ directory
+- verification results:
+  - `npm install` succeeds (4 packages added)
+  - `npm start` boots server on port 3001, stays alive
+  - `npm run dev` boots server with --watch on port 3001, stays alive
+  - `curl localhost:3001/health` returns `{"ok":true,"service":"backend-api"}` (200)
+  - `curl localhost:3001/` returns `{"error":"Not found"}` (404)
+- decisions made:
+  - Hono is the backend framework (lightweight, ESM-native, Web Standard API)
+  - zod is used for env validation (fail-fast on invalid config)
+  - dotenv loads .env file automatically via `import 'dotenv/config'`
+  - error handler returns generic 500 messages to clients, logs full errors server-side
+  - module folders (auth, site-config, study-data) are preserved as empty domain placeholders
+- risks or blockers:
+  - no .env file exists yet (only .env.example) — server uses defaults, which is fine for dev
+  - Prisma is not installed yet (intentionally deferred to Phase 6.5.2)
+- next recommended step:
+  - Phase 6.5.2: install Prisma, create AdminUser + Session models, run first migration

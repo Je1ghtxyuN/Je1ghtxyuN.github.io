@@ -1,0 +1,13 @@
+- main [ref=e5]:
+  - generic [ref=e7]:
+    - group "Study Room 面板" [ref=e8]:
+      - button "任务面板" [ref=e9] [cursor=pointer]: To
+      - button "音乐面板" [ref=e10] [cursor=pointer]: Mu
+    - generic [ref=e13]: Study Room
+    - group [ref=e14]:
+      - button "统计面板" [ref=e15] [cursor=pointer]: St
+      - button "设置面板" [ref=e16] [cursor=pointer]: Se
+  - button "海岸咖啡馆 25:00 开始" [ref=e18] [cursor=pointer]:
+    - paragraph [ref=e19]: 海岸咖啡馆
+    - generic [ref=e20]: 25:00
+    - button "开始" [ref=e21]

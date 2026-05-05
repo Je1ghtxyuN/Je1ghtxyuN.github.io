@@ -6,6 +6,9 @@ const supportedLocales = Array.isArray(siteIdentity.i18n?.supportedLocales)
   ? siteIdentity.i18n.supportedLocales
   : []
 const localeBasePath = '/shared-assets/locales/site-ui'
+const studyRoomLandingPath =
+  siteIdentity.routes?.studyRoomLandingPath || '/study-room/'
+const studyRoomAppPath = siteIdentity.routes?.studyRoomAppPath || '/study-app/'
 const defaultLocaleBundle = require(path.join(
   __dirname,
   `../../../packages/shared-assets/locales/site-ui/${defaultLocale}.json`,
@@ -24,12 +27,19 @@ function getDefaultLocaleText(keyPath, fallback = '') {
   return typeof value === 'string' ? value : fallback
 }
 
+function resolveStudyRoomPublicUrl() {
+  return studyRoomAppPath
+}
+
 module.exports = {
   siteIdentity,
   defaultLocale,
   supportedLocales,
   localeBasePath,
+  studyRoomLandingPath,
+  studyRoomAppPath,
   defaultLocaleBundle,
   getNestedValue,
   getDefaultLocaleText,
+  resolveStudyRoomPublicUrl,
 }

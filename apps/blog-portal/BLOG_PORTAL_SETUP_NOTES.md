@@ -223,6 +223,15 @@ Public CTA rule:
 - homepage shortcut cards now send Study Room traffic directly to `/study-app/`
 - the Study Room portfolio card uses `/study-app/` for its live demo link
 - the dedicated `/study-room/` page acts as an informational handoff surface and uses `/study-app/` as its primary entry CTA
+- the main navigation entry now also points directly to the Study Room app so users reach it in one click
+
+Development vs production rule:
+
+- all Study Room CTAs now resolve to `/study-app/` in both local preview and production builds
+- the Study Room SPA is mounted into the portal source at `source/study-app/` via the sync script
+- local integrated preview is the default: `hexo server` serves both portal and Study Room from one process
+
+This unified approach eliminates the old `localhost:5173` dev shortcut since the integrated preview now works.
 
 The route assumptions come from:
 
@@ -251,9 +260,16 @@ Portal-side wiring:
 Default behavior:
 
 - the default locale comes from `site-identity.json`
-- the portal checks `?lang=`, then `localStorage.site-locale`, then the browser language
+- the portal reads `localStorage.site-locale` as the shared locale source
+- if the key is missing, the portal falls back to the shared default locale, currently `en`
 - only shared UI text is translated
 - blog post bodies are not duplicated per locale in this phase
+
+Cross-app locale sync:
+
+- the portal writes the active locale into `localStorage.site-locale`
+- the Study Room reads `site-locale` on boot and also writes back to it when its own language setting changes
+- refreshing either app therefore reuses the same selected UI language
 
 Currently translated portal UI includes:
 
@@ -262,6 +278,11 @@ Currently translated portal UI includes:
 - about, portfolio, contact, and Study Room static labels
 - contact form labels and placeholders
 - search placeholder text
+
+Search translation note:
+
+- Butterfly still seeds the local-search placeholder from default config during generation
+- `source/js/portal-i18n.js` re-applies the translated placeholder at runtime and again when dynamic search UI is inserted, so locale switching updates the search field too
 
 ## Adding A New Language
 
