@@ -817,3 +817,144 @@ Append new dated sessions below this line.
   - Prisma is not installed yet (intentionally deferred to Phase 6.5.2)
 - next recommended step:
   - Phase 6.5.2: install Prisma, create AdminUser + Session models, run first migration
+
+### Session 2026-05-08 — Phase 6.5.2A Prisma + Database Foundation
+
+- objectives:
+  - install Prisma ORM into apps/backend-api
+  - create AdminUser and Session models
+  - create Prisma client singleton
+  - improve env validation for fail-fast behavior
+  - prepare schema and client without running migrations
+- actions taken:
+  - installed prisma (6.19.3) and @prisma/client (6.19.3) — pinned to v6 because Prisma 7 introduced breaking changes (adapter-based client, TypeScript-only generated output, removed datasource URL from schema) that add unnecessary complexity for a JS-only foundation
+  - created prisma/schema.prisma with MySQL datasource, generator, AdminUser model, and Session model with relation
+  - created src/db/client.js as ESM-compatible PrismaClient singleton (avoids multiple instances in dev/watch mode via globalThis caching)
+  - updated src/config/env.js to make DATABASE_URL and SESSION_SECRET required (fail-fast with zod .min(1))
+  - added COOKIE_DOMAIN to env schema with default "localhost"
+  - updated .env.example with all required and optional variables
+  - added prisma:generate, prisma:validate, prisma:migrate:dev, and prisma:studio scripts to package.json
+  - moved prisma CLI to devDependencies
+- files changed:
+  - updated apps/backend-api/package.json (added prisma deps and scripts)
+  - updated apps/backend-api/package-lock.json
+  - updated apps/backend-api/prisma/schema.prisma (added AdminUser + Session models)
+  - created apps/backend-api/src/db/client.js (PrismaClient singleton)
+  - updated apps/backend-api/src/config/env.js (required DATABASE_URL and SESSION_SECRET)
+  - updated apps/backend-api/.env.example (added COOKIE_DOMAIN and REPO_ROOT)
+- verification results:
+  - `node_modules/.bin/prisma validate` → schema valid
+  - `node_modules/.bin/prisma generate` → Prisma Client v6.19.3 generated to ./node_modules/@prisma/client
+  - PrismaClient import resolves correctly
+  - `node src/index.js` boots on port 3001
+  - `curl localhost:3001/health` returns `{"ok":true,"service":"backend-api"}` (200)
+  - env validation correctly exits(1) when DATABASE_URL or SESSION_SECRET are empty
+- decisions made:
+  - pinned Prisma to v6.x — Prisma 7 requires adapter-based PrismaClient constructor, generates TypeScript-only output, and removes datasource URL from schema.prisma; these are breaking changes that add unnecessary complexity for a pure JS ESM project at this stage
+  - PrismaClient singleton uses globalThis pattern to prevent multiple instances during --watch hot reload
+  - DATABASE_URL and SESSION_SECRET are now required (server exits immediately if missing)
+  - no prisma.config.js needed (Prisma 6 uses url in schema.prisma)
+- risks or blockers:
+  - no real database connected yet — PrismaClient instantiation works but queries will fail until a MySQL instance is available
+  - migrations intentionally deferred until remote database deployment strategy is finalized
+  - Prisma 7 upgrade path exists but should be evaluated separately when the project is ready for TypeScript or needs Prisma 7-specific features
+- next recommended step:
+  - set up remote MySQL database (Docker on Ubuntu server), then run first prisma migrate dev to create tables
+  - begin auth route implementation once database is connected
+
+### Session 2026-05-08 — Phase 6.5.2B Local MySQL Foundation
+
+- objectives:
+  - establish local MySQL database for backend-api development
+  - execute first Prisma migration to create AdminUser and Session tables
+  - verify end-to-end Prisma connectivity from backend-api
+- actions taken:
+  - audited repo: no existing Docker files, MySQL configs, or .env files found
+  - attempted Docker Desktop install via brew — failed (network: connection reset by peer on Docker CDN download)
+  - installed Colima + Docker CLI + qemu as alternative — Colima VM image download also failed (GitHub timeout)
+  - installed MySQL 9.6 via Homebrew as fallback (lighter, no large downloads needed)
+  - started MySQL service via `brew services start mysql`
+  - created `personal_website` database with utf8mb4_unicode_ci collation
+  - created `personal_user` with full privileges (required for Prisma shadow database)
+  - created `infra/local-db/docker-compose.yml` for future Docker-based setup (preserved as reference)
+  - created `infra/local-db/README.md` documenting both Homebrew and Docker approaches
+  - updated `apps/backend-api/.env` with Docker/Homebrew MySQL credentials
+  - ran `prisma migrate dev --name init` — created migration `20260508094440_init`
+  - verified tables: AdminUser (id, email, password, createdAt), Session (id, userId, expiresAt, createdAt) with foreign key
+  - verified Prisma queries work: `prisma.adminUser.count()` and `prisma.session.count()` both return 0
+  - verified server boots and /health endpoint responds correctly with DB connected
+- files changed:
+  - created infra/local-db/docker-compose.yml (Docker MySQL reference stack)
+  - created infra/local-db/README.md (setup instructions for both methods)
+  - updated apps/backend-api/.env (real MySQL credentials for local dev)
+  - created apps/backend-api/prisma/migrations/20260508094440_init/migration.sql
+  - created apps/backend-api/prisma/migrations/migration_lock.toml
+- verification results:
+  - `mysql -u personal_user -p[REDACTED] personal_website -e "SHOW TABLES"` → AdminUser, Session, _prisma_migrations
+  - `prisma migrate dev --name init` → migration applied, client generated
+  - `node src/index.js` → boots on port 3001
+  - `fetch localhost:3001/health` → 200, `{"ok":true,"service":"backend-api"}`
+  - `prisma.adminUser.count()` → 0 (table accessible)
+  - `prisma.session.count()` → 0 (table accessible)
+- decisions made:
+  - Homebrew MySQL used instead of Docker due to network issues blocking large downloads (Docker Desktop CDN, Colima/GitHub VM images)
+  - docker-compose.yml preserved as reference for future Docker-based workflow when network allows
+  - personal_user granted full privileges (not just personal_website scope) because Prisma shadow database requires CREATE DATABASE permission
+  - MySQL 9.6 installed (latest Homebrew default), compatible with Prisma 6 MySQL connector
+- risks or blockers:
+  - Homebrew MySQL is not as isolated as Docker — data lives in /opt/homebrew/var/mysql, shared with any other local MySQL usage
+  - if Docker Desktop is installed later, the docker-compose.yml can replace the Homebrew approach
+  - shadow database requires elevated privileges; in production, use `prisma migrate deploy` instead (no shadow DB needed)
+- next recommended step:
+  - begin auth route implementation (login, session creation) since database is now connected and tables exist
+
+### Session 2026-05-08 — Phase 6.5.3 Backend Auth Foundation
+
+- objectives:
+  - implement minimal but production-structured authentication/session infrastructure
+  - DB-backed sessions with HttpOnly cookies (no JWT)
+  - single-admin architecture
+- actions taken:
+  - installed bcryptjs for password hashing
+  - created src/middleware/auth.js with authMiddleware() and requireAuth() guards
+    - authMiddleware reads session_id cookie, validates against DB, attaches user to Hono context
+    - requireAuth() returns 401 if no authenticated user
+    - expired sessions are auto-cleaned on access
+  - created src/routes/auth.js with three endpoints:
+    - POST /auth/login — validates email/password via bcrypt, creates Session row, sets HttpOnly cookie, returns safe user payload
+    - POST /auth/logout — deletes Session row, clears cookie
+    - GET /auth/session — returns current authenticated user (requires auth)
+  - created src/routes/protected.js with GET /protected/ping (requires auth, returns user info)
+  - updated src/app.js to mount auth routes at /auth and protected routes at /protected, added CORS with credentials
+  - created scripts/create-admin.js — bootstraps initial admin user from ADMIN_EMAIL/ADMIN_PASSWORD env vars
+  - verified full flow: unauthenticated 401, wrong-password 401, login 200 + cookie, authenticated session 200, authenticated protected 200, logout 200 + cookie cleared, post-logout 401
+- files changed:
+  - updated apps/backend-api/package.json (added bcryptjs)
+  - updated apps/backend-api/package-lock.json
+  - created apps/backend-api/src/middleware/auth.js
+  - created apps/backend-api/src/routes/auth.js
+  - created apps/backend-api/src/routes/protected.js
+  - created apps/backend-api/scripts/create-admin.js
+  - updated apps/backend-api/src/app.js (mounted auth + protected routes, CORS with credentials)
+- verification results:
+  - POST /auth/login with wrong password → 401 "Invalid credentials"
+  - POST /auth/login with correct credentials → 200 + Set-Cookie: session_id=...; HttpOnly; SameSite=Lax
+  - GET /auth/session with cookie → 200 + user object (no password field)
+  - GET /protected/ping with cookie → 200 + user info
+  - POST /auth/logout → 200 + cookie cleared, session row deleted from DB
+  - GET /auth/session after logout → 401
+  - DB verified: AdminUser row exists, Session row correctly deleted after logout
+- decisions made:
+  - DB-backed sessions only (no JWT) — session token is a cuid stored in HttpOnly cookie
+  - session duration: 7 days
+  - cookie: HttpOnly, Secure (non-localhost), SameSite=Lax
+  - bcrypt cost factor: 12 (in create-admin.js)
+  - auth middleware runs on every request but does not block — requireAuth() is a separate guard
+  - password field stripped from all responses via destructuring
+  - CORS configured with credentials: true for localhost:4000 and localhost:5173
+- risks or blockers:
+  - no rate limiting on login endpoint (acceptable for single-admin architecture)
+  - no CSRF protection yet (SameSite=Lax provides partial protection)
+  - session cleanup only happens on access — orphaned expired sessions accumulate until accessed
+- next recommended step:
+  - add admin dashboard routes or CMS content editing endpoints that use the auth foundation
