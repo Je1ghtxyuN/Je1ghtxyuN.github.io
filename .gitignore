@@ -26,3 +26,18 @@ dist-ssr
 
 # video
 *.mp4
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+credentials.json
+
+# Claude Code
+.claude/
+
+# Playwright MCP artifacts
+.playwright-mcp/
