@@ -6,6 +6,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal website platform (Je1ghtxyuN) mid-migration from a legacy React/Firebase SPA to a modular multi-app architecture. The target stack is: Hexo portal + standalone React SPA (Study Room) + self-hosted Node.js API backend + MySQL via Prisma. Firebase is transitional and planned for full removal.
 
+## Project Decisions & Constraints
+
+These are locked architectural decisions. Do not contradict them unless the user explicitly asks to change direction.
+
+- **Visual reference**: `https://atritium.github.io` — the only approved design reference
+- **Hexo theme**: `hexo-theme-butterfly` by `jerryc127` — fixed, not negotiable
+- **Aesthetic**: elegant technical blog + personal portfolio + anime subtle atmosphere
+- **Hosting**: Ubuntu + Docker self-hosting, Cloudflare as CDN/reverse-proxy
+- **China mainland accessibility required** — avoid dependencies blocked or unstable in mainland
+- **Firebase is transitional** — do not add new Firebase-dependent features
+- **Auth strategy**: DB-backed sessions with HttpOnly cookies, no JWT, single-admin architecture
+- **Database**: MySQL (self-hosted) via Prisma ORM. Browsers never connect to DB directly
+- **Comment system**: self-hosted (MySQL), not third-party hosted
+- **Contact form**: backend-owned, replacing Formspree
+
+## Current Project Status (as of 2026-05-08)
+
+- Phase 1 (Architecture Memory): done
+- Phase 2 (Hexo Portal): core UI done, content populated, locale sync working
+- Phase 3 (Study Room): immersive scene-first UI, Pomodoro engine, video scenes, ambient music all working
+- Phase 4 (Backend): Hono server bootstrapped, Prisma + MySQL connected, auth foundation (login/session/logout) working
+- Phase 5 (Integration): portal ↔ study-room integrated via sync script, local preview working at localhost:4000
+- Phase 6 (Optimization): not started
+
+## Detailed References (read on demand, not every session)
+
+These files contain full history and detail. Read them only when the task requires deep context:
+
+- `docs/AI_PROJECT_MEMORY/PROJECT_CONTEXT.md` — permanent project identity, migration principles, infrastructure constraints
+- `docs/AI_PROJECT_MEMORY/MASTER_ARCHITECTURE.md` — final target architecture, data model, auth strategy, deployment topology
+- `docs/AI_PROJECT_MEMORY/DEVELOPMENT_ROADMAP.md` — 6-phase execution roadmap with checklists
+- `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md` — append-only engineering session log
+- `docs/DEPLOYMENT_CONTRACT.md` — routing contract for portal + study-room + backend
+- `docs/CONTENT_MAP.md` — where content is stored and how it flows to the homepage
+
 ## Repository Structure
 
 This is a **manual monorepo** (no workspace tooling — each app has its own `node_modules`).
@@ -90,3 +125,29 @@ bash scripts/sync-study-app.sh   # Builds study-room, copies dist/ into blog-por
 - Never hardcode `http://localhost:5173` in production-facing portal content
 - The Study Room uses `BrowserRouter` — its hosting must serve `index.html` as SPA fallback for nested routes
 - The engineering worklog at `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md` is append-only — new sessions are appended, not overwritten
+
+## Output Style
+
+Every response should be educational: explain what was done, how it was done, and why. The user is learning while building. Do not just produce code — teach the reasoning behind decisions, trade-offs considered, and patterns used. Structure explanations clearly with brief context before technical details.
+
+## Skill Auto-Invoke Rules
+
+Project commands live in `.claude/commands/`. When the work context matches a skill's domain, invoke it proactively without waiting for the user to type `/project:command`. Do NOT invoke skills for trivial or unrelated tasks.
+
+| Work Context | Auto-Invoke |
+|---|---|
+| Writing, editing, or reviewing blog posts, About page, project descriptions, any user-facing copy | `/project:humanizer` |
+| Working on auth, API endpoints, session handling, input validation, CORS, cookies | `/project:security-insecure-defaults`, `/project:security-c-review` |
+| Adding new npm dependencies or upgrading existing ones | `/project:deps-audit` |
+| Preparing Docker configs, deployment scripts, or production builds | `/project:deploy-checklist`, `/project:docker-optimize` |
+| Database schema changes (Prisma models, migrations) | `/project:db-migrate` |
+| Creating or modifying API routes (Hono backend) | `/project:api-scaffold` |
+| Writing or modifying React components, layouts, pages | `/project:ui-ux-design` |
+| Working on Hexo portal pages, meta tags, SEO-related content | `/project:seo-seo-analysis`, `/project:seo-meta-tags-optimizer` |
+| Writing tests (unit, integration, e2e) | `/project:tdd-red`, `/project:tdd-green` |
+| Refactoring existing code | `/project:karpathy-guidelines`, `/project:security-code-maturity` |
+| Reviewing a PR or large changeset | `/project:security-diff-review`, `/project:pr-enhance` |
+| Debugging errors or unexpected behavior | `/project:error-analysis` |
+| Before any commit touching backend API, auth, or data handling | `/project:security-insecure-defaults` (quick scan) |
+
+When invoking a skill automatically, briefly note which skill you're using and why — e.g., "Running security-insecure-defaults scan on the new auth route."

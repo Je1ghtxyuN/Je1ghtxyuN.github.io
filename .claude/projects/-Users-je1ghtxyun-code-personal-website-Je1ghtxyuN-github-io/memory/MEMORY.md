@@ -1,0 +1,2 @@
+- [Explain While Building](feedback_explain_while_building.md) — Every response should teach: explain what, how, and why
+- [Docs Migration](project_docs_migration.md) — Key decisions from docs/ now in CLAUDE.md; no need to read all docs every session
