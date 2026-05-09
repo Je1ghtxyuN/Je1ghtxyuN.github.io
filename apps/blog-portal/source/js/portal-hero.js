@@ -5,13 +5,28 @@
   var header = document.getElementById('page-header')
   if (!header) return
 
+  // Hide Butterfly's default "Home" title in the header
+  var siteTitle = document.getElementById('site-title')
+  if (siteTitle) siteTitle.style.display = 'none'
+
   // Create hero info container
   var heroInfo = document.createElement('div')
   heroInfo.className = 'portal-hero-info'
 
-  var title = document.createElement('h1')
-  title.className = 'portal-hero-info__title'
-  title.textContent = 'Je1ghtxyuN'
+  // Avatar
+  var avatar = document.createElement('img')
+  avatar.className = 'portal-hero-info__avatar'
+  avatar.src = '/shared-assets/images/profile.jpg'
+  avatar.alt = 'Je1ghtxyuN'
+  avatar.onerror = function () { this.src = '/img/friend_404.gif' }
+
+  // Name + subtitle group
+  var textGroup = document.createElement('div')
+  textGroup.className = 'portal-hero-info__text'
+
+  var name = document.createElement('div')
+  name.className = 'portal-hero-info__name'
+  name.textContent = 'Je1ghtxyuN'
 
   var subtitle = document.createElement('div')
   subtitle.className = 'portal-hero-info__subtitle'
@@ -20,8 +35,16 @@
   cursor.className = 'typed-cursor'
   cursor.textContent = '|'
 
-  heroInfo.appendChild(title)
-  heroInfo.appendChild(subtitle)
+  var intro = document.createElement('p')
+  intro.className = 'portal-hero-info__intro'
+  intro.textContent = 'Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.'
+
+  textGroup.appendChild(name)
+  textGroup.appendChild(subtitle)
+  textGroup.appendChild(intro)
+
+  heroInfo.appendChild(avatar)
+  heroInfo.appendChild(textGroup)
   header.appendChild(heroInfo)
 
   // Scroll hint
@@ -63,7 +86,6 @@
     subtitle.appendChild(cursor)
 
     if (!isDeleting && charIndex === currentPhrase.length) {
-      // Finished typing, pause then start deleting
       setTimeout(function () {
         isDeleting = true
         type()
@@ -81,7 +103,6 @@
     setTimeout(type, isDeleting ? deleteSpeed : typeSpeed)
   }
 
-  // Start with a small delay
   setTimeout(type, 800)
 
   // Make header nav transparent
