@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import {
   useStudyRoomActions,
@@ -19,11 +19,48 @@ export function useAmbientMusicController() {
   const playbackStateRef = useRef('idle')
   const [playbackState, setPlaybackState] = useState('idle')
   const [playbackError, setPlaybackError] = useState('')
-  const trackSource = getAmbientTrackSource(MUSIC_SOURCE_TYPES.local)
-  const tracks = trackSource.getTracks()
+  const [tracks, setTracks] = useState([])
+  const [playlistName, setPlaylistName] = useState('')
+  const [loading, setLoading] = useState(false)
+  const sourceType = preferences.musicSourceType || MUSIC_SOURCE_TYPES.local
+  const trackSource = getAmbientTrackSource(sourceType)
 
   const selectedTrackIndex = getTrackIndex(tracks, preferences.selectedTrackId)
-  const currentTrack = tracks[selectedTrackIndex]
+  const currentTrack = tracks[selectedTrackIndex] || { id: '', title: '', src: '' }
+
+  // Load playlist when source changes
+  useEffect(() => {
+    if (sourceType === MUSIC_SOURCE_TYPES.netease) {
+      setLoading(true)
+      trackSource.loadPlaylist().then(({ tracks: newTracks, name }) => {
+        setTracks(newTracks)
+        setPlaylistName(name)
+        setLoading(false)
+        if (newTracks.length > 0 && !preferences.selectedTrackId) {
+          setPreference('selectedTrackId', newTracks[0].id)
+        }
+      }).catch(() => {
+        setLoading(false)
+      })
+    } else {
+      setTracks(trackSource.getTracks())
+      setPlaylistName('')
+    }
+  }, [sourceType])
+
+  // Fetch song URL when track changes (Netease URLs expire)
+  useEffect(() => {
+    if (sourceType !== MUSIC_SOURCE_TYPES.netease) return
+    if (!currentTrack.id) return
+
+    trackSource.getTrackUrl(currentTrack.id).then((url) => {
+      if (url) {
+        setTracks((prev) =>
+          prev.map((t) => (t.id === currentTrack.id ? { ...t, src: url } : t)),
+        )
+      }
+    })
+  }, [currentTrack.id, sourceType])
 
   useEffect(() => {
     const audio = new Audio()
@@ -44,16 +81,13 @@ export function useAmbientMusicController() {
 
   useEffect(() => {
     const audio = audioRef.current
-
     if (!audio) return
-
     audio.volume = preferences.volume
   }, [preferences.volume])
 
   useEffect(() => {
     const audio = audioRef.current
-
-    if (!audio) return
+    if (!audio || !currentTrack.src) return
 
     audio.pause()
     audio.src = currentTrack.src
@@ -63,124 +97,77 @@ export function useAmbientMusicController() {
 
     void audio.play().catch(() => {
       setPlaybackState('paused')
-      setPlaybackError(
-        t(
-          'studyRoom.music.errors.blocked',
-          {},
-          'Playback is blocked until the browser receives a user gesture.',
-        ),
-      )
+      setPlaybackError(t('studyRoom.music.errors.blocked', {}, 'Playback blocked'))
     })
   }, [currentTrack.id, currentTrack.src, t])
 
   useEffect(() => {
     if (preferences.soundEnabled) return
-
     const audio = audioRef.current
-
     if (!audio) return
-
     audio.pause()
     setPlaybackState('paused')
   }, [preferences.soundEnabled])
 
-  const play = async () => {
+  const play = useCallback(async () => {
     const audio = audioRef.current
-
     if (!audio || !preferences.soundEnabled) {
-      setPlaybackError(
-        t(
-          'studyRoom.music.errors.enableSound',
-          {},
-          'Enable sound before starting ambient playback.',
-        ),
-      )
+      setPlaybackError(t('studyRoom.music.errors.enableSound', {}, 'Enable sound'))
       return
     }
-
     try {
       await audio.play()
       setPlaybackState('playing')
       setPlaybackError('')
     } catch {
       setPlaybackState('paused')
-      setPlaybackError(
-        t(
-          'studyRoom.music.errors.blocked',
-          {},
-          'Playback is blocked until the browser receives a user gesture.',
-        ),
-      )
+      setPlaybackError(t('studyRoom.music.errors.blocked', {}, 'Playback blocked'))
     }
-  }
+  }, [preferences.soundEnabled, t])
 
-  const pause = () => {
+  const pause = useCallback(() => {
     const audio = audioRef.current
-
     if (!audio) return
-
     audio.pause()
     setPlaybackState('paused')
-  }
+  }, [])
 
-  const selectTrack = (trackId) => {
+  const selectTrack = useCallback((trackId) => {
     setPreference('selectedTrackId', trackId)
     setPlaybackError('')
-  }
+  }, [setPreference])
 
-  const goToTrack = (direction) => {
-    const nextIndex =
-      (selectedTrackIndex + direction + tracks.length) % tracks.length
-    selectTrack(tracks[nextIndex].id)
-  }
+  const goToTrack = useCallback((direction) => {
+    const nextIndex = (selectedTrackIndex + direction + tracks.length) % tracks.length
+    selectTrack(tracks[nextIndex]?.id)
+  }, [selectedTrackIndex, tracks, selectTrack])
+
+  const setSource = useCallback((type) => {
+    setPreference('musicSourceType', type)
+  }, [setPreference])
 
   return {
-    musicSourceType: trackSource.type,
-    musicSourceLabel:
-      trackSource.type === MUSIC_SOURCE_TYPES.cloudFuture
-        ? t(
-            'studyRoom.music.source.cloudFutureLabel',
-            {},
-            'Cloud Music',
-          )
-        : t('studyRoom.music.source.localLabel', {}, 'Local Library'),
-    musicSourceDescription:
-      trackSource.type === MUSIC_SOURCE_TYPES.cloudFuture
-        ? t(
-            'studyRoom.music.source.cloudFutureDescription',
-            {},
-            'Cloud music integration coming soon.',
-          )
-        : t(
-            'studyRoom.music.source.localDescription',
-            {},
-            'Bundled local ambience keeps the current Study Room self-contained and offline-safe.',
-          ),
+    musicSourceType: sourceType,
+    musicSourceLabel: sourceType === MUSIC_SOURCE_TYPES.netease
+      ? playlistName || t('studyRoom.music.source.neteaseLabel', {}, 'NetEase Cloud')
+      : t('studyRoom.music.source.localLabel', {}, 'Local Library'),
     tracks,
     currentTrack,
     playbackState,
     playbackError,
+    loading,
     volume: preferences.volume,
     soundEnabled: preferences.soundEnabled,
     play,
     pause,
     togglePlayback() {
-      if (playbackState === 'playing') {
-        pause()
-        return
-      }
-
-      void play()
+      if (playbackState === 'playing') pause()
+      else void play()
     },
     selectTrack,
-    nextTrack() {
-      goToTrack(1)
-    },
-    previousTrack() {
-      goToTrack(-1)
-    },
-    setVolume(value) {
-      setPreference('volume', value)
-    },
+    nextTrack() { goToTrack(1) },
+    previousTrack() { goToTrack(-1) },
+    setVolume(value) { setPreference('volume', value) },
+    setSource,
   }
 }

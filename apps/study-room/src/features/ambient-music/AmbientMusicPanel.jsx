@@ -1,14 +1,17 @@
 import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useAmbientMusicController } from './useAmbientMusicController.js'
+import { MUSIC_SOURCE_TYPES } from './musicSources.js'
 
 export function AmbientMusicPanel() {
   const { t } = useStudyRoomLocale()
   const {
+    musicSourceType,
     musicSourceLabel,
     tracks,
     currentTrack,
     playbackState,
     playbackError,
+    loading,
     volume,
     soundEnabled,
     togglePlayback,
@@ -16,17 +19,10 @@ export function AmbientMusicPanel() {
     nextTrack,
     previousTrack,
     setVolume,
+    setSource,
   } = useAmbientMusicController()
-  const currentTrackTitle = t(
-    `studyRoom.music.tracks.${currentTrack.id}.title`,
-    {},
-    currentTrack.title,
-  )
-  const currentTrackNote = t(
-    `studyRoom.music.tracks.${currentTrack.id}.note`,
-    {},
-    currentTrack.note,
-  )
+  const currentTrackTitle = currentTrack.title || t('studyRoom.music.noTrack', {}, 'No track')
+  const artists = currentTrack.artists || ''
 
   return (
     <section className="floating-widget music-widget">
@@ -36,15 +32,23 @@ export function AmbientMusicPanel() {
             {t('studyRoom.music.eyebrow', {}, 'Ambient Music')}
           </p>
           <h2 className="floating-widget__title">{currentTrackTitle}</h2>
-          <p className="floating-widget__meta">{musicSourceLabel}</p>
+          {artists ? <p className="floating-widget__meta">{artists}</p> : null}
         </div>
         <span className="floating-widget__badge">
-          {t(
-            `studyRoom.music.playback.${playbackState}`,
-            {},
-            playbackState,
-          )}
+          {loading ? 'Loading...' : t(`studyRoom.music.playback.${playbackState}`, {}, playbackState)}
         </span>
+      </div>
+
+      <div className="field">
+        <label>{t('common.source', {}, 'Source')}</label>
+        <select
+          className="select"
+          value={musicSourceType}
+          onChange={(e) => setSource(e.target.value)}
+        >
+          <option value={MUSIC_SOURCE_TYPES.local}>Local Library</option>
+          <option value={MUSIC_SOURCE_TYPES.netease}>NetEase Cloud</option>
+        </select>
       </div>
 
       <div className="field">
@@ -59,7 +63,7 @@ export function AmbientMusicPanel() {
         >
           {tracks.map((track) => (
             <option key={track.id} value={track.id}>
-              {t(`studyRoom.music.tracks.${track.id}.title`, {}, track.title)}
+              {track.title}
             </option>
           ))}
         </select>
@@ -108,7 +112,7 @@ export function AmbientMusicPanel() {
         />
       </div>
 
-      <p className="floating-widget__meta">{currentTrackNote}</p>
+      <p className="floating-widget__meta">{musicSourceLabel}</p>
       {playbackError ? (
         <p className="floating-widget__hint">{playbackError}</p>
       ) : null}
