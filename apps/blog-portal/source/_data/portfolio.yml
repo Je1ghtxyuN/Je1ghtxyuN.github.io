@@ -1,8 +1,9 @@
+<!-- managed-by-backend-api -->
 section:
   title: Portfolio
-  intro: Current builds and migration-era projects that define the platform direction, product scope, and long-term engineering priorities.
+  intro: Projects and builds that define the platform direction.
   home_preview_title: Selected Projects
-  home_preview_intro: Active workstreams and documented project tracks rendered from a shared portfolio data model.
+  home_preview_intro: Active workstreams rendered from the portfolio data model.
   page_link_label: View Project
 cards:
   - slug: personal-platform-rebuild
@@ -11,25 +12,11 @@ cards:
     status: Active architecture and migration
     summary: Rebuilding the original React and Firebase website into a static-first Hexo portal, an independent Study Room app, and a self-hosted backend platform with clearer service boundaries.
     cover_image: /shared-assets/images/background.jpg
-    gallery:
-      - /shared-assets/images/background.jpg
-      - /shared-assets/images/profile.jpg
-    tech_stack:
-      - Hexo
-      - Butterfly
-      - React
-      - Vite
-      - Node.js
-      - Prisma
-      - MySQL
-      - Docker
-      - Cloudflare
-    tags:
-      - Architecture
-      - Self-Hosting
-      - Migration
+    gallery: [/shared-assets/images/background.jpg, /shared-assets/images/profile.jpg]
+    tech_stack: [Hexo, Butterfly, React, Vite, Node.js, Prisma, MySQL, Docker, Cloudflare]
+    tags: [Architecture, Self-Hosting, Migration]
     links:
-      repo: https://github.com/Je1ghtxyuN/Je1ghtxyuN.github.io
+      repo: "https://github.com/Je1ghtxyuN/Je1ghtxyuN.github.io"
       article: /posts/project-architecture-journey/
   - slug: study-room
     title: Study Room
@@ -37,19 +24,9 @@ cards:
     status: Integrated flagship application foundation
     summary: A scene-first focus environment that now sits beside the portal as a true sister application, combining Pomodoro flow, immersive video ambience, compact task tools, and a future shared account/backend contract.
     cover_image: /shared-assets/images/gallery/photo5.png
-    gallery:
-      - /shared-assets/images/gallery/photo5.png
-      - /shared-assets/images/gallery/photo6.png
-    tech_stack:
-      - React
-      - Vite
-      - Web Audio API
-      - Shared Assets
-      - Future Backend API
-    tags:
-      - Focus UX
-      - Ambient Music
-      - Productivity
+    gallery: [/shared-assets/images/gallery/photo5.png, /shared-assets/images/gallery/photo6.png]
+    tech_stack: [React, Vite, Web Audio API, Shared Assets, Future Backend API]
+    tags: [Focus UX, Ambient Music, Productivity]
     links:
       demo: /study-app/
       article: /posts/building-my-study-room/
@@ -59,17 +36,8 @@ cards:
     status: Content modeling and documentation phase
     summary: Turning scattered legacy showcase material into structured portfolio records so future case studies, media previews, and cross-project comparisons can be managed consistently.
     cover_image: /shared-assets/images/works/REBORN1.jpg
-    gallery:
-      - /shared-assets/images/works/REBORN1.jpg
-      - /shared-assets/images/works/REBORN2.jpg
-    tech_stack:
-      - Hexo Data Files
-      - Markdown
-      - Shared Assets
-      - Content Modeling
-    tags:
-      - Documentation
-      - Portfolio
-      - Content Design
+    gallery: [/shared-assets/images/works/REBORN1.jpg, /shared-assets/images/works/REBORN2.jpg]
+    tech_stack: [Hexo Data Files, Markdown, Shared Assets, Content Modeling]
+    tags: [Documentation, Portfolio, Content Design]
     links:
       article: /posts/tech-stack-decisions/

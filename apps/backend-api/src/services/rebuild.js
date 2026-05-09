@@ -1,0 +1,215 @@
+import { writeFile, mkdir, readdir, unlink } from 'node:fs/promises'
+import { join } from 'node:path'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { prisma } from '../db/client.js'
+import { env } from '../config/env.js'
+
+const execFileAsync = promisify(execFile)
+
+const MANAGED_MARKER = '<!-- managed-by-backend-api -->'
+
+function getPortalRoot() {
+  if (!env.REPO_ROOT) throw new Error('REPO_ROOT is not configured')
+  return join(env.REPO_ROOT, 'apps', 'blog-portal')
+}
+
+function getPostsDir() {
+  return join(getPortalRoot(), 'source', '_posts')
+}
+
+function getDataDir() {
+  return join(getPortalRoot(), 'source', '_data')
+}
+
+function yamlEscape(value) {
+  if (value === null || value === undefined) return 'null'
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
+  const str = String(value)
+  if (str.includes('\n') || str.includes(':') || str.includes('#') || str.includes('"')) {
+    return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+  }
+  return str
+}
+
+function yamlArrayInline(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return '[]'
+  return `[${arr.map((v) => yamlEscape(v)).join(', ')}]`
+}
+
+function toYaml(obj, indent = 0) {
+  const prefix = '  '.repeat(indent)
+  const lines = []
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (value === null || value === undefined) {
+      lines.push(`${prefix}${key}:`)
+    } else if (Array.isArray(value)) {
+      if (value.length === 0) {
+        lines.push(`${prefix}${key}: []`)
+      } else if (value.every((v) => typeof v === 'string' || typeof v === 'number')) {
+        lines.push(`${prefix}${key}: ${yamlArrayInline(value)}`)
+      } else {
+        lines.push(`${prefix}${key}:`)
+        for (const item of value) {
+          if (typeof item === 'object' && item !== null) {
+            const entries = Object.entries(item)
+            if (entries.length > 0) {
+              const [firstKey, firstVal] = entries[0]
+              lines.push(`${prefix}  - ${firstKey}: ${typeof firstVal === 'object' ? '' : yamlEscape(firstVal)}`)
+              for (const [k, v] of entries.slice(1)) {
+                if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
+                  lines.push(`${prefix}    ${k}:`)
+                  for (const [sk, sv] of Object.entries(v)) {
+                    lines.push(`${prefix}      ${sk}: ${yamlEscape(sv)}`)
+                  }
+                } else if (Array.isArray(v)) {
+                  lines.push(`${prefix}    ${k}: ${yamlArrayInline(v)}`)
+                } else {
+                  lines.push(`${prefix}    ${k}: ${yamlEscape(v)}`)
+                }
+              }
+            }
+          } else {
+            lines.push(`${prefix}  - ${yamlEscape(item)}`)
+          }
+        }
+      }
+    } else if (typeof value === 'object') {
+      lines.push(`${prefix}${key}:`)
+      lines.push(toYaml(value, indent + 1))
+    } else {
+      lines.push(`${prefix}${key}: ${yamlEscape(value)}`)
+    }
+  }
+
+  return lines.join('\n')
+}
+
+function postToFrontmatter(post) {
+  const lines = ['---']
+  lines.push(`title: ${yamlEscape(post.title)}`)
+  lines.push(`date: ${new Date(post.publishedAt || post.createdAt).toISOString().replace('T', ' ').slice(0, 19)}`)
+  if (post.description) lines.push(`description: ${yamlEscape(post.description)}`)
+
+  const categories = Array.isArray(post.categories) ? post.categories : []
+  if (categories.length > 0) {
+    lines.push('categories:')
+    for (const cat of categories) lines.push(`  - ${yamlEscape(cat)}`)
+  }
+
+  const tags = Array.isArray(post.tags) ? post.tags : []
+  if (tags.length > 0) {
+    lines.push('tags:')
+    for (const tag of tags) lines.push(`  - ${yamlEscape(tag)}`)
+  }
+
+  lines.push('---')
+  lines.push('')
+  lines.push(post.content || '')
+
+  return lines.join('\n')
+}
+
+async function clearManagedFiles(dir) {
+  try {
+    const files = await readdir(dir)
+    for (const file of files) {
+      if (!file.endsWith('.md') && !file.endsWith('.yml')) continue
+      const filePath = join(dir, file)
+      try {
+        const content = await import('node:fs/promises').then((fs) => fs.readFile(filePath, 'utf-8'))
+        if (content.includes(MANAGED_MARKER)) {
+          await unlink(filePath)
+        }
+      } catch {
+        // skip files we can't read
+      }
+    }
+  } catch {
+    // directory may not exist yet
+  }
+}
+
+export async function rebuildPortal() {
+  const postsDir = getPostsDir()
+  const dataDir = getDataDir()
+
+  await mkdir(postsDir, { recursive: true })
+  await mkdir(dataDir, { recursive: true })
+
+  // 1. Generate blog posts
+  await clearManagedFiles(postsDir)
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    orderBy: { publishedAt: 'desc' },
+  })
+
+  for (const post of posts) {
+    const filename = `${post.slug}.md`
+    const content = postToFrontmatter(post) + '\n' + MANAGED_MARKER
+    await writeFile(join(postsDir, filename), content, 'utf-8')
+  }
+
+  // 2. Generate site_profile.yml
+  const profile = await prisma.siteProfile.findUnique({ where: { id: 'default' } })
+  if (profile?.data) {
+    const yamlContent = MANAGED_MARKER + '\n' + toYaml(profile.data)
+    await writeFile(join(dataDir, 'site_profile.yml'), yamlContent, 'utf-8')
+  }
+
+  // 3. Generate portfolio.yml
+  const portfolioItems = await prisma.portfolioItem.findMany({
+    orderBy: { sortOrder: 'asc' },
+  })
+
+  if (portfolioItems.length > 0) {
+    const portfolioData = {
+      section: {
+        title: 'Portfolio',
+        intro: 'Projects and builds that define the platform direction.',
+        home_preview_title: 'Selected Projects',
+        home_preview_intro: 'Active workstreams rendered from the portfolio data model.',
+        page_link_label: 'View Project',
+      },
+      cards: portfolioItems.map((item) => ({
+        slug: item.slug,
+        title: item.title,
+        year: item.year || '',
+        status: item.status || '',
+        summary: item.summary,
+        cover_image: item.coverImage || '/shared-assets/images/background.jpg',
+        gallery: Array.isArray(item.gallery) ? item.gallery : [],
+        tech_stack: Array.isArray(item.techStack) ? item.techStack : [],
+        tags: Array.isArray(item.tags) ? item.tags : [],
+        links: typeof item.links === 'object' ? item.links : {},
+      })),
+    }
+
+    const yamlContent = MANAGED_MARKER + '\n' + toYaml(portfolioData)
+    await writeFile(join(dataDir, 'portfolio.yml'), yamlContent, 'utf-8')
+  }
+
+  // 4. Run hexo generate
+  const portalRoot = getPortalRoot()
+  try {
+    const { stdout, stderr } = await execFileAsync('npx', ['hexo', 'generate'], {
+      cwd: portalRoot,
+      timeout: 60000,
+    })
+    return {
+      ok: true,
+      postsGenerated: posts.length,
+      hexoOutput: stdout,
+      hexoErrors: stderr || null,
+    }
+  } catch (err) {
+    return {
+      ok: false,
+      postsGenerated: posts.length,
+      error: err.message,
+      hexoOutput: err.stdout || null,
+      hexoErrors: err.stderr || null,
+    }
+  }
+}

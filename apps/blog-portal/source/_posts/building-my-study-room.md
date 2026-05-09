@@ -87,3 +87,4 @@ The important part is that none of those features need to block the first versio
 Success for this module is not measured by the number of controls on screen. It is measured by whether the experience quietly supports focus for an hour or two without becoming tiring.
 
 If the portal is the public front door, the Study Room should feel like the interior space worth staying in.
+<!-- managed-by-backend-api -->

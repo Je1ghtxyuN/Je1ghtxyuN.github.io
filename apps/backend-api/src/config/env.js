@@ -6,6 +6,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   SESSION_SECRET: z.string().min(1, 'SESSION_SECRET is required'),
   COOKIE_DOMAIN: z.string().default('localhost'),
+  REPO_ROOT: z.string().default(''),
 })
 
 const parsed = envSchema.safeParse(process.env)

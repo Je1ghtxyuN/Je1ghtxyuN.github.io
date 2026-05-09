@@ -1,56 +1,12 @@
-owner:
-  display_name: Je1ghtxyuN
-  full_name: Kyoka
-site_started_year: 2026
-icon_path: /shared-assets/images/icon.png
-subtitle: Static-first writing, interactive experiments, and long-term platform design.
-avatar_path: /shared-assets/images/profile.jpg
-hero_background_path: /shared-assets/images/background.jpg
-intro:
-  short: Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.
-  long: |
-    Computer science student at Southeast University with a strong interest in VR, HCI, and game development.
-    I enjoy turning scattered ideas into systems that are calm to use, easy to maintain, and worth growing for years.
-    This platform is where technical notes, project write-ups, and interactive experiments start becoming a coherent long-term home.
-social_links:
-  - label: GitHub
-    icon: fab fa-github
-    url: https://github.com/Je1ghtxyuN
-    color: '#24292e'
-    placeholder: true
-  - label: X
-    icon: fab fa-x-twitter
-    url: https://x.com/je1ghtxyun_dev
-    color: '#0f1419'
-    placeholder: true
-  - label: Bilibili
-    icon: fas fa-circle-play
-    url: https://space.bilibili.com/10000427
-    color: '#00a1d6'
-    placeholder: true
-contact:
-  email: hello@je1ghtxyun.dev
-  location: Nanjing, Jiangsu, China
-  formspree_endpoint: https://formspree.io/f/your-form-id
-  availability_note: Best for project discussions, collaboration ideas, and technical conversations. Response times may slow down during busy academic weeks.
+<!-- managed-by-backend-api -->
 home:
+  footer_title: Stay Connected
   shortcuts_title: Quick Entry
   recent_posts_title: Recent Writing
-  recent_posts_empty_text: No posts are published yet. The portal structure is ready for the first articles.
   portfolio_preview_title: Featured Work
-  footer_title: Stay Connected
-footer_note: Static-first portal under active construction for writing, project documentation, and future interactive modules.
+  recent_posts_empty_text: No posts are published yet. The portal structure is ready for the first articles.
 about:
-  intro_title: About Me
-  intro_summary: I am building a long-term personal platform that combines technical writing, project documentation, and an independent Study Room into one coherent system.
-  skills_title: Skills
-  skills:
-    - Virtual Reality Prototyping
-    - Human-Computer Interaction
-    - Game Development
-    - Frontend Engineering
-    - Platform Architecture
-  experience_title: Experience
+  skills: [Virtual Reality Prototyping, Human-Computer Interaction, Game Development, Frontend Engineering, Platform Architecture]
   experience:
     - title: Computer Science Student
       period: Current
@@ -58,19 +14,55 @@ about:
     - title: Game And Interactive Prototype Builder
       period: Ongoing
       description: Exploring playable concepts, visual experiments, and small-scale systems that can later mature into documented portfolio case studies and stronger product thinking.
+  intro_title: About Me
+  skills_title: Skills
+  intro_summary: I am building a long-term personal platform that combines technical writing, project documentation, and an independent Study Room into one coherent system.
+  experience_title: Experience
+intro:
+  long: "Computer science student at Southeast University with a strong interest in VR, HCI, and game development.
+I enjoy turning scattered ideas into systems that are calm to use, easy to maintain, and worth growing for years.
+This platform is where technical notes, project write-ups, and interactive experiments start becoming a coherent long-term home.
+"
+  short: Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.
+owner:
+  full_name: Kyoka
+  display_name: Je1ghtxyuN
+contact:
+  email: hello@je1ghtxyun.dev
+  location: Nanjing, Jiangsu, China
+  availability_note: Best for project discussions, collaboration ideas, and technical conversations. Response times may slow down during busy academic weeks.
+  formspree_endpoint: "https://formspree.io/f/your-form-id"
+subtitle: Static-first writing, interactive experiments, and long-term platform design.
+icon_path: /shared-assets/images/icon.png
 study_room:
   title: Study Room
   summary: A flagship focus application for deep work, immersive ambience, and long-session study flow.
-  description: |
-    The Study Room is now treated as a first-class product inside the platform family:
-    an independent application with scene-based focus sessions, Pomodoro guidance,
-    ambient playback, lightweight task capture, and future account-linked study data.
+  cta_note: "The Study Room opens at `/study-app/` as a standalone experience while still
+sharing the same brand, assets, and future backend contract as the main portal.
+"
+  features: [Scene-first immersive focus timer, Todo capture for lightweight study planning, Ambient music and atmosphere controls, Future login and study statistics sync]
   cta_label: Enter Study Room
-  cta_note: |
-    The Study Room opens at `/study-app/` as a standalone experience while still
-    sharing the same brand, assets, and future backend contract as the main portal.
-  features:
-    - Scene-first immersive focus timer
-    - Todo capture for lightweight study planning
-    - Ambient music and atmosphere controls
-    - Future login and study statistics sync
+  description: "The Study Room is now treated as a first-class product inside the platform family:
+an independent application with scene-based focus sessions, Pomodoro guidance,
+ambient playback, lightweight task capture, and future account-linked study data.
+"
+avatar_path: /shared-assets/images/profile.jpg
+footer_note: Static-first portal under active construction for writing, project documentation, and future interactive modules.
+social_links:
+  - url: "https://github.com/Je1ghtxyuN"
+    icon: fab fa-github
+    color: "#24292e"
+    label: GitHub
+    placeholder: true
+  - url: "https://x.com/je1ghtxyun_dev"
+    icon: fab fa-x-twitter
+    color: "#0f1419"
+    label: X
+    placeholder: true
+  - url: "https://space.bilibili.com/10000427"
+    icon: fas fa-circle-play
+    color: "#00a1d6"
+    label: Bilibili
+    placeholder: true
+site_started_year: 2026
+hero_background_path: /shared-assets/images/background.jpg

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="login-view" class="view">
+      <div class="login-card">
+        <h1>Admin Login</h1>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <p id="login-error" class="error"></p>
+        </form>
+      </div>
+    </div>
+
+    <div id="dashboard-view" class="view" style="display:none">
+      <nav class="topbar">
+        <span class="topbar-title">Admin Dashboard</span>
+        <div class="topbar-actions">
+          <button id="rebuild-btn" class="btn btn-accent">Rebuild Portal</button>
+          <button id="logout-btn" class="btn btn-ghost">Logout</button>
+        </div>
+      </nav>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="posts">Blog Posts</button>
+        <button class="tab" data-tab="portfolio">Portfolio</button>
+        <button class="tab" data-tab="profile">Site Profile</button>
+      </div>
+
+      <!-- Blog Posts Tab -->
+      <div id="tab-posts" class="tab-content active">
+        <div class="toolbar">
+          <h2>Blog Posts</h2>
+          <button id="new-post-btn" class="btn btn-primary">+ New Post</button>
+        </div>
+        <div id="posts-list" class="list"></div>
+      </div>
+
+      <!-- Portfolio Tab -->
+      <div id="tab-portfolio" class="tab-content">
+        <div class="toolbar">
+          <h2>Portfolio Items</h2>
+          <button id="new-portfolio-btn" class="btn btn-primary">+ New Item</button>
+        </div>
+        <div id="portfolio-list" class="list"></div>
+      </div>
+
+      <!-- Site Profile Tab -->
+      <div id="tab-profile" class="tab-content">
+        <div class="toolbar">
+          <h2>Site Profile</h2>
+          <button id="save-profile-btn" class="btn btn-primary">Save Profile</button>
+        </div>
+        <div class="form-group">
+          <label for="profile-json">Profile Data (JSON)</label>
+          <textarea id="profile-json" rows="25" class="code-editor"></textarea>
+        </div>
+        <p class="hint">Edit the JSON above. This controls your homepage hero, about page, social links, contact info, and Study Room section.</p>
+      </div>
+
+      <!-- Post Editor Modal -->
+      <div id="post-editor-modal" class="modal" style="display:none">
+        <div class="modal-content modal-large">
+          <div class="modal-header">
+            <h2 id="post-editor-title">New Post</h2>
+            <button class="btn btn-ghost modal-close">&times;</button>
+          </div>
+          <form id="post-form">
+            <input type="hidden" id="post-id">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="post-title">Title</label>
+                <input type="text" id="post-title" required>
+              </div>
+              <div class="form-group">
+                <label for="post-slug">Slug</label>
+                <input type="text" id="post-slug" placeholder="auto-generated">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="post-description">Description</label>
+              <input type="text" id="post-description">
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="post-categories">Categories (comma-separated)</label>
+                <input type="text" id="post-categories">
+              </div>
+              <div class="form-group flex-1">
+                <label for="post-tags">Tags (comma-separated)</label>
+                <input type="text" id="post-tags">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="post-cover">Cover Image URL</label>
+              <input type="text" id="post-cover" placeholder="/shared-assets/images/...">
+            </div>
+            <div class="form-group">
+              <label for="post-content">Content (Markdown)</label>
+              <textarea id="post-content" rows="20" class="code-editor" required></textarea>
+            </div>
+            <div class="form-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="post-published"> Published
+              </label>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Portfolio Editor Modal -->
+      <div id="portfolio-editor-modal" class="modal" style="display:none">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="portfolio-editor-title">New Portfolio Item</h2>
+            <button class="btn btn-ghost modal-close">&times;</button>
+          </div>
+          <form id="portfolio-form">
+            <input type="hidden" id="portfolio-id">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="portfolio-title">Title</label>
+                <input type="text" id="portfolio-title" required>
+              </div>
+              <div class="form-group">
+                <label for="portfolio-slug">Slug</label>
+                <input type="text" id="portfolio-slug" placeholder="auto-generated">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="portfolio-year">Year</label>
+                <input type="text" id="portfolio-year" placeholder="2026">
+              </div>
+              <div class="form-group flex-1">
+                <label for="portfolio-status">Status</label>
+                <input type="text" id="portfolio-status" placeholder="Active">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="portfolio-summary">Summary</label>
+              <textarea id="portfolio-summary" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="portfolio-cover">Cover Image URL</label>
+              <input type="text" id="portfolio-cover" placeholder="/shared-assets/images/...">
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="portfolio-tech">Tech Stack (comma-separated)</label>
+                <input type="text" id="portfolio-tech">
+              </div>
+              <div class="form-group flex-1">
+                <label for="portfolio-tags">Tags (comma-separated)</label>
+                <input type="text" id="portfolio-tags">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="portfolio-links">Links (JSON)</label>
+              <input type="text" id="portfolio-links" placeholder='{"repo":"https://...","demo":"/study-app/"}'>
+            </div>
+            <div class="form-group">
+              <label for="portfolio-sort">Sort Order</label>
+              <input type="number" id="portfolio-sort" value="0">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost modal-close">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Rebuild Status Toast -->
+      <div id="toast" class="toast" style="display:none"></div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -98,3 +98,4 @@ The next major steps are straightforward:
 3. define the backend framework and first Prisma schema for dynamic platform features
 
 The migration is gradual on purpose. A flagship platform should be built to last, not rushed into another monolith.
+<!-- managed-by-backend-api -->

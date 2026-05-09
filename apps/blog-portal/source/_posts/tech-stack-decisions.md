@@ -107,3 +107,4 @@ This keeps public routing clean while allowing each application to stay modular 
 This stack is not the smallest possible stack. It introduces more moving parts than a single static app.
 
 I still think the tradeoff is worth it because the project is being built as a long-term platform, not as a short demo. Clear module boundaries now will save much larger rewrite costs later.
+<!-- managed-by-backend-api -->
