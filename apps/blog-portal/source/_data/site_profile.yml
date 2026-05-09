@@ -1,4 +1,4 @@
-<!-- managed-by-backend-api -->
+# managed-by-backend-api
 home:
   footer_title: Stay Connected
   shortcuts_title: Quick Entry
@@ -19,10 +19,7 @@ about:
   intro_summary: I am building a long-term personal platform that combines technical writing, project documentation, and an independent Study Room into one coherent system.
   experience_title: Experience
 intro:
-  long: "Computer science student at Southeast University with a strong interest in VR, HCI, and game development.
-I enjoy turning scattered ideas into systems that are calm to use, easy to maintain, and worth growing for years.
-This platform is where technical notes, project write-ups, and interactive experiments start becoming a coherent long-term home.
-"
+  long: Computer science student at Southeast University with a strong interest in VR, HCI, and game development. I enjoy turning scattered ideas into systems that are calm to use, easy to maintain, and worth growing for years. This platform is where technical notes, project write-ups, and interactive experiments start becoming a coherent long-term home. 
   short: Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.
 owner:
   full_name: Kyoka
@@ -37,15 +34,10 @@ icon_path: /shared-assets/images/icon.png
 study_room:
   title: Study Room
   summary: A flagship focus application for deep work, immersive ambience, and long-session study flow.
-  cta_note: "The Study Room opens at `/study-app/` as a standalone experience while still
-sharing the same brand, assets, and future backend contract as the main portal.
-"
+  cta_note: The Study Room opens at `/study-app/` as a standalone experience while still sharing the same brand, assets, and future backend contract as the main portal. 
   features: [Scene-first immersive focus timer, Todo capture for lightweight study planning, Ambient music and atmosphere controls, Future login and study statistics sync]
   cta_label: Enter Study Room
-  description: "The Study Room is now treated as a first-class product inside the platform family:
-an independent application with scene-based focus sessions, Pomodoro guidance,
-ambient playback, lightweight task capture, and future account-linked study data.
-"
+  description: "The Study Room is now treated as a first-class product inside the platform family: an independent application with scene-based focus sessions, Pomodoro guidance, ambient playback, lightweight task capture, and future account-linked study data. "
 avatar_path: /shared-assets/images/profile.jpg
 footer_note: Static-first portal under active construction for writing, project documentation, and future interactive modules.
 social_links:
@@ -64,5 +56,6 @@ social_links:
     color: "#00a1d6"
     label: Bilibili
     placeholder: true
-site_started_year: 2026
+site_started_date: 2025-06-25
+site_started_year: 2025
 hero_background_path: /shared-assets/images/background.jpg

@@ -358,6 +358,7 @@ async function loadProfile() {
   setVal('pf-avatar', getVal(p, 'avatar_path'))
   setVal('pf-icon', getVal(p, 'icon_path'))
   setVal('pf-hero-bg', getVal(p, 'hero_background_path'))
+  setVal('pf-started-date', getVal(p, 'site_started_date'))
   setVal('pf-started-year', getVal(p, 'site_started_year'))
 
   // Preview images
@@ -412,6 +413,7 @@ async function saveProfile() {
     avatar_path: readVal('pf-avatar'),
     icon_path: readVal('pf-icon'),
     hero_background_path: readVal('pf-hero-bg'),
+    site_started_date: readVal('pf-started-date'),
     site_started_year: parseInt(readVal('pf-started-year')) || new Date().getFullYear(),
     intro: {
       short: readVal('pf-intro-short'),

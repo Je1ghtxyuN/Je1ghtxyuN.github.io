@@ -636,6 +636,10 @@ module.exports = function createPortalRenderer(hexo) {
     )
     const currentYear = new Date().getFullYear()
     const sinceYear = profile.site_started_year || currentYear
+    const siteStartedRaw = profile.site_started_date || profile.site_started_year || sinceYear
+    const siteStartedDate = siteStartedRaw instanceof Date
+      ? siteStartedRaw.toISOString().slice(0, 10)
+      : String(siteStartedRaw)
 
     return renderTag(
       'section',
@@ -694,7 +698,7 @@ module.exports = function createPortalRenderer(hexo) {
               sinceYear !== currentYear
                 ? `© ${sinceYear} - ${currentYear} ${ownerName}`
                 : `© ${currentYear} ${ownerName}`
-            )}${renderTag('span', { id: 'site-running-time', 'data-site-started': `${sinceYear}-01-01` }, '')}`
+            )}${renderTag('span', { id: 'site-running-time', 'data-site-started': siteStartedDate }, '')}`
           )}`
         )}`
       )}`

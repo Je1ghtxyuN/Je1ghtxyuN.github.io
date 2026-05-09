@@ -7,7 +7,8 @@ import { env } from '../config/env.js'
 
 const execFileAsync = promisify(execFile)
 
-const MANAGED_MARKER = '<!-- managed-by-backend-api -->'
+const MANAGED_MARKER_MD = '<!-- managed-by-backend-api -->'
+const MANAGED_MARKER_YML = '# managed-by-backend-api'
 
 function getPortalRoot() {
   if (!env.REPO_ROOT) throw new Error('REPO_ROOT is not configured')
@@ -119,7 +120,7 @@ async function clearManagedFiles(dir) {
       const filePath = join(dir, file)
       try {
         const content = await import('node:fs/promises').then((fs) => fs.readFile(filePath, 'utf-8'))
-        if (content.includes(MANAGED_MARKER)) {
+        if (content.includes(MANAGED_MARKER_MD) || content.includes(MANAGED_MARKER_YML)) {
           await unlink(filePath)
         }
       } catch {
@@ -147,14 +148,14 @@ export async function rebuildPortal() {
 
   for (const post of posts) {
     const filename = `${post.slug}.md`
-    const content = postToFrontmatter(post) + '\n' + MANAGED_MARKER
+    const content = postToFrontmatter(post) + '\n' + MANAGED_MARKER_MD
     await writeFile(join(postsDir, filename), content, 'utf-8')
   }
 
   // 2. Generate site_profile.yml
   const profile = await prisma.siteProfile.findUnique({ where: { id: 'default' } })
   if (profile?.data) {
-    const yamlContent = MANAGED_MARKER + '\n' + toYaml(profile.data)
+    const yamlContent = MANAGED_MARKER_YML + '\n' + toYaml(profile.data)
     await writeFile(join(dataDir, 'site_profile.yml'), yamlContent, 'utf-8')
   }
 
@@ -186,7 +187,7 @@ export async function rebuildPortal() {
       })),
     }
 
-    const yamlContent = MANAGED_MARKER + '\n' + toYaml(portfolioData)
+    const yamlContent = MANAGED_MARKER_YML + '\n' + toYaml(portfolioData)
     await writeFile(join(dataDir, 'portfolio.yml'), yamlContent, 'utf-8')
   }
 
