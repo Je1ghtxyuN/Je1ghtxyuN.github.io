@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import bellCueSource from '../../../../packages/shared-assets/se/BreakOrWork.mp3'
 import { writePersistedStudyRoomState } from './studyRoomStorage.js'
 import { useStudyRoomState } from './useStudyRoom.js'
+import { recordPomodoro } from './studySessionRecorder.js'
 
 export function StudyRoomRuntimeEffects() {
   const state = useStudyRoomState()
@@ -62,6 +63,7 @@ export function StudyRoomRuntimeEffects() {
     }
   }, [])
 
+  // Record completed work cycles to backend
   useEffect(() => {
     const transition = lastAutoTransition
 
@@ -69,6 +71,11 @@ export function StudyRoomRuntimeEffects() {
     if (transition.id === lastHandledTransitionIdRef.current) return
 
     lastHandledTransitionIdRef.current = transition.id
+
+    // Only record completed work cycles
+    if (transition.fromSessionType === 'work') {
+      recordPomodoro(durations.work)
+    }
 
     if (!soundEnabled) return
 
@@ -80,7 +87,7 @@ export function StudyRoomRuntimeEffects() {
     void bellAudio.play().catch(() => {
       // Playback can be blocked until the browser receives a user gesture.
     })
-  }, [lastAutoTransition, soundEnabled])
+  }, [lastAutoTransition, soundEnabled, durations.work])
 
   return null
 }

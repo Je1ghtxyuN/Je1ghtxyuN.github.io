@@ -79,3 +79,11 @@ model MediaAsset {
 
   @@index([filename])
 }
+
+model StudySession {
+  id            String   @id @default(cuid())
+  workDuration  Int      // configured work minutes (e.g. 25)
+  completedAt   DateTime @default(now())
+
+  @@index([completedAt])
+}
