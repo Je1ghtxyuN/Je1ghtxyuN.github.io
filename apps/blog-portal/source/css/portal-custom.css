@@ -109,9 +109,54 @@
   box-shadow: none !important;
 }
 
-/* Remove floating locale switcher — use Butterfly gear menu instead */
+/* Language switcher — compact pill in top-right */
 .portal-locale-switcher {
+  position: fixed;
+  top: 5.2rem;
+  right: 1rem;
+  z-index: 91;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.85);
+  transition: background 0.2s;
+}
+
+.portal-locale-switcher:hover {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.portal-locale-switcher__label {
   display: none;
+}
+
+.portal-locale-switcher__select {
+  min-width: auto;
+  padding: 0.1rem 0.2rem;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,0.9);
+  font: inherit;
+  cursor: pointer;
+}
+
+.portal-locale-switcher__select option {
+  color: #333;
+  background: #fff;
+}
+
+@media (max-width: 768px) {
+  .portal-locale-switcher {
+    top: auto;
+    bottom: 1rem;
+    right: 0.5rem;
+  }
 }
 
 /* Footer: darker bg in dark mode to avoid harsh contrast */

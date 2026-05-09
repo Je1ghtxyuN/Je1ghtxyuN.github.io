@@ -705,13 +705,28 @@ module.exports = function createPortalRenderer(hexo) {
     const { profile, navigation, portfolio } = getPortalData(siteLocals)
     const home = profile.home || {}
 
-    return renderTag(
-      'div',
-      { class: 'portal-page portal-home' },
-      `${renderShortcutSection(navigation, home)}${renderRecentPosts(
-        siteLocals,
-        home
-      )}${renderPortfolioPreview(portfolio, home)}`
+    // Embed profile data for client-side scripts (hero, etc.)
+    const heroData = {
+      display_name: fallbackText(profile.owner?.display_name, hexo.config.author),
+      full_name: fallbackText(profile.owner?.full_name, ''),
+      avatar_path: fallbackText(profile.avatar_path, '/shared-assets/images/profile.jpg'),
+      intro_short: fallbackText(profile.intro?.short, ''),
+      intro_long: fallbackText(profile.intro?.long, ''),
+    }
+    const heroDataJson = JSON.stringify(heroData)
+    // Direct output to avoid HTML escaping JSON
+    const heroScript = `<script id="portal-hero-data" type="application/json">${heroDataJson}</script>`
+
+    return (
+      heroScript +
+      renderTag(
+        'div',
+        { class: 'portal-page portal-home' },
+        `${renderShortcutSection(navigation, home)}${renderRecentPosts(
+          siteLocals,
+          home
+        )}${renderPortfolioPreview(portfolio, home)}`
+      )
     )
   }
 

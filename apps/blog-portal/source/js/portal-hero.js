@@ -5,6 +5,17 @@
   var header = document.getElementById('page-header')
   if (!header) return
 
+  // Read profile data from embedded JSON
+  var data = {}
+  var dataNode = document.getElementById('portal-hero-data')
+  if (dataNode) {
+    try { data = JSON.parse(dataNode.textContent || '{}') } catch (e) {}
+  }
+
+  var displayName = data.display_name || 'Je1ghtxyuN'
+  var avatarPath = data.avatar_path || '/shared-assets/images/profile.jpg'
+  var introText = data.intro_short || ''
+
   // Hide Butterfly's default "Home" title in the header
   var siteTitle = document.getElementById('site-title')
   if (siteTitle) siteTitle.style.display = 'none'
@@ -16,8 +27,8 @@
   // Avatar
   var avatar = document.createElement('img')
   avatar.className = 'portal-hero-info__avatar'
-  avatar.src = '/shared-assets/images/profile.jpg'
-  avatar.alt = 'Je1ghtxyuN'
+  avatar.src = avatarPath
+  avatar.alt = displayName
   avatar.onerror = function () { this.src = '/img/friend_404.gif' }
 
   // Name + subtitle group
@@ -26,7 +37,7 @@
 
   var name = document.createElement('div')
   name.className = 'portal-hero-info__name'
-  name.textContent = 'Je1ghtxyuN'
+  name.textContent = displayName
 
   var subtitle = document.createElement('div')
   subtitle.className = 'portal-hero-info__subtitle'
@@ -37,11 +48,11 @@
 
   var intro = document.createElement('p')
   intro.className = 'portal-hero-info__intro'
-  intro.textContent = 'Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.'
+  intro.textContent = introText
 
   textGroup.appendChild(name)
   textGroup.appendChild(subtitle)
-  textGroup.appendChild(intro)
+  if (introText) textGroup.appendChild(intro)
 
   heroInfo.appendChild(avatar)
   heroInfo.appendChild(textGroup)
