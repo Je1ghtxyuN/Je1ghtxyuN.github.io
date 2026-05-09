@@ -65,11 +65,190 @@
           <h2>Site Profile</h2>
           <button id="save-profile-btn" class="btn btn-primary">Save Profile</button>
         </div>
-        <div class="form-group">
-          <label for="profile-json">Profile Data (JSON)</label>
-          <textarea id="profile-json" rows="25" class="code-editor"></textarea>
+
+        <div class="profile-sections">
+          <!-- Owner Info -->
+          <section class="profile-section">
+            <h3>Owner Info</h3>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="pf-display-name">Display Name</label>
+                <input type="text" id="pf-display-name">
+              </div>
+              <div class="form-group flex-1">
+                <label for="pf-full-name">Full Name</label>
+                <input type="text" id="pf-full-name">
+              </div>
+            </div>
+          </section>
+
+          <!-- Brand & Images -->
+          <section class="profile-section">
+            <h3>Brand & Images</h3>
+            <div class="form-group">
+              <label for="pf-subtitle">Subtitle / Tagline</label>
+              <input type="text" id="pf-subtitle">
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="pf-avatar">Avatar Image Path</label>
+                <div class="input-with-preview">
+                  <input type="text" id="pf-avatar" placeholder="/shared-assets/images/profile.jpg">
+                  <img id="pf-avatar-preview" class="img-preview" src="" alt="Avatar preview">
+                </div>
+              </div>
+              <div class="form-group flex-1">
+                <label for="pf-icon">Site Icon Path</label>
+                <div class="input-with-preview">
+                  <input type="text" id="pf-icon" placeholder="/shared-assets/images/icon.png">
+                  <img id="pf-icon-preview" class="img-preview img-preview--sm" src="" alt="Icon preview">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pf-hero-bg">Hero Background Path</label>
+              <input type="text" id="pf-hero-bg" placeholder="/shared-assets/images/background.jpg">
+            </div>
+            <div class="form-group">
+              <label for="pf-started-year">Site Started Year</label>
+              <input type="number" id="pf-started-year" min="2000" max="2100">
+            </div>
+          </section>
+
+          <!-- Intro -->
+          <section class="profile-section">
+            <h3>Introduction</h3>
+            <div class="form-group">
+              <label for="pf-intro-short">Short Intro (displayed on homepage)</label>
+              <input type="text" id="pf-intro-short">
+            </div>
+            <div class="form-group">
+              <label for="pf-intro-long">Long Intro (displayed on About page)</label>
+              <textarea id="pf-intro-long" rows="4"></textarea>
+            </div>
+          </section>
+
+          <!-- Social Links -->
+          <section class="profile-section">
+            <h3>Social Links</h3>
+            <div id="pf-social-links"></div>
+            <button type="button" class="btn btn-ghost btn-sm" id="pf-add-social">+ Add Social Link</button>
+          </section>
+
+          <!-- Contact -->
+          <section class="profile-section">
+            <h3>Contact Info</h3>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="pf-contact-email">Email</label>
+                <input type="text" id="pf-contact-email">
+              </div>
+              <div class="form-group flex-1">
+                <label for="pf-contact-location">Location</label>
+                <input type="text" id="pf-contact-location">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pf-contact-note">Availability Note</label>
+              <input type="text" id="pf-contact-note">
+            </div>
+          </section>
+
+          <!-- About Page -->
+          <section class="profile-section">
+            <h3>About Page</h3>
+            <div class="form-group">
+              <label for="pf-about-title">Section Title</label>
+              <input type="text" id="pf-about-title" value="About Me">
+            </div>
+            <div class="form-group">
+              <label for="pf-about-summary">Summary</label>
+              <textarea id="pf-about-summary" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="pf-about-skills-title">Skills Title</label>
+              <input type="text" id="pf-about-skills-title" value="Skills">
+            </div>
+            <div class="form-group">
+              <label>Skills</label>
+              <div id="pf-skills"></div>
+              <button type="button" class="btn btn-ghost btn-sm" id="pf-add-skill">+ Add Skill</button>
+            </div>
+            <div class="form-group">
+              <label for="pf-about-exp-title">Experience Title</label>
+              <input type="text" id="pf-about-exp-title" value="Experience">
+            </div>
+            <div class="form-group">
+              <label>Experience</label>
+              <div id="pf-experience"></div>
+              <button type="button" class="btn btn-ghost btn-sm" id="pf-add-experience">+ Add Experience</button>
+            </div>
+          </section>
+
+          <!-- Homepage Settings -->
+          <section class="profile-section">
+            <h3>Homepage Settings</h3>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="pf-home-shortcuts">Shortcuts Title</label>
+                <input type="text" id="pf-home-shortcuts">
+              </div>
+              <div class="form-group flex-1">
+                <label for="pf-home-posts">Recent Posts Title</label>
+                <input type="text" id="pf-home-posts">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="pf-home-portfolio">Portfolio Preview Title</label>
+                <input type="text" id="pf-home-portfolio">
+              </div>
+              <div class="form-group flex-1">
+                <label for="pf-home-footer">Footer Title</label>
+                <input type="text" id="pf-home-footer">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="pf-home-empty">Empty Posts Text</label>
+              <input type="text" id="pf-home-empty">
+            </div>
+          </section>
+
+          <!-- Study Room Section -->
+          <section class="profile-section">
+            <h3>Study Room Section</h3>
+            <div class="form-group">
+              <label for="pf-sr-title">Title</label>
+              <input type="text" id="pf-sr-title">
+            </div>
+            <div class="form-group">
+              <label for="pf-sr-summary">Summary</label>
+              <input type="text" id="pf-sr-summary">
+            </div>
+            <div class="form-group">
+              <label for="pf-sr-desc">Description</label>
+              <textarea id="pf-sr-desc" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="pf-sr-cta">CTA Button Label</label>
+              <input type="text" id="pf-sr-cta">
+            </div>
+            <div class="form-group">
+              <label>Features</label>
+              <div id="pf-sr-features"></div>
+              <button type="button" class="btn btn-ghost btn-sm" id="pf-add-feature">+ Add Feature</button>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <section class="profile-section">
+            <h3>Footer</h3>
+            <div class="form-group">
+              <label for="pf-footer-note">Footer Note</label>
+              <textarea id="pf-footer-note" rows="2"></textarea>
+            </div>
+          </section>
         </div>
-        <p class="hint">Edit the JSON above. This controls your homepage hero, about page, social links, contact info, and Study Room section.</p>
       </div>
 
       <!-- Post Editor Modal -->

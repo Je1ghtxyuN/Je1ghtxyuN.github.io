@@ -254,19 +254,244 @@ document.getElementById('portfolio-form').addEventListener('submit', async (e) =
 })
 
 // --- Site Profile ---
-async function loadProfile() {
-  const { profile } = await api('/site-profile')
-  document.getElementById('profile-json').value = JSON.stringify(profile, null, 2)
+
+function getVal(obj, path, def = '') {
+  return path.split('.').reduce((o, k) => (o && o[k] != null) ? o[k] : '', obj) || def
 }
 
-document.getElementById('save-profile-btn').addEventListener('click', async () => {
-  try {
-    const data = JSON.parse(document.getElementById('profile-json').value)
-    await api('/site-profile', { method: 'PUT', body: JSON.stringify({ data }) })
-    showToast('Profile saved')
-  } catch (err) {
-    showToast('Invalid JSON: ' + err.message, 'error')
+function setVal(id, value) {
+  const el = document.getElementById(id)
+  if (!el) return
+  if (el.type === 'checkbox') el.checked = value
+  else if (el.tagName === 'IMG') el.src = value
+  else el.value = value ?? ''
+}
+
+function readVal(id) {
+  const el = document.getElementById(id)
+  if (!el) return ''
+  if (el.type === 'checkbox') return el.checked
+  return el.value.trim()
+}
+
+// --- Array Fields ---
+function renderArrayFields(containerId, items, template) {
+  const container = document.getElementById(containerId)
+  container.innerHTML = items.map((item, i) => template(item, i)).join('')
+}
+
+function collectArrayFields(containerId, fieldConfigs) {
+  const container = document.getElementById(containerId)
+  const items = container.querySelectorAll('.array-item')
+  const result = []
+  items.forEach((item) => {
+    const obj = {}
+    fieldConfigs.forEach(({ key, selector }) => {
+      const el = item.querySelector(selector)
+      if (el) obj[key] = el.value.trim()
+    })
+    if (Object.values(obj).some((v) => v)) result.push(obj)
+  })
+  return result
+}
+
+function socialLinkTemplate(link, i) {
+  return `
+    <div class="array-item">
+      <input type="text" value="${esc(link.label || '')}" placeholder="Label" class="sl-label">
+      <input type="text" value="${esc(link.url || '')}" placeholder="URL" class="sl-url">
+      <input type="text" value="${esc(link.icon || '')}" placeholder="Icon class" class="sl-icon">
+      <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.array-item').remove()">&times;</button>
+    </div>`
+}
+
+function skillTemplate(skill, i) {
+  return `
+    <div class="array-item">
+      <input type="text" value="${esc(skill || '')}" placeholder="Skill" class="sk-value">
+      <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.array-item').remove()">&times;</button>
+    </div>`
+}
+
+function featureTemplate(feature, i) {
+  return `
+    <div class="array-item">
+      <input type="text" value="${esc(feature || '')}" placeholder="Feature" class="ft-value">
+      <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.array-item').remove()">&times;</button>
+    </div>`
+}
+
+function expTemplate(exp, i) {
+  return `
+    <div class="exp-item">
+      <div class="exp-header">
+        <strong>Experience #${i + 1}</strong>
+        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.exp-item').remove()">&times;</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label>Title</label>
+          <input type="text" value="${esc(exp.title || '')}" class="exp-title">
+        </div>
+        <div class="form-group">
+          <label>Period</label>
+          <input type="text" value="${esc(exp.period || '')}" class="exp-period">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea rows="2" class="exp-desc">${esc(exp.description || '')}</textarea>
+      </div>
+    </div>`
+}
+
+async function loadProfile() {
+  const { profile } = await api('/site-profile')
+  const p = profile || {}
+
+  // Owner
+  setVal('pf-display-name', getVal(p, 'owner.display_name'))
+  setVal('pf-full-name', getVal(p, 'owner.full_name'))
+
+  // Brand
+  setVal('pf-subtitle', getVal(p, 'subtitle'))
+  setVal('pf-avatar', getVal(p, 'avatar_path'))
+  setVal('pf-icon', getVal(p, 'icon_path'))
+  setVal('pf-hero-bg', getVal(p, 'hero_background_path'))
+  setVal('pf-started-year', getVal(p, 'site_started_year'))
+
+  // Preview images
+  document.getElementById('pf-avatar-preview').src = getVal(p, 'avatar_path')
+  document.getElementById('pf-icon-preview').src = getVal(p, 'icon_path')
+
+  // Intro
+  setVal('pf-intro-short', getVal(p, 'intro.short'))
+  setVal('pf-intro-long', getVal(p, 'intro.long'))
+
+  // Social links
+  renderArrayFields('pf-social-links', p.social_links || [], socialLinkTemplate)
+
+  // Contact
+  setVal('pf-contact-email', getVal(p, 'contact.email'))
+  setVal('pf-contact-location', getVal(p, 'contact.location'))
+  setVal('pf-contact-note', getVal(p, 'contact.availability_note'))
+
+  // About
+  setVal('pf-about-title', getVal(p, 'about.intro_title', 'About Me'))
+  setVal('pf-about-summary', getVal(p, 'about.intro_summary'))
+  setVal('pf-about-skills-title', getVal(p, 'about.skills_title', 'Skills'))
+  renderArrayFields('pf-skills', p.about?.skills || [], skillTemplate)
+  setVal('pf-about-exp-title', getVal(p, 'about.experience_title', 'Experience'))
+  renderArrayFields('pf-experience', p.about?.experience || [], expTemplate)
+
+  // Homepage
+  setVal('pf-home-shortcuts', getVal(p, 'home.shortcuts_title'))
+  setVal('pf-home-posts', getVal(p, 'home.recent_posts_title'))
+  setVal('pf-home-portfolio', getVal(p, 'home.portfolio_preview_title'))
+  setVal('pf-home-footer', getVal(p, 'home.footer_title'))
+  setVal('pf-home-empty', getVal(p, 'home.recent_posts_empty_text'))
+
+  // Study Room
+  setVal('pf-sr-title', getVal(p, 'study_room.title'))
+  setVal('pf-sr-summary', getVal(p, 'study_room.summary'))
+  setVal('pf-sr-desc', getVal(p, 'study_room.description'))
+  setVal('pf-sr-cta', getVal(p, 'study_room.cta_label'))
+  renderArrayFields('pf-sr-features', p.study_room?.features || [], featureTemplate)
+
+  // Footer
+  setVal('pf-footer-note', getVal(p, 'footer_note'))
+}
+
+async function saveProfile() {
+  const p = {
+    owner: {
+      display_name: readVal('pf-display-name'),
+      full_name: readVal('pf-full-name'),
+    },
+    subtitle: readVal('pf-subtitle'),
+    avatar_path: readVal('pf-avatar'),
+    icon_path: readVal('pf-icon'),
+    hero_background_path: readVal('pf-hero-bg'),
+    site_started_year: parseInt(readVal('pf-started-year')) || new Date().getFullYear(),
+    intro: {
+      short: readVal('pf-intro-short'),
+      long: readVal('pf-intro-long'),
+    },
+    social_links: collectArrayFields('pf-social-links', [
+      { key: 'label', selector: '.sl-label' },
+      { key: 'url', selector: '.sl-url' },
+      { key: 'icon', selector: '.sl-icon' },
+    ]),
+    contact: {
+      email: readVal('pf-contact-email'),
+      location: readVal('pf-contact-location'),
+      availability_note: readVal('pf-contact-note'),
+      formspree_endpoint: 'https://formspree.io/f/your-form-id',
+    },
+    about: {
+      intro_title: readVal('pf-about-title'),
+      intro_summary: readVal('pf-about-summary'),
+      skills_title: readVal('pf-about-skills-title'),
+      skills: collectArrayFields('pf-skills', [{ key: 'value', selector: '.sk-value' }]).map((s) => s.value).filter(Boolean),
+      experience_title: readVal('pf-about-exp-title'),
+      experience: collectArrayFields('pf-experience', [
+        { key: 'title', selector: '.exp-title' },
+        { key: 'period', selector: '.exp-period' },
+        { key: 'description', selector: '.exp-desc' },
+      ]),
+    },
+    home: {
+      shortcuts_title: readVal('pf-home-shortcuts'),
+      recent_posts_title: readVal('pf-home-posts'),
+      portfolio_preview_title: readVal('pf-home-portfolio'),
+      footer_title: readVal('pf-home-footer'),
+      recent_posts_empty_text: readVal('pf-home-empty'),
+    },
+    study_room: {
+      title: readVal('pf-sr-title'),
+      summary: readVal('pf-sr-summary'),
+      description: readVal('pf-sr-desc'),
+      cta_label: readVal('pf-sr-cta'),
+      cta_note: 'The Study Room opens at `/study-app/` as a standalone experience.',
+      features: collectArrayFields('pf-sr-features', [{ key: 'value', selector: '.ft-value' }]).map((f) => f.value).filter(Boolean),
+    },
+    footer_note: readVal('pf-footer-note'),
   }
+
+  await api('/site-profile', { method: 'PUT', body: JSON.stringify({ data: p }) })
+  showToast('Profile saved')
+}
+
+document.getElementById('save-profile-btn').addEventListener('click', saveProfile)
+
+// Add buttons for array fields
+document.getElementById('pf-add-social').addEventListener('click', () => {
+  const div = document.createElement('div')
+  div.innerHTML = socialLinkTemplate({}, 0)
+  document.getElementById('pf-social-links').appendChild(div.firstElementChild)
+})
+document.getElementById('pf-add-skill').addEventListener('click', () => {
+  const div = document.createElement('div')
+  div.innerHTML = skillTemplate('', 0)
+  document.getElementById('pf-skills').appendChild(div.firstElementChild)
+})
+document.getElementById('pf-add-experience').addEventListener('click', () => {
+  const div = document.createElement('div')
+  div.innerHTML = expTemplate({}, 0)
+  document.getElementById('pf-experience').appendChild(div.firstElementChild)
+})
+document.getElementById('pf-add-feature').addEventListener('click', () => {
+  const div = document.createElement('div')
+  div.innerHTML = featureTemplate('', 0)
+  document.getElementById('pf-sr-features').appendChild(div.firstElementChild)
+})
+
+// Avatar preview on input change
+document.getElementById('pf-avatar').addEventListener('input', function () {
+  document.getElementById('pf-avatar-preview').src = this.value
+})
+document.getElementById('pf-icon').addEventListener('input', function () {
+  document.getElementById('pf-icon-preview').src = this.value
 })
 
 // --- Rebuild ---

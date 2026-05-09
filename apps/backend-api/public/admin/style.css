@@ -221,3 +221,82 @@ body {
   .tab-content { padding: 1rem; }
   .modal-content { width: 95%; }
 }
+
+/* Profile Sections */
+.profile-sections { max-width: 800px; }
+.profile-section {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.profile-section h3 {
+  font-size: 1rem;
+  color: #58a6ff;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #30363d;
+}
+
+/* Array fields (social links, skills, etc.) */
+.array-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+}
+.array-item input {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  color: #e1e4e8;
+  font-size: 0.85rem;
+}
+.array-item input:focus {
+  outline: none;
+  border-color: #58a6ff;
+}
+.array-item .btn-sm { flex-shrink: 0; }
+
+.exp-item {
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+}
+.exp-item .form-row { margin-bottom: 0.5rem; }
+.exp-item .exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Image preview */
+.input-with-preview {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.input-with-preview input { flex: 1; }
+.img-preview {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #30363d;
+  background: #0d1117;
+}
+.img-preview--sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+}
