@@ -207,19 +207,20 @@
 
     if (select) return select
 
-    // Inject into Butterfly's rightside gear menu
     const configHide = document.getElementById('rightside-config-hide')
     if (!configHide) return null
 
-    const wrapper = document.createElement('button')
-    wrapper.id = 'locale-switch-btn'
-    wrapper.type = 'button'
-    wrapper.title = 'Switch Language'
-    wrapper.innerHTML = '<i class="fas fa-language"></i>'
+    // Globe button — same size as darkmode toggle
+    const btn = document.createElement('button')
+    btn.id = 'locale-switch-btn'
+    btn.type = 'button'
+    btn.title = 'Switch Language'
+    btn.innerHTML = '<i class="fas fa-language"></i>'
 
+    // Hidden select to hold state (used by applyLocale)
     select = document.createElement('select')
     select.id = 'portal-locale-select'
-    select.title = 'Switch Language'
+    select.style.display = 'none'
 
     supportedLocales.forEach((locale) => {
       const option = document.createElement('option')
@@ -228,16 +229,41 @@
       select.appendChild(option)
     })
 
-    // Clicking the globe icon toggles the select dropdown
-    wrapper.addEventListener('click', (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-      select.focus()
-      select.click()
+    // Custom dropdown for language selection
+    const dropdown = document.createElement('div')
+    dropdown.id = 'locale-dropdown'
+    dropdown.style.display = 'none'
+
+    supportedLocales.forEach((locale) => {
+      const item = document.createElement('button')
+      item.className = 'locale-dropdown__item'
+      item.type = 'button'
+      item.textContent = locale.label
+      item.addEventListener('click', () => {
+        select.value = locale.code
+        select.dispatchEvent(new Event('change', { bubbles: true }))
+        dropdown.style.display = 'none'
+      })
+      dropdown.appendChild(item)
     })
 
-    configHide.appendChild(wrapper)
+    // Click globe → toggle dropdown
+    btn.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      dropdown.style.display = dropdown.style.display === 'none' ? '' : 'none'
+    })
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      if (dropdown.style.display !== 'none' && !dropdown.contains(e.target) && e.target !== btn) {
+        dropdown.style.display = 'none'
+      }
+    })
+
+    configHide.appendChild(btn)
     configHide.appendChild(select)
+    document.body.appendChild(dropdown)
 
     document.querySelectorAll('.portal-locale-switcher').forEach(el => el.remove())
 
@@ -263,6 +289,15 @@
 
     const select = ensureLocaleSwitcher()
     if (select) select.value = normalizedLocale
+
+    // Highlight active locale in dropdown
+    const dropdown = document.getElementById('locale-dropdown')
+    if (dropdown) {
+      dropdown.querySelectorAll('.locale-dropdown__item').forEach((item) => {
+        const isActive = item.textContent === supportedLocales.find(l => l.code === normalizedLocale)?.label
+        item.classList.toggle('locale-dropdown__item--active', isActive)
+      })
+    }
   }
 
   const select = ensureLocaleSwitcher()
