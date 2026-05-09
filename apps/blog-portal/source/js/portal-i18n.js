@@ -203,17 +203,23 @@
   }
 
   function ensureLocaleSwitcher() {
-    let switcher = document.querySelector('.portal-locale-switcher')
+    let select = document.getElementById('portal-locale-select')
 
-    if (switcher) return switcher
+    if (select) return select
 
-    switcher = document.createElement('div')
-    switcher.className = 'portal-locale-switcher'
-    switcher.innerHTML =
-      '<label class="portal-locale-switcher__label" for="portal-locale-select"></label>' +
-      '<select id="portal-locale-select" class="portal-locale-switcher__select"></select>'
+    // Inject into Butterfly's rightside gear menu
+    const configHide = document.getElementById('rightside-config-hide')
+    if (!configHide) return null
 
-    const select = switcher.querySelector('select')
+    const wrapper = document.createElement('button')
+    wrapper.id = 'locale-switch-btn'
+    wrapper.type = 'button'
+    wrapper.title = 'Switch Language'
+    wrapper.innerHTML = '<i class="fas fa-language"></i>'
+
+    select = document.createElement('select')
+    select.id = 'portal-locale-select'
+    select.title = 'Switch Language'
 
     supportedLocales.forEach((locale) => {
       const option = document.createElement('option')
@@ -222,8 +228,20 @@
       select.appendChild(option)
     })
 
-    document.body.appendChild(switcher)
-    return switcher
+    // Clicking the globe icon toggles the select dropdown
+    wrapper.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      select.focus()
+      select.click()
+    })
+
+    configHide.appendChild(wrapper)
+    configHide.appendChild(select)
+
+    document.querySelectorAll('.portal-locale-switcher').forEach(el => el.remove())
+
+    return select
   }
 
   async function applyLocale(locale) {
@@ -243,25 +261,17 @@
     applyNavigationTranslations(nextLocaleBundle, fallbackLocaleBundle)
     applySearchPlaceholder(nextLocaleBundle, fallbackLocaleBundle)
 
-    const switcher = ensureLocaleSwitcher()
-    const label = switcher.querySelector('.portal-locale-switcher__label')
-    const select = switcher.querySelector('.portal-locale-switcher__select')
-
-    label.textContent = translate(
-      nextLocaleBundle,
-      fallbackLocaleBundle,
-      'portal.languageSelectorLabel',
-      'Language',
-    )
-    select.value = normalizedLocale
+    const select = ensureLocaleSwitcher()
+    if (select) select.value = normalizedLocale
   }
 
-  const switcher = ensureLocaleSwitcher()
-  const select = switcher.querySelector('.portal-locale-switcher__select')
+  const select = ensureLocaleSwitcher()
 
-  select.addEventListener('change', (event) => {
-    void applyLocale(event.target.value)
-  })
+  if (select) {
+    select.addEventListener('change', (event) => {
+      void applyLocale(event.target.value)
+    })
+  }
 
   document.addEventListener('pjax:complete', () => {
     void applyLocale(activeLocale)
