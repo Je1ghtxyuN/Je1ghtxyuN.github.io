@@ -88,3 +88,4 @@ Success for this module is not measured by the number of controls on screen. It 
 
 If the portal is the public front door, the Study Room should feel like the interior space worth staying in.
 <!-- managed-by-backend-api -->
+<!-- managed-by-backend-api -->

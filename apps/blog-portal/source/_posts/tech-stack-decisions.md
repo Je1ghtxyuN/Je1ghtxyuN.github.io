@@ -108,3 +108,4 @@ This stack is not the smallest possible stack. It introduces more moving parts t
 
 I still think the tradeoff is worth it because the project is being built as a long-term platform, not as a short demo. Clear module boundaries now will save much larger rewrite costs later.
 <!-- managed-by-backend-api -->
+<!-- managed-by-backend-api -->
