@@ -690,11 +690,11 @@ module.exports = function createPortalRenderer(hexo) {
           )}${renderTag(
             'p',
             { class: 'portal-copyright' },
-            escapeHtml(
+            `${escapeHtml(
               sinceYear !== currentYear
                 ? `© ${sinceYear} - ${currentYear} ${ownerName}`
                 : `© ${currentYear} ${ownerName}`
-            )
+            )}${renderTag('span', { id: 'site-running-time', 'data-site-started': `${sinceYear}-01-01` }, '')}`
           )}`
         )}`
       )}`

@@ -269,4 +269,41 @@
 
   ensureSearchObserver()
   void applyLocale(resolveInitialLocale())
+})();
+
+(function siteRunningTime() {
+  const el = document.getElementById('site-running-time')
+  if (!el) return
+
+  const started = el.getAttribute('data-site-started')
+  if (!started) return
+
+  const startDate = new Date(started)
+  if (isNaN(startDate.getTime())) return
+
+  function formatDuration(diff) {
+    const seconds = Math.floor(diff / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
+    const days = Math.floor(hours / 24)
+    const years = Math.floor(days / 365)
+    const remainingDays = days - years * 365
+
+    const parts = []
+    if (years > 0) parts.push(years + 'y')
+    if (remainingDays > 0 || years > 0) parts.push(remainingDays + 'd')
+    parts.push(String(hours % 24).padStart(2, '0') + 'h')
+    parts.push(String(minutes % 60).padStart(2, '0') + 'm')
+    parts.push(String(seconds % 60).padStart(2, '0') + 's')
+    return parts.join(' ')
+  }
+
+  function update() {
+    const now = new Date()
+    const diff = now - startDate
+    el.textContent = ' · Running for ' + formatDuration(diff)
+  }
+
+  update()
+  setInterval(update, 1000)
 })()
