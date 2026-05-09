@@ -323,7 +323,7 @@ function featureTemplate(feature, i) {
 
 function expTemplate(exp, i) {
   return `
-    <div class="exp-item">
+    <div class="exp-item array-item">
       <div class="exp-header">
         <strong>Experience #${i + 1}</strong>
         <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.exp-item').remove()">&times;</button>

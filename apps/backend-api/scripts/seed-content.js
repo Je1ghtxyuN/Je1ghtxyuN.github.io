@@ -16,7 +16,9 @@ const dataDir = join(portalRoot, 'source', '_data')
 const postsDir = join(portalRoot, 'source', '_posts')
 
 async function seedSiteProfile() {
-  const content = readFileSync(join(dataDir, 'site_profile.yml'), 'utf-8')
+  let content = readFileSync(join(dataDir, 'site_profile.yml'), 'utf-8')
+  // Strip managed marker if present (re-seed from existing managed file)
+  content = content.replace(/^<!-- managed-by-backend-api -->\n/m, '')
   const data = yaml.load(content)
 
   console.log('[seed] Importing site profile...')
@@ -29,7 +31,8 @@ async function seedSiteProfile() {
 }
 
 async function seedPortfolio() {
-  const content = readFileSync(join(dataDir, 'portfolio.yml'), 'utf-8')
+  let content = readFileSync(join(dataDir, 'portfolio.yml'), 'utf-8')
+  content = content.replace(/^<!-- managed-by-backend-api -->\n/m, '')
   const parsed = yaml.load(content)
 
   const cards = parsed?.cards || []
