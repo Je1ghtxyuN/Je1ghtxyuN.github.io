@@ -636,10 +636,6 @@ module.exports = function createPortalRenderer(hexo) {
     )
     const currentYear = new Date().getFullYear()
     const sinceYear = profile.site_started_year || currentYear
-    const siteStartedRaw = profile.site_started_date || profile.site_started_year || sinceYear
-    const siteStartedDate = siteStartedRaw instanceof Date
-      ? siteStartedRaw.toISOString().slice(0, 10)
-      : String(siteStartedRaw)
 
     return renderTag(
       'section',
@@ -694,11 +690,11 @@ module.exports = function createPortalRenderer(hexo) {
           )}${renderTag(
             'p',
             { class: 'portal-copyright' },
-            `${escapeHtml(
+            escapeHtml(
               sinceYear !== currentYear
                 ? `© ${sinceYear} - ${currentYear} ${ownerName}`
                 : `© ${currentYear} ${ownerName}`
-            )}${renderTag('span', { id: 'site-running-time', 'data-site-started': siteStartedDate }, '')}`
+            )
           )}`
         )}`
       )}`
@@ -712,10 +708,10 @@ module.exports = function createPortalRenderer(hexo) {
     return renderTag(
       'div',
       { class: 'portal-page portal-home' },
-      `${renderHero(profile)}${renderShortcutSection(navigation, home)}${renderRecentPosts(
+      `${renderShortcutSection(navigation, home)}${renderRecentPosts(
         siteLocals,
         home
-      )}${renderPortfolioPreview(portfolio, home)}${renderFooter(profile, home)}`
+      )}${renderPortfolioPreview(portfolio, home)}`
     )
   }
 

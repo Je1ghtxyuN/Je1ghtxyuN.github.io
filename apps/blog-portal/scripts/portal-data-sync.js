@@ -81,7 +81,11 @@ hexo.extend.filter.register('before_generate', () => {
   }
 
   if (profile.footer_note) {
-    themeConfig.footer.custom_text = profile.footer_note
+    const startedRaw = profile.site_started_date || '2025-06-25'
+    const startedDate = startedRaw instanceof Date
+      ? startedRaw.toISOString().slice(0, 10)
+      : String(startedRaw).slice(0, 10)
+    themeConfig.footer.custom_text = profile.footer_note + '<span id="site-running-time" data-site-started="' + startedDate + '"></span>'
   }
 
   if (Array.isArray(navigation.items) && navigation.items.length) {

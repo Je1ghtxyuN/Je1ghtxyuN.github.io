@@ -38,12 +38,18 @@ tag_img: /shared-assets/images/background.jpg
 category_img: /shared-assets/images/background.jpg
 footer_img: false
 
+# Hero image fills the screen with centered title and subtitle
+index_site_info_top:
+index_top_img_height: 100vh
+
 subtitle:
   enable: true
-  effect: false
+  effect: true
+  loop: true
   sub:
     - Code, Anime, Games, and Coffee.
     - Elegant technical blog and portfolio foundation.
+    - Building a calm, long-term personal platform.
 
 index_layout: 4
 
@@ -58,11 +64,11 @@ toc:
 footer:
   owner:
     enable: true
-    since: 2026
+    since: 2025
   copyright:
     enable: true
     version: true
-  custom_text: Main portal foundation under reconstruction.
+  custom_text: <span id="site-running-time" data-site-started="2025-06-25"></span>
 
 aside:
   enable: true
@@ -183,3 +189,5 @@ structured_data:
 inject:
   head:
     - <link rel="stylesheet" href="/css/portal-custom.css">
+  bottom:
+    - <script src="/js/portal-hero.js" defer></script>
