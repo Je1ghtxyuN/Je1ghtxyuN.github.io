@@ -42,6 +42,8 @@ rsync -avz --delete \
   "$SERVER:$SERVER_PORTAL/" 2>&1 | tail -1
 
 # Also sync the built public/ to portal-source/public/ on server
+# First, fix ownership of Docker-created root-owned files
+ssh "$SERVER" "docker exec je1ght-backend-api chown -R 1000:1000 /portal-source/public/ 2>/dev/null" || true
 rsync -avz --delete \
   "$REPO_ROOT/apps/blog-portal/public/" \
   "$SERVER:$SERVER_PORTAL/public/" 2>&1 | tail -1
