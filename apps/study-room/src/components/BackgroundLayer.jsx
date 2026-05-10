@@ -1,47 +1,33 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   getStudyScene,
   resolveStudyScenePresentation,
 } from '../lib/studyScene.js'
 
-const VIDEO_VISIBILITY_TIMEOUT_MS = 4000
-
 function BackgroundVideo({ scene }) {
-  const [isVisible, setIsVisible] = useState(false)
-  const timerRef = useRef(null)
+  const videoRef = useRef(null)
 
-  const markVisible = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
-    }
-    setIsVisible(true)
-  }
-
+  // Show poster immediately, video fades in when playing
   useEffect(() => {
-    timerRef.current = setTimeout(() => {
-      markVisible()
-    }, VIDEO_VISIBILITY_TIMEOUT_MS)
+    const video = videoRef.current
+    if (!video) return
 
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-        timerRef.current = null
-      }
-    }
+    const handlePlaying = () => video.classList.add('background-layer__video--visible')
+    video.addEventListener('playing', handlePlaying, { once: true })
+
+    return () => video.removeEventListener('playing', handlePlaying)
   }, [scene.mediaSrc])
 
   return (
     <video
-      className={`background-layer__video${isVisible ? ' background-layer__video--visible' : ''}`}
-      autoPlay={scene.videoAutoPlay ?? true}
-      loop={scene.videoLoop ?? true}
-      muted={scene.videoMuted ?? true}
-      playsInline={scene.videoPlaysInline ?? true}
+      ref={videoRef}
+      className="background-layer__video"
+      autoPlay
+      loop
+      muted
+      playsInline
       preload="auto"
       poster={scene.posterImage || scene.backgroundImage}
-      onCanPlay={markVisible}
-      onLoadedData={markVisible}
     >
       <source src={scene.mediaSrc} type={scene.videoType || 'video/mp4'} />
     </video>

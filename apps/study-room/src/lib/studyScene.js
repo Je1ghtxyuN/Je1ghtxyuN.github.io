@@ -5,6 +5,16 @@ import sceneTwoPoster from '../../../../packages/shared-assets/videos/2-poster.p
 import sceneThreeLoop from '../../../../packages/shared-assets/videos/3.mp4'
 import sceneThreePoster from '../../../../packages/shared-assets/videos/3-poster.png'
 
+// Preload all scene videos as soon as this module loads
+const PRELOAD_VIDEOS = [sceneOneLoop, sceneTwoLoop, sceneThreeLoop]
+PRELOAD_VIDEOS.forEach((src) => {
+  const link = document.createElement('link')
+  link.rel = 'preload'
+  link.as = 'video'
+  link.href = src
+  document.head.appendChild(link)
+})
+
 const DEFAULT_MEDIA_BEHAVIOR = Object.freeze({
   type: 'video',
   src: '',
