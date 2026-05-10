@@ -1,0 +1,23 @@
+{
+  "name": "blog-portal",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "hexo server",
+    "build": "hexo generate",
+    "clean": "hexo clean",
+    "deploy": "hexo deploy"
+  },
+  "hexo": {
+    "version": "7.3.0"
+  },
+  "dependencies": {
+    "hexo": "^7.3.0",
+    "hexo-cli": "^4.3.2",
+    "hexo-generator-searchdb": "^1.4.1",
+    "hexo-renderer-pug": "^3.0.0",
+    "hexo-server": "^3.0.0",
+    "hexo-theme-butterfly": "^5.5.4",
+    "hexo-util": "^3.3.0"
+  }
+}
