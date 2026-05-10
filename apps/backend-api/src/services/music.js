@@ -75,6 +75,50 @@ export async function getSongUrl(id) {
   }
 }
 
+export async function loginEmail(email, password) {
+  const api = getNeteaseApi()
+  try {
+    const result = await api.login({ email, password })
+    if (result.body.code !== 200) {
+      return { ok: false, message: result.body.message || 'Login failed' }
+    }
+    userCookies = result.body.cookie || ''
+    return {
+      ok: true,
+      profile: {
+        userId: result.body.account?.id,
+        nickname: result.body.profile?.nickname,
+        avatarUrl: result.body.profile?.avatarUrl,
+      },
+    }
+  } catch (err) {
+    console.error('[music] login error:', err.message)
+    throw err
+  }
+}
+
+export async function loginPhone(phone, password) {
+  const api = getNeteaseApi()
+  try {
+    const result = await api.login_cellphone({ phone, password })
+    if (result.body.code !== 200) {
+      return { ok: false, message: result.body.message || 'Login failed' }
+    }
+    userCookies = result.body.cookie || ''
+    return {
+      ok: true,
+      profile: {
+        userId: result.body.account?.id,
+        nickname: result.body.profile?.nickname,
+        avatarUrl: result.body.profile?.avatarUrl,
+      },
+    }
+  } catch (err) {
+    console.error('[music] login error:', err.message)
+    throw err
+  }
+}
+
 export async function login(email, password) {
   const api = getNeteaseApi()
 

@@ -3,6 +3,7 @@ import {
   getPlaylistDetail,
   getSongUrl,
   login,
+  loginPhone,
   getUserPlaylists,
   getDefaultPlaylistId,
 } from '../services/music.js'
@@ -40,23 +41,28 @@ music.get('/song/:id/url', async (c) => {
   }
 })
 
-// NetEase account login (optional)
+// NetEase account login — email
 music.post('/login', async (c) => {
   let body
-  try {
-    body = await c.req.json()
-  } catch {
-    return c.json({ error: 'Invalid JSON body' }, 400)
-  }
-
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON body' }, 400) }
   const { email, password } = body
-
-  if (!email || !password) {
-    return c.json({ error: 'Email and password are required' }, 400)
-  }
-
+  if (!email || !password) return c.json({ error: 'Email and password are required' }, 400)
   try {
     const result = await login(email, password)
+    return c.json(result)
+  } catch (err) {
+    return c.json({ error: err.message }, 500)
+  }
+})
+
+// NetEase account login — phone
+music.post('/login/phone', async (c) => {
+  let body
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON body' }, 400) }
+  const { phone, password } = body
+  if (!phone || !password) return c.json({ error: 'Phone and password are required' }, 400)
+  try {
+    const result = await loginPhone(phone, password)
     return c.json(result)
   } catch (err) {
     return c.json({ error: err.message }, 500)

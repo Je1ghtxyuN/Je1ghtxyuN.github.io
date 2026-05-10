@@ -5,7 +5,7 @@ import {
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
 import { getAmbientTrackSource, MUSIC_SOURCE_TYPES } from './musicSources.js'
-import { loginNetEase, fetchUserPlaylists } from './neteaseSource.js'
+import { loginNetEase, loginNetEasePhone, fetchUserPlaylists } from './neteaseSource.js'
 
 const getTrackIndex = (tracks, trackId) => {
   const index = tracks.findIndex((track) => track.id === trackId)
@@ -127,10 +127,14 @@ export function useAmbientMusicController() {
     selectTrack(tracks[nextIndex]?.id)
   }, [selectedTrackIndex, tracks, selectTrack])
 
-  const doNetEaseLogin = useCallback(async (email, password) => {
+  const doNetEaseLogin = useCallback(async (account, password) => {
     setLoginError('')
     try {
-      const result = await loginNetEase(email, password)
+      // Auto-detect: if account looks like a phone number (11 digits), use phone login
+      const isPhone = /^\d{11}$/.test(account)
+      const result = isPhone
+        ? await loginNetEasePhone(account, password)
+        : await loginNetEase(account, password)
       if (result.ok) {
         setNeteaseUser(result.profile)
         localStorage.setItem('netease_user', JSON.stringify(result.profile))

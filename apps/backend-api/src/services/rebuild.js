@@ -194,10 +194,13 @@ export async function rebuildPortal() {
     await writeFile(join(dataDir, 'portfolio.yml'), yamlContent, 'utf-8')
   }
 
-  // 4. Run hexo generate
+  // 4. Run hexo clean + generate programmatically (works in Docker)
   const portalRoot = getPortalRoot()
   try {
-    const { stdout, stderr } = await execFileAsync('npx', ['hexo', 'generate'], {
+    const hexoBin = join(portalRoot, 'node_modules', '.bin', 'hexo')
+    // Clean first, then generate
+    await execFileAsync(hexoBin, ['clean'], { cwd: portalRoot, timeout: 30000 })
+    const { stdout, stderr } = await execFileAsync(hexoBin, ['generate'], {
       cwd: portalRoot,
       timeout: 60000,
     })
@@ -208,12 +211,19 @@ export async function rebuildPortal() {
       hexoErrors: stderr || null,
     }
   } catch (err) {
-    return {
-      ok: false,
-      postsGenerated: posts.length,
-      error: err.message,
-      hexoOutput: err.stdout || null,
-      hexoErrors: err.stderr || null,
+    // Fallback: try npx if .bin/hexo failed
+    try {
+      const { stdout, stderr } = await execFileAsync('npx', ['hexo', 'clean'], { cwd: portalRoot, timeout: 30000 })
+      await execFileAsync('npx', ['hexo', 'generate'], { cwd: portalRoot, timeout: 60000 })
+      return { ok: true, postsGenerated: posts.length }
+    } catch (err2) {
+      return {
+        ok: false,
+        postsGenerated: posts.length,
+        error: err.message,
+        hexoOutput: err.stdout || '',
+        hexoErrors: err.stderr || '',
+      }
     }
   }
 }

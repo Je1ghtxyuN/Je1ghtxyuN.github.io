@@ -29,12 +29,13 @@ export function AmbientMusicPanel() {
   const artists = currentTrack.artists || ''
 
   const [showLogin, setShowLogin] = useState(false)
-  const [loginEmail, setLoginEmail] = useState('')
+  const [loginAccount, setLoginAccount] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleLogin = (e) => {
     e.preventDefault()
-    doNetEaseLogin(loginEmail, loginPassword)
+    doNetEaseLogin(loginAccount, loginPassword)
   }
 
   return (
@@ -71,8 +72,17 @@ export function AmbientMusicPanel() {
               </button>
             ) : (
               <form className="netease-login__form" onSubmit={handleLogin}>
-                <input className="netease-login__input" type="text" placeholder="Email or phone" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
-                <input className="netease-login__input" type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+                <div className="netease-login__field">
+                  <i className="fas fa-user netease-login__icon" />
+                  <input className="netease-login__input" type="text" placeholder="Email or phone number" value={loginAccount} onChange={(e) => setLoginAccount(e.target.value)} />
+                </div>
+                <div className="netease-login__field">
+                  <i className="fas fa-lock netease-login__icon" />
+                  <input className="netease-login__input" type={showPassword ? 'text' : 'password'} placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+                  <button type="button" className="netease-login__eye" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                    <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} />
+                  </button>
+                </div>
                 <div className="netease-login__actions">
                   <button type="submit" className="button button--primary button--sm">Login</button>
                   <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>Cancel</button>

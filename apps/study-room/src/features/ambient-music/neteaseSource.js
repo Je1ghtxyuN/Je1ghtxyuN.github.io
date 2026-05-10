@@ -46,6 +46,16 @@ export async function loginNetEase(email, password) {
   return res.json()
 }
 
+export async function loginNetEasePhone(phone, password) {
+  const res = await fetch(`${API_BASE}/music/login/phone`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, password }),
+  })
+  if (!res.ok) throw new Error(`Login failed: ${res.status}`)
+  return res.json()
+}
+
 export async function fetchUserPlaylists() {
   const res = await fetch(`${API_BASE}/music/user/playlists`)
   if (!res.ok) return { playlists: [] }
