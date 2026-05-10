@@ -56,6 +56,26 @@ export async function loginNetEasePhone(phone, password) {
   return res.json()
 }
 
+export async function sendSmsCode(phone) {
+  const res = await fetch(`${API_BASE}/music/captcha/send`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone }),
+  })
+  if (!res.ok) throw new Error(`Failed to send SMS: ${res.status}`)
+  return res.json()
+}
+
+export async function verifySmsCode(phone, code) {
+  const res = await fetch(`${API_BASE}/music/captcha/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, code }),
+  })
+  if (!res.ok) throw new Error(`Verification failed: ${res.status}`)
+  return res.json()
+}
+
 export async function fetchUserPlaylists() {
   const res = await fetch(`${API_BASE}/music/user/playlists`)
   if (!res.ok) return { playlists: [] }

@@ -4,6 +4,8 @@ import {
   getSongUrl,
   login,
   loginPhone,
+  sendCaptcha,
+  verifyCaptcha,
   getUserPlaylists,
   getDefaultPlaylistId,
 } from '../services/music.js'
@@ -63,6 +65,34 @@ music.post('/login/phone', async (c) => {
   if (!phone || !password) return c.json({ error: 'Phone and password are required' }, 400)
   try {
     const result = await loginPhone(phone, password)
+    return c.json(result)
+  } catch (err) {
+    return c.json({ error: err.message }, 500)
+  }
+})
+
+// Send SMS verification code
+music.post('/captcha/send', async (c) => {
+  let body
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON body' }, 400) }
+  const { phone } = body
+  if (!phone) return c.json({ error: 'Phone number is required' }, 400)
+  try {
+    const result = await sendCaptcha(phone)
+    return c.json(result)
+  } catch (err) {
+    return c.json({ error: err.message }, 500)
+  }
+})
+
+// Verify SMS code and login
+music.post('/captcha/verify', async (c) => {
+  let body
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON body' }, 400) }
+  const { phone, code } = body
+  if (!phone || !code) return c.json({ error: 'Phone and verification code are required' }, 400)
+  try {
+    const result = await verifyCaptcha(phone, code)
     return c.json(result)
   } catch (err) {
     return c.json({ error: err.message }, 500)

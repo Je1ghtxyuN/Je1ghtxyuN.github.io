@@ -23,19 +23,36 @@ export function AmbientMusicPanel() {
     loginError,
     doNetEaseLogin,
     doNetEaseLogout,
+    doSendSms,
+    doSmsLogin,
     switchToPlaylist,
   } = useAmbientMusicController()
   const currentTrackTitle = currentTrack.title || t('studyRoom.music.noTrack', {}, 'No track')
   const artists = currentTrack.artists || ''
 
   const [showLogin, setShowLogin] = useState(false)
+  const [loginTab, setLoginTab] = useState('password') // 'password' | 'sms'
   const [loginAccount, setLoginAccount] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [smsPhone, setSmsPhone] = useState('')
+  const [smsCode, setSmsCode] = useState('')
+  const [smsSent, setSmsSent] = useState(false)
 
   const handleLogin = (e) => {
     e.preventDefault()
     doNetEaseLogin(loginAccount, loginPassword)
+  }
+
+  const handleSendSms = async () => {
+    if (!smsPhone) return
+    const ok = await doSendSms(smsPhone)
+    if (ok) setSmsSent(true)
+  }
+
+  const handleSmsLogin = (e) => {
+    e.preventDefault()
+    doSmsLogin(smsPhone, smsCode)
   }
 
   return (
@@ -71,24 +88,54 @@ export function AmbientMusicPanel() {
                 <i className="fas fa-music" /> Login NetEase
               </button>
             ) : (
-              <form className="netease-login__form" onSubmit={handleLogin}>
-                <div className="netease-login__field">
-                  <i className="fas fa-user netease-login__icon" />
-                  <input className="netease-login__input" type="text" placeholder="Email or phone number" value={loginAccount} onChange={(e) => setLoginAccount(e.target.value)} />
+              <div className="netease-login__form">
+                <div className="netease-login__tabs">
+                  <button type="button" className={`netease-login__tab${loginTab === 'password' ? ' netease-login__tab--active' : ''}`} onClick={() => setLoginTab('password')}>Password</button>
+                  <button type="button" className={`netease-login__tab${loginTab === 'sms' ? ' netease-login__tab--active' : ''}`} onClick={() => setLoginTab('sms')}>SMS</button>
                 </div>
-                <div className="netease-login__field">
-                  <i className="fas fa-lock netease-login__icon" />
-                  <input className="netease-login__input" type={showPassword ? 'text' : 'password'} placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
-                  <button type="button" className="netease-login__eye" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
-                    <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} />
-                  </button>
-                </div>
-                <div className="netease-login__actions">
-                  <button type="submit" className="button button--primary button--sm">Login</button>
-                  <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>Cancel</button>
-                </div>
+
+                {loginTab === 'password' ? (
+                  <form onSubmit={handleLogin}>
+                    <div className="netease-login__field">
+                      <i className="fas fa-user netease-login__icon" />
+                      <input className="netease-login__input" type="text" placeholder="Email or phone number" value={loginAccount} onChange={(e) => setLoginAccount(e.target.value)} />
+                    </div>
+                    <div className="netease-login__field">
+                      <i className="fas fa-lock netease-login__icon" />
+                      <input className="netease-login__input" type={showPassword ? 'text' : 'password'} placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+                      <button type="button" className="netease-login__eye" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                        <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} />
+                      </button>
+                    </div>
+                    <div className="netease-login__actions">
+                      <button type="submit" className="button button--primary button--sm">Login</button>
+                      <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>Cancel</button>
+                    </div>
+                  </form>
+                ) : (
+                  <form onSubmit={handleSmsLogin}>
+                    <div className="netease-login__field">
+                      <i className="fas fa-mobile-alt netease-login__icon" />
+                      <input className="netease-login__input" type="tel" placeholder="Phone number" value={smsPhone} onChange={(e) => setSmsPhone(e.target.value)} />
+                      <button type="button" className="netease-login__sms-btn" onClick={handleSendSms} disabled={smsSent}>
+                        {smsSent ? 'Resend' : 'Send Code'}
+                      </button>
+                    </div>
+                    {smsSent && (
+                      <div className="netease-login__field">
+                        <i className="fas fa-key netease-login__icon" />
+                        <input className="netease-login__input" type="text" placeholder="SMS code" value={smsCode} onChange={(e) => setSmsCode(e.target.value)} maxLength={6} />
+                      </div>
+                    )}
+                    <div className="netease-login__actions">
+                      <button type="submit" className="button button--primary button--sm" disabled={!smsSent}>Verify & Login</button>
+                      <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>Cancel</button>
+                    </div>
+                  </form>
+                )}
+
                 {loginError ? <p className="floating-widget__hint">{loginError}</p> : null}
-              </form>
+              </div>
             )}
           </div>
         )}

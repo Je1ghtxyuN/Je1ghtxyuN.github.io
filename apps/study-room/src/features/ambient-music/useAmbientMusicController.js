@@ -5,7 +5,7 @@ import {
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
 import { getAmbientTrackSource, MUSIC_SOURCE_TYPES } from './musicSources.js'
-import { loginNetEase, loginNetEasePhone, fetchUserPlaylists } from './neteaseSource.js'
+import { loginNetEase, loginNetEasePhone, sendSmsCode, verifySmsCode, fetchUserPlaylists } from './neteaseSource.js'
 
 const getTrackIndex = (tracks, trackId) => {
   const index = tracks.findIndex((track) => track.id === trackId)
@@ -148,6 +148,35 @@ export function useAmbientMusicController() {
     }
   }, [])
 
+  const doSendSms = useCallback(async (phone) => {
+    setLoginError('')
+    try {
+      const result = await sendSmsCode(phone)
+      if (!result.ok) setLoginError(result.message || 'Failed to send SMS')
+      return result.ok
+    } catch (e) {
+      setLoginError(e.message)
+      return false
+    }
+  }, [])
+
+  const doSmsLogin = useCallback(async (phone, code) => {
+    setLoginError('')
+    try {
+      const result = await verifySmsCode(phone, code)
+      if (result.ok) {
+        setNeteaseUser(result.profile)
+        localStorage.setItem('netease_user', JSON.stringify(result.profile))
+        const pl = await fetchUserPlaylists()
+        setUserPlaylists(pl.playlists || [])
+      } else {
+        setLoginError(result.message || 'Verification failed')
+      }
+    } catch (e) {
+      setLoginError(e.message)
+    }
+  }, [])
+
   const doNetEaseLogout = useCallback(() => {
     setNeteaseUser(null)
     setUserPlaylists([])
@@ -221,6 +250,8 @@ export function useAmbientMusicController() {
     loginError,
     doNetEaseLogin,
     doNetEaseLogout,
+    doSendSms,
+    doSmsLogin,
     switchToPlaylist,
   }
 }

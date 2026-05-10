@@ -97,6 +97,47 @@ export async function loginEmail(email, password) {
   }
 }
 
+export async function sendCaptcha(phone) {
+  const api = getNeteaseApi()
+  try {
+    const result = await api.captcha_sent({ phone })
+    if (result.body.code !== 200) {
+      return { ok: false, message: result.body.message || 'Failed to send SMS' }
+    }
+    return { ok: true, message: 'SMS sent' }
+  } catch (err) {
+    console.error('[music] captcha send error:', err.message)
+    throw err
+  }
+}
+
+export async function verifyCaptcha(phone, code) {
+  const api = getNeteaseApi()
+  try {
+    const result = await api.captcha_verify({ phone, captcha: code })
+    if (result.body.code !== 200) {
+      return { ok: false, message: result.body.message || 'Verification failed' }
+    }
+    // After captcha verification, login without password
+    const loginResult = await api.login_cellphone({ phone, captcha: code })
+    if (loginResult.body.code !== 200) {
+      return { ok: false, message: loginResult.body.message || 'Login failed after verification' }
+    }
+    userCookies = loginResult.body.cookie || ''
+    return {
+      ok: true,
+      profile: {
+        userId: loginResult.body.account?.id,
+        nickname: loginResult.body.profile?.nickname,
+        avatarUrl: loginResult.body.profile?.avatarUrl,
+      },
+    }
+  } catch (err) {
+    console.error('[music] captcha verify error:', err.message)
+    throw err
+  }
+}
+
 export async function loginPhone(phone, password) {
   const api = getNeteaseApi()
   try {
