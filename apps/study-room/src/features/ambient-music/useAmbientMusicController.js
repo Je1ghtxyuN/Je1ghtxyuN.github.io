@@ -5,6 +5,7 @@ import {
   useStudyRoomState,
 } from '../../state/useStudyRoom.js'
 import { getAmbientTrackSource, MUSIC_SOURCE_TYPES } from './musicSources.js'
+import { loginNetEase, fetchUserPlaylists } from './neteaseSource.js'
 
 const getTrackIndex = (tracks, trackId) => {
   const index = tracks.findIndex((track) => track.id === trackId)
@@ -33,6 +34,9 @@ export function useAmbientMusicController() {
   const [tracks, setTracks] = useState([])
   const [playlistName, setPlaylistName] = useState('')
   const [loading, setLoading] = useState(false)
+  const [neteaseUser, setNeteaseUser] = useState(null)
+  const [userPlaylists, setUserPlaylists] = useState([])
+  const [loginError, setLoginError] = useState('')
   const sourceType = MUSIC_SOURCE_TYPES.netease
   const trackSource = getAmbientTrackSource(sourceType)
   const audio = getGlobalAudio()
@@ -123,6 +127,68 @@ export function useAmbientMusicController() {
     selectTrack(tracks[nextIndex]?.id)
   }, [selectedTrackIndex, tracks, selectTrack])
 
+  const doNetEaseLogin = useCallback(async (email, password) => {
+    setLoginError('')
+    try {
+      const result = await loginNetEase(email, password)
+      if (result.ok) {
+        setNeteaseUser(result.profile)
+        localStorage.setItem('netease_user', JSON.stringify(result.profile))
+        const pl = await fetchUserPlaylists()
+        setUserPlaylists(pl.playlists || [])
+      } else {
+        setLoginError(result.message || 'Login failed')
+      }
+    } catch (e) {
+      setLoginError(e.message)
+    }
+  }, [])
+
+  const doNetEaseLogout = useCallback(() => {
+    setNeteaseUser(null)
+    setUserPlaylists([])
+    localStorage.removeItem('netease_user')
+  }, [])
+
+  const switchToPlaylist = useCallback(async (playlistId) => {
+    setLoading(true)
+    try {
+      const res = await fetch(`${import.meta.env.DEV ? 'http://localhost:3001' : ''}/music/playlist/${playlistId}`)
+      const data = await res.json()
+      if (data.playlist) {
+        const newTracks = data.playlist.tracks.map((t) => ({
+          id: String(t.id),
+          title: t.name,
+          artists: t.artists.map((a) => a.name).join(', '),
+          album: t.album,
+          duration: t.duration,
+          src: '',
+        }))
+        setTracks(newTracks)
+        setPlaylistName(data.playlist.name)
+        if (newTracks.length > 0) {
+          selectTrack(newTracks[0].id)
+        }
+      }
+    } catch (e) {
+      setLoginError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [selectTrack])
+
+  // Restore login state from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('netease_user')
+      if (saved) {
+        const profile = JSON.parse(saved)
+        setNeteaseUser(profile)
+        fetchUserPlaylists().then((pl) => setUserPlaylists(pl.playlists || []))
+      }
+    } catch {}
+  }, [])
+
   return {
     musicSourceType: sourceType,
     musicSourceLabel: sourceType === MUSIC_SOURCE_TYPES.netease
@@ -145,5 +211,12 @@ export function useAmbientMusicController() {
     nextTrack() { goToTrack(1) },
     previousTrack() { goToTrack(-1) },
     setVolume(value) { setPreference('volume', value) },
+    // NetEase login
+    neteaseUser,
+    userPlaylists,
+    loginError,
+    doNetEaseLogin,
+    doNetEaseLogout,
+    switchToPlaylist,
   }
 }
