@@ -11,19 +11,31 @@ const getTrackIndex = (tracks, trackId) => {
   return index >= 0 ? index : 0
 }
 
+// Shared audio ref — survives panel mount/unmount
+let globalAudio = null
+
+function getGlobalAudio() {
+  if (!globalAudio) {
+    globalAudio = new Audio()
+    globalAudio.loop = true
+    globalAudio.preload = 'auto'
+  }
+  return globalAudio
+}
+
 export function useAmbientMusicController() {
   const { preferences } = useStudyRoomState()
   const { setPreference } = useStudyRoomActions()
   const { t } = useStudyRoomLocale()
-  const audioRef = useRef(null)
-  const playbackStateRef = useRef('idle')
-  const [playbackState, setPlaybackState] = useState('idle')
+  const playbackStateRef = useRef(getGlobalAudio().paused ? 'idle' : 'playing')
+  const [playbackState, setPlaybackState] = useState(getGlobalAudio().paused ? 'idle' : 'playing')
   const [playbackError, setPlaybackError] = useState('')
   const [tracks, setTracks] = useState([])
   const [playlistName, setPlaylistName] = useState('')
   const [loading, setLoading] = useState(false)
   const sourceType = preferences.musicSourceType || MUSIC_SOURCE_TYPES.local
   const trackSource = getAmbientTrackSource(sourceType)
+  const audio = getGlobalAudio()
 
   const selectedTrackIndex = getTrackIndex(tracks, preferences.selectedTrackId)
   const currentTrack = tracks[selectedTrackIndex] || { id: '', title: '', src: '' }
@@ -48,11 +60,10 @@ export function useAmbientMusicController() {
     }
   }, [sourceType])
 
-  // Fetch song URL when track changes (Netease URLs expire)
+  // Fetch song URL when track changes
   useEffect(() => {
     if (sourceType !== MUSIC_SOURCE_TYPES.netease) return
     if (!currentTrack.id) return
-
     trackSource.getTrackUrl(currentTrack.id).then((url) => {
       if (url) {
         setTracks((prev) =>
@@ -62,56 +73,33 @@ export function useAmbientMusicController() {
     })
   }, [currentTrack.id, sourceType])
 
+  // Sync volume
   useEffect(() => {
-    const audio = new Audio()
-    audio.loop = true
-    audio.preload = 'auto'
-    audioRef.current = audio
-
-    return () => {
-      audio.pause()
-      audio.src = ''
-      audioRef.current = null
-    }
-  }, [])
-
-  useEffect(() => {
-    playbackStateRef.current = playbackState
-  }, [playbackState])
-
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
     audio.volume = preferences.volume
   }, [preferences.volume])
 
+  // Switch track
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio || !currentTrack.src) return
-
+    if (!currentTrack.src) return
+    const wasPlaying = !audio.paused
     audio.pause()
     audio.src = currentTrack.src
     audio.load()
-
-    if (playbackStateRef.current !== 'playing') return
-
-    void audio.play().catch(() => {
-      setPlaybackState('paused')
-      setPlaybackError(t('studyRoom.music.errors.blocked', {}, 'Playback blocked'))
-    })
-  }, [currentTrack.id, currentTrack.src, t])
+    if (wasPlaying) {
+      void audio.play().catch(() => {
+        setPlaybackState('paused')
+      })
+    }
+  }, [currentTrack.id, currentTrack.src])
 
   useEffect(() => {
     if (preferences.soundEnabled) return
-    const audio = audioRef.current
-    if (!audio) return
     audio.pause()
     setPlaybackState('paused')
   }, [preferences.soundEnabled])
 
   const play = useCallback(async () => {
-    const audio = audioRef.current
-    if (!audio || !preferences.soundEnabled) {
+    if (!preferences.soundEnabled) {
       setPlaybackError(t('studyRoom.music.errors.enableSound', {}, 'Enable sound'))
       return
     }
@@ -126,8 +114,6 @@ export function useAmbientMusicController() {
   }, [preferences.soundEnabled, t])
 
   const pause = useCallback(() => {
-    const audio = audioRef.current
-    if (!audio) return
     audio.pause()
     setPlaybackState('paused')
   }, [])

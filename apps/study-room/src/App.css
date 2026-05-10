@@ -317,6 +317,16 @@
   border-color: rgba(142, 183, 255, 0.62);
 }
 
+.scene-chrome__home-btn {
+  font-size: 0.85rem;
+  opacity: 0.55;
+  text-decoration: none;
+}
+.scene-chrome__home-btn:hover {
+  opacity: 1;
+  color: var(--color-accent, #8eb7ff);
+}
+
 .scene-timer {
   display: grid;
   justify-items: center;

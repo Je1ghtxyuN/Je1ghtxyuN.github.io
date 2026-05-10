@@ -26,6 +26,14 @@ export function StudyChromeWidget({
           'Study Room Panels',
         )}
       >
+        <a
+          href="/"
+          className="scene-chrome__button scene-chrome__home-btn"
+          aria-label={t('studyRoom.chrome.backToHome', {}, 'Back to Home')}
+          title={t('studyRoom.chrome.backToHome', {}, 'Back to Home')}
+        >
+          <i className="fas fa-home" />
+        </a>
         {PANEL_GROUPS[0].map((item) => (
           <button
             key={item.id}
