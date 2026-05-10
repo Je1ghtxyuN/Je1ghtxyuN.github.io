@@ -11,8 +11,11 @@ const MANAGED_MARKER_MD = '<!-- managed-by-backend-api -->'
 const MANAGED_MARKER_YML = '# managed-by-backend-api'
 
 function getPortalRoot() {
-  if (!env.REPO_ROOT) throw new Error('REPO_ROOT is not configured')
-  return join(env.REPO_ROOT, 'apps', 'blog-portal')
+  // In Docker: portal source is mounted at /portal-source
+  if (env.REPO_ROOT === '/portal-source') return '/portal-source'
+  // Local dev: REPO_ROOT points to repo, portal is at apps/blog-portal
+  if (env.REPO_ROOT) return join(env.REPO_ROOT, 'apps', 'blog-portal')
+  throw new Error('REPO_ROOT is not configured')
 }
 
 function getPostsDir() {
