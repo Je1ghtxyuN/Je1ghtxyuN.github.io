@@ -33,32 +33,27 @@ export function useAmbientMusicController() {
   const [tracks, setTracks] = useState([])
   const [playlistName, setPlaylistName] = useState('')
   const [loading, setLoading] = useState(false)
-  const sourceType = preferences.musicSourceType || MUSIC_SOURCE_TYPES.local
+  const sourceType = MUSIC_SOURCE_TYPES.netease
   const trackSource = getAmbientTrackSource(sourceType)
   const audio = getGlobalAudio()
 
   const selectedTrackIndex = getTrackIndex(tracks, preferences.selectedTrackId)
   const currentTrack = tracks[selectedTrackIndex] || { id: '', title: '', src: '' }
 
-  // Load playlist when source changes
+  // Load NetEase playlist on mount
   useEffect(() => {
-    if (sourceType === MUSIC_SOURCE_TYPES.netease) {
-      setLoading(true)
-      trackSource.loadPlaylist().then(({ tracks: newTracks, name }) => {
-        setTracks(newTracks)
-        setPlaylistName(name)
-        setLoading(false)
-        if (newTracks.length > 0 && !preferences.selectedTrackId) {
-          setPreference('selectedTrackId', newTracks[0].id)
-        }
-      }).catch(() => {
-        setLoading(false)
-      })
-    } else {
-      setTracks(trackSource.getTracks())
-      setPlaylistName('')
-    }
-  }, [sourceType])
+    setLoading(true)
+    trackSource.loadPlaylist().then(({ tracks: newTracks, name }) => {
+      setTracks(newTracks)
+      setPlaylistName(name)
+      setLoading(false)
+      if (newTracks.length > 0 && !preferences.selectedTrackId) {
+        setPreference('selectedTrackId', newTracks[0].id)
+      }
+    }).catch(() => {
+      setLoading(false)
+    })
+  }, [])
 
   // Fetch song URL when track changes
   useEffect(() => {
@@ -128,10 +123,6 @@ export function useAmbientMusicController() {
     selectTrack(tracks[nextIndex]?.id)
   }, [selectedTrackIndex, tracks, selectTrack])
 
-  const setSource = useCallback((type) => {
-    setPreference('musicSourceType', type)
-  }, [setPreference])
-
   return {
     musicSourceType: sourceType,
     musicSourceLabel: sourceType === MUSIC_SOURCE_TYPES.netease
@@ -154,6 +145,5 @@ export function useAmbientMusicController() {
     nextTrack() { goToTrack(1) },
     previousTrack() { goToTrack(-1) },
     setVolume(value) { setPreference('volume', value) },
-    setSource,
   }
 }
