@@ -12,21 +12,28 @@ echo "========================================="
 
 # 1. Build Study Room
 echo ""
-echo "[1/5] Building Study Room..."
+echo "[1/6] Building Study Room..."
 cd "$REPO_ROOT/apps/study-room"
 npm run build --silent 2>&1 | tail -1
 
 # 2. Sync Study Room to portal
-echo "[2/5] Syncing Study Room to portal..."
+echo "[2/6] Syncing Study Room to portal..."
 bash "$REPO_ROOT/scripts/sync-study-app.sh" 2>&1 | tail -1
 
 # 3. Build Portal
-echo "[3/5] Building Portal..."
+echo "[3/6] Building Portal..."
 cd "$REPO_ROOT/apps/blog-portal"
 ./node_modules/.bin/hexo generate 2>&1 | tail -1
 
-# 4. Sync portal source (entire blog-portal) to server
-echo "[4/5] Syncing to server..."
+# 4. Prepare self-contained portal and sync to server
+echo "[4/6] Preparing portal for deployment..."
+# Copy shared config to portal root (server has no packages/ directory)
+cp "$REPO_ROOT/packages/shared-config/site-identity.json" "$REPO_ROOT/apps/blog-portal/"
+# Replace symlink with real copy of shared assets
+rm -rf "$REPO_ROOT/apps/blog-portal/source/shared-assets"
+cp -r "$REPO_ROOT/packages/shared-assets" "$REPO_ROOT/apps/blog-portal/source/shared-assets"
+
+echo "[5/6] Syncing to server..."
 rsync -avz --delete \
   --exclude='node_modules' \
   --exclude='.git' \
@@ -39,8 +46,8 @@ rsync -avz --delete \
   "$REPO_ROOT/apps/blog-portal/public/" \
   "$SERVER:$SERVER_PORTAL/public/" 2>&1 | tail -1
 
-# 5. Sync infra files to server
-echo "[5/5] Syncing infra & rebuilding Docker..."
+# 6. Sync infra files to server
+echo "[6/6] Syncing infra & rebuilding Docker..."
 rsync -avz "$REPO_ROOT/infra/docker-compose.yml" "$SERVER:$SERVER_DOCKER/" 2>&1 | tail -1
 rsync -avz "$REPO_ROOT/infra/nginx/default.conf" "$SERVER:$SERVER_DOCKER/nginx/" 2>&1 | tail -1
 ssh "$SERVER" "cd $SERVER_PORTAL && npm install --silent 2>&1 | tail -1"
