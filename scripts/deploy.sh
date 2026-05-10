@@ -39,10 +39,12 @@ rsync -avz --delete \
   "$REPO_ROOT/apps/blog-portal/public/" \
   "$SERVER:$SERVER_PORTAL/public/" 2>&1 | tail -1
 
-# 5. Install deps on server and Docker rebuild
-echo "[5/5] Rebuilding Docker & restarting..."
+# 5. Sync infra files to server
+echo "[5/5] Syncing infra & rebuilding Docker..."
+rsync -avz "$REPO_ROOT/infra/docker-compose.yml" "$SERVER:$SERVER_DOCKER/" 2>&1 | tail -1
+rsync -avz "$REPO_ROOT/infra/nginx/default.conf" "$SERVER:$SERVER_DOCKER/nginx/" 2>&1 | tail -1
 ssh "$SERVER" "cd $SERVER_PORTAL && npm install --silent 2>&1 | tail -1"
-ssh "$SERVER" "cd $SERVER_DOCKER && docker compose build backend-api 2>&1 | tail -3 && docker compose up -d 2>&1"
+ssh "$SERVER" "cd $SERVER_DOCKER && docker compose build backend-api 2>&1 | tail -3 && docker compose up -d --force-recreate 2>&1"
 
 echo ""
 # Also sync admin creds
