@@ -45,6 +45,10 @@ ssh "$SERVER" "cd $SERVER_PORTAL && npm install --silent 2>&1 | tail -1"
 ssh "$SERVER" "cd $SERVER_DOCKER && docker compose build backend-api 2>&1 | tail -3 && docker compose up -d 2>&1"
 
 echo ""
+# Also sync admin creds
+"$REPO_ROOT/scripts/sync-admin.sh" 2>/dev/null || true
+
+echo ""
 echo "========================================="
 echo " Deploy complete!"
 echo " https://je1ght.top"
