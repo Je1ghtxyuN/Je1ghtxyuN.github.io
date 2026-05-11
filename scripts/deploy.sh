@@ -10,53 +10,78 @@ echo "========================================="
 echo " Deploy to je1ght.top"
 echo "========================================="
 
-# 1. Build Study Room
+# --- Local build ---
+
 echo ""
-echo "[1/6] Building Study Room..."
+echo "[1/7] Building Study Room..."
 cd "$REPO_ROOT/apps/study-room"
 npm run build --silent 2>&1 | tail -1
 
-# 2. Sync Study Room to portal
-echo "[2/6] Syncing Study Room to portal..."
+echo "[2/7] Syncing Study Room to portal source..."
 bash "$REPO_ROOT/scripts/sync-study-app.sh" 2>&1 | tail -1
 
-# 3. Build Portal
-echo "[3/6] Building Portal..."
+echo "[3/7] Building Portal..."
 cd "$REPO_ROOT/apps/blog-portal"
 ./node_modules/.bin/hexo generate 2>&1 | tail -1
 
-# 4. Prepare self-contained portal and sync to server
-echo "[4/6] Preparing portal for deployment..."
-# Copy shared config to portal root (server has no packages/ directory)
-cp "$REPO_ROOT/packages/shared-config/site-identity.json" "$REPO_ROOT/apps/blog-portal/"
-# Replace symlink with real copy of shared assets
-rm -rf "$REPO_ROOT/apps/blog-portal/source/shared-assets"
-cp -r "$REPO_ROOT/packages/shared-assets" "$REPO_ROOT/apps/blog-portal/source/shared-assets"
+# --- Prepare self-contained portal for server ---
+# Server has no packages/ directory, so copy deps into portal before syncing.
+# Save and restore the local shared-assets symlink.
 
-echo "[5/6] Syncing to server..."
+echo "[4/7] Preparing portal for deployment..."
+PORTAL_DIR="$REPO_ROOT/apps/blog-portal"
+
+# Save symlink target before we clobber it
+SHARED_ASSETS_REAL="$(cd "$PORTAL_DIR/source/shared-assets" 2>/dev/null && pwd -P || true)"
+
+# Copy shared config
+cp "$REPO_ROOT/packages/shared-config/site-identity.json" "$PORTAL_DIR/"
+
+# Replace symlink with real copy for server
+rm -rf "$PORTAL_DIR/source/shared-assets"
+cp -r "$REPO_ROOT/packages/shared-assets" "$PORTAL_DIR/source/shared-assets"
+
+# --- Sync to server ---
+
+echo "[5/7] Syncing to server..."
 rsync -avz --delete \
   --exclude='node_modules' \
   --exclude='.git' \
   --exclude='public' \
-  "$REPO_ROOT/apps/blog-portal/" \
+  "$PORTAL_DIR/" \
   "$SERVER:$SERVER_PORTAL/" 2>&1 | tail -1
 
-# Also sync the built public/ to portal-source/public/ on server
-# First, fix ownership of Docker-created root-owned files
-ssh "$SERVER" "docker exec je1ght-backend-api chown -R 1000:1000 /portal-source/public/ 2>/dev/null" || true
+# Sync built HTML (hexo output)
 rsync -avz --delete \
-  "$REPO_ROOT/apps/blog-portal/public/" \
+  "$PORTAL_DIR/public/" \
   "$SERVER:$SERVER_PORTAL/public/" 2>&1 | tail -1
 
-# 6. Sync infra files to server
-echo "[6/6] Syncing infra & rebuilding Docker..."
+# Sync backend source for Docker build
+rsync -avz --delete \
+  --exclude='node_modules' \
+  --exclude='.env' \
+  "$REPO_ROOT/apps/backend-api/" \
+  "$SERVER:$SERVER_DOCKER/backend-api/" 2>&1 | tail -1
+
+# --- Restore local symlink ---
+rm -rf "$PORTAL_DIR/source/shared-assets"
+ln -s "$SHARED_ASSETS_REAL" "$PORTAL_DIR/source/shared-assets" 2>/dev/null || true
+rm -f "$PORTAL_DIR/site-identity.json"
+
+# --- Docker rebuild on server ---
+
+echo "[6/7] Installing deps & rebuilding Docker..."
+ssh "$SERVER" "cd $SERVER_PORTAL && npm install --silent 2>&1 | tail -1"
 rsync -avz "$REPO_ROOT/infra/docker-compose.yml" "$SERVER:$SERVER_DOCKER/" 2>&1 | tail -1
 rsync -avz "$REPO_ROOT/infra/nginx/default.conf" "$SERVER:$SERVER_DOCKER/nginx/" 2>&1 | tail -1
-ssh "$SERVER" "cd $SERVER_PORTAL && npm install --silent 2>&1 | tail -1"
-ssh "$SERVER" "cd $SERVER_DOCKER && docker compose build backend-api 2>&1 | tail -3 && docker compose up -d --force-recreate 2>&1"
 
-echo ""
-# Also sync admin creds
+# Fix root-owned files from Docker, then full restart (not just recreate)
+ssh "$SERVER" "docker exec je1ght-backend-api chown -R 1000:1000 /portal-source/public/ 2>/dev/null" || true
+ssh "$SERVER" "cd $SERVER_DOCKER && docker compose build backend-api 2>&1 | tail -3 && docker compose down 2>&1 | tail -1 && docker compose up -d 2>&1 | tail -1"
+
+# --- Sync admin credentials ---
+
+echo "[7/7] Syncing admin credentials..."
 "$REPO_ROOT/scripts/sync-admin.sh" 2>/dev/null || true
 
 echo ""
