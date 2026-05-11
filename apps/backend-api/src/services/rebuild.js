@@ -194,36 +194,40 @@ export async function rebuildPortal() {
     await writeFile(join(dataDir, 'portfolio.yml'), yamlContent, 'utf-8')
   }
 
-  // 4. Run hexo clean + generate programmatically (works in Docker)
+  // 4. Run hexo clean + generate
   const portalRoot = getPortalRoot()
+
+  // Temporarily disable conflicting generator (uses source/index.md + tag instead)
+  const genPath = join(portalRoot, 'scripts', 'portal-home-generator.js')
+  const genBak = genPath + '.disabled'
+  let restored = false
+  try {
+    await import('node:fs/promises').then((fs) => fs.rename(genPath, genBak))
+    restored = true
+  } catch { /* generator may already be disabled */ }
+
   try {
     const hexoBin = join(portalRoot, 'node_modules', '.bin', 'hexo')
-    // Clean first, then generate
-    await execFileAsync(hexoBin, ['clean'], { cwd: portalRoot, timeout: 30000 })
+    // Note: do NOT use `hexo clean` — it deletes public/ which breaks the Docker bind mount
     const { stdout, stderr } = await execFileAsync(hexoBin, ['generate'], {
       cwd: portalRoot,
       timeout: 60000,
     })
-    return {
-      ok: true,
-      postsGenerated: posts.length,
-      hexoOutput: stdout,
-      hexoErrors: stderr || null,
-    }
+    // Fix ownership and restart nginx to refresh bind mount
+    await execFileAsync('chown', ['-R', '1000:1000', join(portalRoot, 'public')], { timeout: 10000 }).catch(() => {})
+    await execFileAsync('docker', ['compose', '-f', '/home/je1ght/docker/je1ght-platform/docker-compose.yml', 'restart', 'nginx'], { timeout: 15000 }).catch(() => {})
+    return { ok: true, postsGenerated: posts.length, hexoOutput: stdout, hexoErrors: stderr || null }
   } catch (err) {
-    // Fallback: try npx if .bin/hexo failed
     try {
-      const { stdout, stderr } = await execFileAsync('npx', ['hexo', 'clean'], { cwd: portalRoot, timeout: 30000 })
       await execFileAsync('npx', ['hexo', 'generate'], { cwd: portalRoot, timeout: 60000 })
       return { ok: true, postsGenerated: posts.length }
     } catch (err2) {
-      return {
-        ok: false,
-        postsGenerated: posts.length,
-        error: err.message,
-        hexoOutput: err.stdout || '',
-        hexoErrors: err.stderr || '',
-      }
+      return { ok: false, postsGenerated: posts.length, error: err.message, hexoOutput: err.stdout || '', hexoErrors: err.stderr || '' }
+    }
+  } finally {
+    // Restore the generator if we renamed it
+    if (restored) {
+      try { await import('node:fs/promises').then((fs) => fs.rename(genBak, genPath)) } catch {}
     }
   }
 }
