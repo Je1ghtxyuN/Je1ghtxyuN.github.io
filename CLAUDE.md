@@ -116,6 +116,24 @@ bash scripts/sync-study-app.sh   # Builds study-room, copies dist/ into blog-por
 - `apps/study-room/vite.config.js` — sets dynamic `base` path from shared-config, controls build output paths
 - `apps/study-room/src/i18n/config.js` — i18n provider that reads from shared locale files
 
+## Deployment Sync Rule (CRITICAL)
+
+When any change touches the server-side build pipeline, you MUST update ALL THREE in sync:
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| Admin Rebuild button | `apps/backend-api/src/services/rebuild.js` | What happens when user clicks "Rebuild Portal" in Admin UI |
+| Deploy script | `scripts/deploy.sh` | What `bash scripts/deploy.sh` does locally |
+| Server state | `ssh je1ght-server` docker containers | What's actually running in production |
+
+**Common failure points:**
+- Hexo CLI vs programmatic build — must work both locally AND inside Docker
+- `portal-home-generator.js` must be DISABLED on server (`source/index.md` + tag handles homepage)
+- `hexo clean` deletes `public/` which breaks Docker bind mount — NEVER use it in rebuild service
+- After `hexo generate` inside Docker, must chown files + restart nginx to refresh bind mount
+- New dependencies (like `hexo-renderer-marked`) must be added to `package.json` so `npm install` picks them up
+- Docker build context is `./backend-api` (relative to `~/docker/je1ght-platform/`)
+
 ## Conventions
 
 - ESLint 9 flat config with `react-hooks` and `react-refresh` plugins (separate configs per app)
