@@ -12,6 +12,7 @@ import { portfolio } from './routes/portfolio.js'
 import { siteProfile } from './routes/site-profile.js'
 import { rebuild } from './routes/rebuild.js'
 import { music } from './routes/music.js'
+import { userAuth } from './routes/user-auth.js'
 import { studySessions } from './routes/study-sessions.js'
 
 export function createApp() {
@@ -36,6 +37,7 @@ export function createApp() {
   app.route('/site-profile', siteProfile)
   app.route('/admin/rebuild', rebuild)
   app.route('/music', music)
+  app.route('/user', userAuth)
   app.route('/study-sessions', studySessions)
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404))

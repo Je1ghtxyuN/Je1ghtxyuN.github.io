@@ -1402,3 +1402,37 @@ code {
   padding: 0.3rem 0.65rem;
   font-size: 0.78rem;
 }
+
+/* Stats login */
+.stats-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+}
+.stats-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.stats-login-input {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(142,183,255,0.15);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.04);
+  color: inherit;
+  font-size: 0.82rem;
+}
+.stats-login-input:focus {
+  outline: none;
+  border-color: rgba(142,183,255,0.5);
+}
+.stats-login-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.stats-gh-btn {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}

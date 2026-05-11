@@ -80,10 +80,24 @@ model MediaAsset {
   @@index([filename])
 }
 
+model StudyUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String?
+  nickname     String?
+  avatarUrl    String?
+  githubId     String?  @unique
+  createdAt    DateTime @default(now())
+  sessions     StudySession[]
+}
+
 model StudySession {
-  id            String   @id @default(cuid())
-  workDuration  Int      // configured work minutes (e.g. 25)
-  completedAt   DateTime @default(now())
+  id            String    @id @default(cuid())
+  userId        String?
+  user          StudyUser? @relation(fields: [userId], references: [id])
+  workDuration  Int
+  completedAt   DateTime  @default(now())
 
   @@index([completedAt])
+  @@index([userId])
 }
