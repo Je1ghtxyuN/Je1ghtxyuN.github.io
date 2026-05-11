@@ -1,7 +1,7 @@
 services:
   backend-api:
     build:
-      context: ../apps/backend-api
+      context: ./backend-api
     image: je1ght-backend-api:latest
     container_name: je1ght-backend-api
     restart: unless-stopped
