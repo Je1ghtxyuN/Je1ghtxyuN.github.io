@@ -18,7 +18,6 @@ export function authMiddleware() {
     try {
       const session = await prisma.session.findUnique({
         where: { id: sessionId },
-        include: { user: true },
       })
 
       if (!session || session.expiresAt < new Date()) {
@@ -29,7 +28,11 @@ export function authMiddleware() {
         return next()
       }
 
-      const { password: _, ...safeUser } = session.user
+      // Try finding admin user first, then study user
+      let user = await prisma.adminUser.findUnique({ where: { id: session.userId } })
+      if (!user) user = await prisma.studyUser.findUnique({ where: { id: session.userId } })
+      if (!user) { c.set('user', null); return next() }
+      const { password: _, ...safeUser } = user
       c.set('user', safeUser)
       c.set('sessionId', session.id)
     } catch (err) {

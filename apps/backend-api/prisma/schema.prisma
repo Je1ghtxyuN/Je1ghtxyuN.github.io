@@ -12,15 +12,13 @@ model AdminUser {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-  sessions  Session[]
 }
 
 model Session {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   userId    String
-  user      AdminUser @relation(fields: [userId], references: [id])
   expiresAt DateTime
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
 }
 
 model BlogPost {
@@ -88,15 +86,13 @@ model StudyUser {
   avatarUrl    String?
   githubId     String?  @unique
   createdAt    DateTime @default(now())
-  sessions     StudySession[]
 }
 
 model StudySession {
-  id            String    @id @default(cuid())
-  userId        String?
-  user          StudyUser? @relation(fields: [userId], references: [id])
-  workDuration  Int
-  completedAt   DateTime  @default(now())
+  id           String   @id @default(cuid())
+  userId       String?
+  workDuration Int
+  completedAt  DateTime @default(now())
 
   @@index([completedAt])
   @@index([userId])

@@ -75,3 +75,17 @@ export async function getGitHubOAuthUrl() {
   const data = await res.json()
   return data.url || null
 }
+
+export async function githubCallback(accessToken, githubUser) {
+  const res = await fetch(`${API_BASE}/user/github/callback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ accessToken, githubUser }),
+  })
+  if (!res.ok) {
+    const data = await res.json()
+    throw new Error(data.error || 'GitHub login failed')
+  }
+  return res.json()
+}

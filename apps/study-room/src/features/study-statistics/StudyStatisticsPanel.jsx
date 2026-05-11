@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useStudyRoomState } from '../../state/useStudyRoom.js'
-import { fetchStats, fetchCurrentUser, loginUser, registerUser, logoutUser, getGitHubOAuthUrl } from '../../state/studySessionRecorder.js'
+import { fetchStats, fetchCurrentUser, loginUser, registerUser, logoutUser, getGitHubOAuthUrl, githubCallback } from '../../state/studySessionRecorder.js'
+
+const GITHUB_CLIENT_ID = 'Ov23liu6udKTVF2eWygV'
+const DEV = import.meta.env.DEV
+const REDIRECT_URI = DEV ? 'http://localhost:5173/' : 'https://je1ght.top/study-app/'
 
 export function StudyStatisticsPanel() {
   const { timer } = useStudyRoomState()
@@ -16,7 +20,38 @@ export function StudyStatisticsPanel() {
 
   useEffect(() => {
     fetchCurrentUser().then(setUser)
+    // Handle GitHub OAuth callback
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    if (code) {
+      window.history.replaceState({}, '', window.location.pathname)
+      exchangeGitHubCode(code)
+    }
   }, [])
+
+  const exchangeGitHubCode = async (code) => {
+    setLoginError('')
+    try {
+      // Exchange code for access token (in browser, bypassing server's China network issue)
+      const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ client_id: GITHUB_CLIENT_ID, client_secret: '2145d903e6570d36c74337a2dbea575cb00f2171', code }),
+      })
+      const tokenData = await tokenRes.json()
+      if (!tokenData.access_token) { setLoginError('GitHub auth failed'); return }
+
+      // Get GitHub user info
+      const userRes = await fetch('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      })
+      const githubUser = await userRes.json()
+
+      // Send to our backend to create account
+      const result = await githubCallback(tokenData.access_token, githubUser)
+      setUser(result.user)
+    } catch (err) { setLoginError(err.message) }
+  }
 
   useEffect(() => {
     fetchStats().then(setStats)
@@ -48,9 +83,9 @@ export function StudyStatisticsPanel() {
     setUser(null)
   }
 
-  const handleGitHubLogin = async () => {
-    const url = await getGitHubOAuthUrl()
-    if (url) window.location.href = url
+  const handleGitHubLogin = () => {
+    const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user:email`
+    window.location.href = url
   }
 
   const hours = Math.floor(stats.totalMinutes / 60)
