@@ -34,15 +34,7 @@ export function PanelOverlay({ title, description, onClose, children }) {
         aria-label={title}
       >
         <header className="panel-overlay__header">
-          <div>
-            <p className="panel-overlay__eyebrow">
-              {t('studyRoom.panelOverlay.eyebrow', {}, 'Panel Mode')}
-            </p>
-            <h2 className="panel-overlay__title">{title}</h2>
-            {description ? (
-              <p className="panel-overlay__copy">{description}</p>
-            ) : null}
-          </div>
+          <h2 className="panel-overlay__title">{title}</h2>
 
           <button
             type="button"

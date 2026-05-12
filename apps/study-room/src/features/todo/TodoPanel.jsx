@@ -24,14 +24,6 @@ export function TodoPanel() {
         <span className="floating-widget__badge">{items.length}</span>
       </div>
 
-      <p className="floating-widget__copy">
-        {t(
-          'studyRoom.todo.intro',
-          {},
-          'Compact local task list for the current study session.',
-        )}
-      </p>
-
       <form className="widget-inline-form" onSubmit={handleSubmit}>
         <input
           className="input"

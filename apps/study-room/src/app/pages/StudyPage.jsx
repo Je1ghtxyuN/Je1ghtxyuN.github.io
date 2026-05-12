@@ -22,39 +22,19 @@ export function StudyPage() {
   const activeScene = getStudyScene(preferences.selectedSceneId)
   const panelDefinitions = {
     todo: {
-      title: t('studyRoom.panels.todo.title', {}, 'Todo Panel'),
-      description: t(
-        'studyRoom.panels.todo.description',
-        {},
-        'Small task capture stays available as an overlay instead of permanently occupying the layout.',
-      ),
+      title: 'Tasks',
       render: () => <TodoPanel />,
     },
     music: {
-      title: t('studyRoom.panels.music.title', {}, 'Music Panel'),
-      description: t(
-        'studyRoom.panels.music.description',
-        {},
-        'Ambient playback remains available without crowding the main focus scene.',
-      ),
+      title: 'Music',
       render: () => <AmbientMusicPanel />,
     },
     statistics: {
-      title: t('studyRoom.panels.statistics.title', {}, 'Statistics Panel'),
-      description: t(
-        'studyRoom.panels.statistics.description',
-        {},
-        'Session counters and future progress views now live in a dedicated overlay surface.',
-      ),
+      title: 'Statistics',
       render: () => <StudyStatisticsPanel />,
     },
     settings: {
-      title: t('studyRoom.panels.settings.title', {}, 'Settings Panel'),
-      description: t(
-        'studyRoom.panels.settings.description',
-        {},
-        'Timer configuration and shared preferences open as a floating panel instead of a separate dashboard route.',
-      ),
+      title: 'Settings',
       render: () => <SettingsPanelContent />,
     },
   }

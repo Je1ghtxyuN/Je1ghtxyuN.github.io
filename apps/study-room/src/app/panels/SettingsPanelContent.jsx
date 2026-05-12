@@ -233,37 +233,6 @@ export function SettingsPanelContent() {
         <TimerSettingsWidget />
       </section>
 
-      <section className="floating-widget settings-placeholder-card">
-        <div className="floating-widget__header">
-          <div>
-            <p className="floating-widget__eyebrow">
-              {t(
-                'studyRoom.settings.audioEyebrow',
-                {},
-                'Audio Architecture Placeholder',
-              )}
-            </p>
-            <h3 className="floating-widget__title">
-              {t(
-                'studyRoom.settings.audioTitle',
-                {},
-                'Cloud music integration coming soon',
-              )}
-            </h3>
-          </div>
-          <span className="floating-widget__badge">
-            {t('common.future', {}, 'Future')}
-          </span>
-        </div>
-
-        <p className="floating-widget__meta">
-          {t(
-            'studyRoom.settings.audioCopy',
-            {},
-            'Ambient playback is still running through the local source provider. A future cloud provider will plug into the music-source abstraction without replacing the existing playback controller.',
-          )}
-        </p>
-      </section>
     </div>
   )
 }
