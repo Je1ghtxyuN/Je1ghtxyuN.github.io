@@ -18,7 +18,6 @@ let globalAudio = null
 function getGlobalAudio() {
   if (!globalAudio) {
     globalAudio = new Audio()
-    globalAudio.loop = true
     globalAudio.preload = 'auto'
   }
   return globalAudio
@@ -28,7 +27,7 @@ export function useAmbientMusicController() {
   const { preferences } = useStudyRoomState()
   const { setPreference } = useStudyRoomActions()
   const { t } = useStudyRoomLocale()
-  const playbackStateRef = useRef(getGlobalAudio().paused ? 'idle' : 'playing')
+  const nextTrackRef = useRef(null)
   const [playbackState, setPlaybackState] = useState(getGlobalAudio().paused ? 'idle' : 'playing')
   const [playbackError, setPlaybackError] = useState('')
   const [tracks, setTracks] = useState([])
@@ -126,6 +125,16 @@ export function useAmbientMusicController() {
     const nextIndex = (selectedTrackIndex + direction + tracks.length) % tracks.length
     selectTrack(tracks[nextIndex]?.id)
   }, [selectedTrackIndex, tracks, selectTrack])
+
+  // Store nextTrack function in ref so ended listener always has latest
+  nextTrackRef.current = () => goToTrack(1)
+
+  // Auto-advance to next track when current ends
+  useEffect(() => {
+    const handleEnded = () => { nextTrackRef.current?.() }
+    audio.addEventListener('ended', handleEnded)
+    return () => audio.removeEventListener('ended', handleEnded)
+  }, [])
 
   const doNetEaseLogin = useCallback(async (account, password) => {
     setLoginError('')

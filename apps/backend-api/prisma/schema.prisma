@@ -97,3 +97,13 @@ model StudySession {
   @@index([completedAt])
   @@index([userId])
 }
+
+model TodoItem {
+  id        String   @id @default(cuid())
+  userId    String
+  label     String
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

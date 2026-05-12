@@ -3,7 +3,7 @@ import { useTodoList } from './useTodoList.js'
 
 export function TodoPanel() {
   const { t } = useStudyRoomLocale()
-  const { draft, items, setDraft, addTodo, toggleTodo } = useTodoList()
+  const { draft, items, loading, userId, setDraft, addTodo, toggleTodo, deleteTodo } = useTodoList()
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -49,30 +49,28 @@ export function TodoPanel() {
         </button>
       </form>
 
-      {items.length ? (
+      {!userId ? (
+        <p className="floating-widget__meta">Login to sync tasks across sessions.</p>
+      ) : loading ? (
+        <p className="floating-widget__meta">Loading...</p>
+      ) : items.length ? (
         <ul className="todo-widget__list">
           {items.map((item) => (
-            <li
-              key={item.id}
-              className={`todo-widget__list-item${item.done ? ' todo-widget__list-item--done' : ''}`}
-            >
+            <li key={item.id} className={`todo-widget__list-item${item.done ? ' todo-widget__list-item--done' : ''}`}>
               <p className="floating-widget__copy">{item.label}</p>
-              <button
-                type="button"
-                className="button button--ghost"
-                onClick={() => toggleTodo(item.id)}
-              >
-                {item.done
-                  ? t('common.undo', {}, 'Undo')
-                  : t('common.done', {}, 'Done')}
-              </button>
+              <div className="todo-widget__actions">
+                <button type="button" className="button button--ghost button--sm" onClick={() => toggleTodo(item.id)}>
+                  {item.done ? 'Undo' : 'Done'}
+                </button>
+                {item.done ? (
+                  <button type="button" className="button button--ghost button--sm" onClick={() => deleteTodo(item.id)}>✕</button>
+                ) : null}
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="floating-widget__empty">
-          {t('studyRoom.todo.empty', {}, 'No tasks yet.')}
-        </div>
+        <div className="floating-widget__empty">No tasks yet.</div>
       )}
     </section>
   )

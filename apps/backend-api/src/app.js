@@ -14,6 +14,7 @@ import { rebuild } from './routes/rebuild.js'
 import { music } from './routes/music.js'
 import { userAuth } from './routes/user-auth.js'
 import { studySessions } from './routes/study-sessions.js'
+import { todos } from './routes/todos.js'
 
 export function createApp() {
   const app = new Hono()
@@ -39,6 +40,7 @@ export function createApp() {
   app.route('/music', music)
   app.route('/user', userAuth)
   app.route('/study-sessions', studySessions)
+  app.route('/todos', todos)
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404))
 
