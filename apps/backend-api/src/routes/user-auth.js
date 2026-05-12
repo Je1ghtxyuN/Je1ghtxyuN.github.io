@@ -62,16 +62,11 @@ userAuth.get('/me', async (c) => {
   const sessionId = c.req.header('Cookie')?.match(/study_session=([^;]+)/)?.[1]
   if (!sessionId) return c.json({ user: null })
 
-  const session = await prisma.session.findUnique({
-    where: { id: sessionId },
-    include: { user: true },
-  })
+  const session = await prisma.session.findUnique({ where: { id: sessionId } })
+  if (!session || session.expiresAt < new Date()) return c.json({ user: null })
 
-  if (!session || session.expiresAt < new Date()) {
-    return c.json({ user: null })
-  }
-
-  const u = session.user
+  const u = await prisma.studyUser.findUnique({ where: { id: session.userId } })
+  if (!u) return c.json({ user: null })
   return c.json({ user: { id: u.id, email: u.email, nickname: u.nickname, avatarUrl: u.avatarUrl } })
 })
 
@@ -94,50 +89,69 @@ userAuth.get('/github', (c) => {
   return c.json({ url })
 })
 
-// GET /user/github/callback — OAuth callback
+// POST /user/github/callback — frontend sends code, backend exchanges server-side
+userAuth.post('/github/callback', async (c) => {
+  let body
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON' }, 400) }
+  const code = body.code
+  if (!code) return c.json({ error: 'No code provided' }, 400)
+  return handleGitHubOAuth(c, code)
+})
+
+// GET /user/github/callback — direct browser redirect from GitHub (legacy)
 userAuth.get('/github/callback', async (c) => {
   const code = c.req.query('code')
   if (!code) return c.json({ error: 'No code provided' }, 400)
+  return handleGitHubOAuth(c, code)
+})
 
+async function handleGitHubOAuth(c, code) {
   // Exchange code for access token
-  const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      client_id: env.GITHUB_CLIENT_ID,
-      client_secret: env.GITHUB_CLIENT_SECRET,
-      code,
-    }),
-  })
-  const tokenData = await tokenRes.json()
-  if (!tokenData.access_token) return c.json({ error: 'Failed to get access token' }, 400)
+  let tokenData
+  try {
+    const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ client_id: env.GITHUB_CLIENT_ID, client_secret: env.GITHUB_CLIENT_SECRET, code }),
+      signal: AbortSignal.timeout(10000),
+    })
+    tokenData = await tokenRes.json()
+  } catch {
+    return c.json({ error: 'Server cannot reach GitHub. Use email login instead.' }, 500)
+  }
+
+  if (!tokenData.access_token) return c.json({ error: 'GitHub auth failed' }, 400)
 
   // Get user info
-  const userRes = await fetch('https://api.github.com/user', {
-    headers: { Authorization: `Bearer ${tokenData.access_token}`, 'User-Agent': 'je1ght-study-room' },
-  })
-  const githubUser = await userRes.json()
-
-  // Get email if not public
-  let email = githubUser.email
-  if (!email) {
-    const emailsRes = await fetch('https://api.github.com/user/emails', {
+  let githubUser, email
+  try {
+    const userRes = await fetch('https://api.github.com/user', {
       headers: { Authorization: `Bearer ${tokenData.access_token}`, 'User-Agent': 'je1ght-study-room' },
+      signal: AbortSignal.timeout(10000),
     })
-    const emails = await emailsRes.json()
-    const primary = emails.find((e) => e.primary)
-    email = primary?.email || emails[0]?.email
+    githubUser = await userRes.json()
+    email = githubUser.email
+    if (!email) {
+      const emailsRes = await fetch('https://api.github.com/user/emails', {
+        headers: { Authorization: `Bearer ${tokenData.access_token}`, 'User-Agent': 'je1ght-study-room' },
+      })
+      const emails = await emailsRes.json()
+      const primary = emails.find((e) => e.primary)
+      email = primary?.email || emails[0]?.email
+    }
+  } catch {
+    return c.json({ error: 'Cannot fetch GitHub profile from server.' }, 500)
   }
+
   if (!email) return c.json({ error: 'Could not get GitHub email' }, 400)
 
-  // Upsert user
+  const githubId = githubUser.id ? String(githubUser.id) : null
   const user = await prisma.studyUser.upsert({
     where: { email },
-    update: { githubId: String(githubUser.id), avatarUrl: githubUser.avatar_url, nickname: githubUser.login },
-    create: { email, githubId: String(githubUser.id), avatarUrl: githubUser.avatar_url, nickname: githubUser.login },
+    update: { githubId, avatarUrl: githubUser.avatar_url, nickname: githubUser.login },
+    create: { email, githubId, avatarUrl: githubUser.avatar_url, nickname: githubUser.login },
   })
 
-  // Issue session
   const expiresAt = new Date(Date.now() + SESSION_DURATION_MS)
   const session = await prisma.session.create({ data: { userId: user.id, expiresAt } })
   setCookie(c, 'study_session', session.id, {
@@ -146,8 +160,7 @@ userAuth.get('/github/callback', async (c) => {
     maxAge: SESSION_DURATION_MS / 1000, domain: env.COOKIE_DOMAIN,
   })
 
-  // Redirect to Study Room
-  return c.redirect('/study-app/')
-})
+  return c.json({ user: { id: user.id, email: user.email, nickname: user.nickname, avatarUrl: user.avatarUrl } })
+}
 
 export { userAuth }

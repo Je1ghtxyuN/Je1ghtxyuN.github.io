@@ -11,6 +11,7 @@ services:
       - /home/je1ght/websites/je1ght-platform/portal-source:/portal-source:rw
     networks:
       - database_default
+      - internet
 
   nginx:
     image: nginx:alpine
@@ -23,9 +24,12 @@ services:
       - /home/je1ght/websites/je1ght-platform/portal-source/public:/usr/share/nginx/html:ro
     networks:
       - database_default
+      - internet
     depends_on:
       - backend-api
 
 networks:
   database_default:
     external: true
+  internet:
+    driver: bridge

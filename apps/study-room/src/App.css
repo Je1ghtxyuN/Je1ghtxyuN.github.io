@@ -1410,6 +1410,22 @@ code {
   justify-content: space-between;
   padding: 0.4rem 0;
 }
+.stats-user__info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+.stats-user__avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.stats-user__icon {
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
 .stats-login-form {
   display: flex;
   flex-direction: column;
@@ -1429,36 +1445,66 @@ code {
 }
 .stats-login-actions {
   display: flex;
+  align-items: center;
   gap: 0.4rem;
   flex-wrap: wrap;
+}
+.stats-login-actions .button,
+.stats-login-actions .stats-gh-btn {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 .stats-gh-btn {
   background: rgba(255,255,255,0.06) !important;
   border-color: rgba(255,255,255,0.12) !important;
+  text-decoration: none !important;
+}
+
+/* Stats metrics cards */
+.stats-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+.stats-metric-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.65rem 0.4rem;
+  border: 1px solid rgba(142,183,255,0.1);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  text-align: center;
+}
+.stats-metric-card__value {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.stats-metric-card__label {
+  font-size: 0.68rem;
+  opacity: 0.55;
+  margin-top: 0.15rem;
 }
 
 /* Contribution heatmap */
 .stats-heatmap {
-  margin-top: 0.5rem;
-}
-.stats-heatmap__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.4rem;
+  margin-top: 0.6rem;
 }
 .stats-heatmap__label {
-  font-size: 0.75rem;
-  opacity: 0.7;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  display: block;
+  margin-bottom: 0.35rem;
 }
 .stats-heatmap__legend {
   display: flex;
   align-items: center;
   gap: 2px;
-}
-.stats-heatmap__legend-label {
-  font-size: 0.65rem;
-  opacity: 0.5;
+  margin-top: 0.35rem;
+  font-size: 0.6rem;
+  opacity: 0.45;
 }
 .stats-heatmap__grid {
   display: flex;

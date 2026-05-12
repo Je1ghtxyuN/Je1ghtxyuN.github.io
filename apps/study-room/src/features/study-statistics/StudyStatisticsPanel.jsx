@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useStudyRoomState } from '../../state/useStudyRoom.js'
-import { fetchStats, fetchDailyStats, fetchCurrentUser, loginUser, registerUser, logoutUser, githubCallback } from '../../state/studySessionRecorder.js'
+import { fetchStats, fetchDailyStats, fetchCurrentUser, loginUser, registerUser, logoutUser } from '../../state/studySessionRecorder.js'
 
 const GITHUB_CLIENT_ID = 'Ov23liu6udKTVF2eWygV'
 const DEV = import.meta.env.DEV
@@ -13,7 +13,7 @@ export function StudyStatisticsPanel() {
   const [stats, setStats] = useState({ total: 0, today: 0, thisWeek: 0, totalMinutes: 0 })
   const [daily, setDaily] = useState([])
   const [user, setUser] = useState(null)
-  const [loginMode, setLoginMode] = useState(null) // null, 'login', 'register'
+  const [loginMode, setLoginMode] = useState(null)
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [loginNick, setLoginNick] = useState('')
@@ -21,38 +21,7 @@ export function StudyStatisticsPanel() {
 
   useEffect(() => {
     fetchCurrentUser().then(setUser)
-    // Handle GitHub OAuth callback
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get('code')
-    if (code) {
-      window.history.replaceState({}, '', window.location.pathname)
-      exchangeGitHubCode(code)
-    }
   }, [])
-
-  const exchangeGitHubCode = async (code) => {
-    setLoginError('')
-    try {
-      // Exchange code for access token (in browser, bypassing server's China network issue)
-      const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ client_id: GITHUB_CLIENT_ID, client_secret: '2145d903e6570d36c74337a2dbea575cb00f2171', code }),
-      })
-      const tokenData = await tokenRes.json()
-      if (!tokenData.access_token) { setLoginError('GitHub auth failed'); return }
-
-      // Get GitHub user info
-      const userRes = await fetch('https://api.github.com/user', {
-        headers: { Authorization: `Bearer ${tokenData.access_token}` },
-      })
-      const githubUser = await userRes.json()
-
-      // Send to our backend to create account
-      const result = await githubCallback(tokenData.access_token, githubUser)
-      setUser(result.user)
-    } catch (err) { setLoginError(err.message) }
-  }
 
   useEffect(() => {
     fetchStats().then(setStats)
@@ -85,14 +54,11 @@ export function StudyStatisticsPanel() {
     setUser(null)
   }
 
-  const handleGitHubLogin = () => {
-    const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user:email`
-    window.location.href = url
-  }
+  const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user:email`
 
   const hours = Math.floor(stats.totalMinutes / 60)
   const mins = stats.totalMinutes % 60
-  const totalTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`
+  const totalTime = hours > 0 ? `${hours}h ${mins}m` : '—'
 
   return (
     <section className="floating-widget">
@@ -107,7 +73,10 @@ export function StudyStatisticsPanel() {
       {/* Login / User section */}
       {user ? (
         <div className="stats-user">
-          <p className="floating-widget__meta">Logged in as <strong>{user.nickname || user.email}</strong></p>
+          <span className="stats-user__info">
+            {user.avatarUrl ? <img src={user.avatarUrl} alt="" className="stats-user__avatar" /> : <i className="fas fa-user-circle stats-user__icon" />}
+            <strong>{user.nickname || user.email}</strong>
+          </span>
           <button type="button" className="button button--ghost button--sm" onClick={handleLogout}>Logout</button>
         </div>
       ) : loginMode ? (
@@ -127,52 +96,41 @@ export function StudyStatisticsPanel() {
         <div className="stats-login-actions">
           <button type="button" className="button button--primary button--sm" onClick={() => setLoginMode('login')}>Login</button>
           <button type="button" className="button button--ghost button--sm" onClick={() => setLoginMode('register')}>Register</button>
-          <button type="button" className="button button--ghost button--sm stats-gh-btn" onClick={handleGitHubLogin}>
+          <a href={githubOAuthUrl} className="button button--ghost button--sm stats-gh-btn">
             <i className="fab fa-github" /> GitHub
-          </button>
+          </a>
         </div>
       )}
 
-      <div className="widget-metrics">
-        <div className="widget-metric">
-          <span className="widget-metric__value">{stats.today}</span>
-          <span className="widget-metric__label">Today</span>
+      <div className="stats-metrics-row">
+        <div className="stats-metric-card">
+          <span className="stats-metric-card__value">{stats.today || '—'}</span>
+          <span className="stats-metric-card__label">Pomodoros today</span>
         </div>
-        <div className="widget-metric">
-          <span className="widget-metric__value">{stats.total}</span>
-          <span className="widget-metric__label">Total</span>
+        <div className="stats-metric-card">
+          <span className="stats-metric-card__value">{stats.total || '—'}</span>
+          <span className="stats-metric-card__label">Total completed</span>
         </div>
-        <div className="widget-metric">
-          <span className="widget-metric__value">{totalTime}</span>
-          <span className="widget-metric__label">Focus time</span>
+        <div className="stats-metric-card">
+          <span className="stats-metric-card__value">{totalTime}</span>
+          <span className="stats-metric-card__label">Focus time</span>
         </div>
       </div>
 
-      {/* Contribution heatmap */}
       {daily.length > 0 && (
         <div className="stats-heatmap">
-          <div className="stats-heatmap__header">
-            <span className="stats-heatmap__label">Study Activity</span>
-            <span className="stats-heatmap__legend">
-              <span className="stats-heatmap__legend-label">Less</span>
-              {[0, 15, 30, 60, 120].map((v) => (
-                <span key={v} className="stats-heatmap__cell stats-heatmap__cell--lvl{Math.min(4, v === 0 ? 0 : Math.ceil(v / 30))}" />
-              ))}
-              <span className="stats-heatmap__legend-label">More</span>
-            </span>
-          </div>
+          <span className="stats-heatmap__label">Last 12 weeks</span>
           <div className="stats-heatmap__grid">
             {daily.map((d) => {
               const mins = d.minutes || 0
               const level = mins === 0 ? 0 : mins <= 15 ? 1 : mins <= 30 ? 2 : mins <= 60 ? 3 : 4
-              return (
-                <span
-                  key={d.date}
-                  className={`stats-heatmap__cell stats-heatmap__cell--lvl${level}`}
-                  title={`${d.date}: ${mins} min`}
-                />
-              )
+              return <span key={d.date} className={'stats-heatmap__cell stats-heatmap__cell--lvl' + level} title={d.date + ': ' + mins + ' min'} />
             })}
+          </div>
+          <div className="stats-heatmap__legend">
+            <span>Less</span>
+            {[0, 1, 2, 3, 4].map((lvl) => <span key={lvl} className={'stats-heatmap__cell stats-heatmap__cell--lvl' + lvl} />)}
+            <span>More</span>
           </div>
         </div>
       )}

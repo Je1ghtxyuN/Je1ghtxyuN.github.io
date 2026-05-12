@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { SessionTransitionCue } from './SessionTransitionCue.jsx'
+import { GitHubCallback } from './GitHubCallback.jsx'
 import { BackgroundLayer } from '../components/BackgroundLayer.jsx'
 import {
   getStudyScene,
@@ -26,6 +27,7 @@ export function AppShell() {
 
   return (
     <div className={appClassName}>
+      <GitHubCallback />
       <BackgroundLayer scene={activeScene} presentation={scenePresentation} />
       <div className="study-app__surface">
         <SessionTransitionCue />
