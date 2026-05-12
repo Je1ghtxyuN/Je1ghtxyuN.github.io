@@ -79,6 +79,26 @@ export async function logoutUser() {
   })
 }
 
+export async function loadUserPrefs() {
+  try {
+    const res = await fetch(`${API_BASE}/user/prefs`, { credentials: 'include' })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.prefs || null
+  } catch { return null }
+}
+
+export async function saveUserPrefs(preferences) {
+  try {
+    await fetch(`${API_BASE}/user/prefs`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ preferences }),
+    })
+  } catch {}
+}
+
 export async function getGitHubOAuthUrl() {
   const res = await fetch(`${API_BASE}/user/github`)
   if (!res.ok) return null

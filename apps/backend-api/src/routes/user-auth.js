@@ -70,6 +70,31 @@ userAuth.get('/me', async (c) => {
   return c.json({ user: { id: u.id, email: u.email, nickname: u.nickname, avatarUrl: u.avatarUrl } })
 })
 
+// GET /user/prefs — load user preferences
+userAuth.get('/prefs', async (c) => {
+  const sessionId = c.req.header('Cookie')?.match(/study_session=([^;]+)/)?.[1]
+  if (!sessionId) return c.json({ prefs: null })
+  const session = await prisma.session.findUnique({ where: { id: sessionId } })
+  if (!session) return c.json({ prefs: null })
+  const user = await prisma.studyUser.findUnique({ where: { id: session.userId } })
+  return c.json({ prefs: user?.preferences || null })
+})
+
+// PUT /user/prefs — save user preferences
+userAuth.put('/prefs', async (c) => {
+  const sessionId = c.req.header('Cookie')?.match(/study_session=([^;]+)/)?.[1]
+  if (!sessionId) return c.json({ error: 'Not logged in' }, 401)
+  const session = await prisma.session.findUnique({ where: { id: sessionId } })
+  if (!session) return c.json({ error: 'Not logged in' }, 401)
+  let body
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON' }, 400) }
+  await prisma.studyUser.update({
+    where: { id: session.userId },
+    data: { preferences: body.preferences },
+  })
+  return c.json({ ok: true })
+})
+
 // POST /user/logout
 userAuth.post('/logout', async (c) => {
   const sessionId = c.req.header('Cookie')?.match(/study_session=([^;]+)/)?.[1]

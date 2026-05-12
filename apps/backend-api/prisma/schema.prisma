@@ -85,6 +85,7 @@ model StudyUser {
   nickname     String?
   avatarUrl    String?
   githubId     String?  @unique
+  preferences  Json?
   createdAt    DateTime @default(now())
 }
 

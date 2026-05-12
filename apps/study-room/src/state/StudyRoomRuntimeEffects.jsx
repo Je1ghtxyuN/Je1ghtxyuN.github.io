@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import bellCueSource from '../../../../packages/shared-assets/se/BreakOrWork.mp3'
 import { writePersistedStudyRoomState } from './studyRoomStorage.js'
 import { useStudyRoomState } from './useStudyRoom.js'
-import { recordPomodoro } from './studySessionRecorder.js'
+import { recordPomodoro, saveUserPrefs, fetchCurrentUser } from './studySessionRecorder.js'
 
 export function StudyRoomRuntimeEffects() {
   const state = useStudyRoomState()
@@ -62,6 +62,26 @@ export function StudyRoomRuntimeEffects() {
       bellAudioRef.current = null
     }
   }, [])
+
+  // Sync preferences to backend when logged in
+  useEffect(() => {
+    fetchCurrentUser().then((user) => {
+      if (!user) return
+      saveUserPrefs({
+        selectedSceneId,
+        selectedTrackId,
+        timerDisplayMode,
+        volume,
+        soundEnabled,
+        durations: {
+          work: durations.work,
+          shortBreak: durations.shortBreak,
+          longBreak: durations.longBreak,
+        },
+        longBreakInterval,
+      })
+    })
+  }, [selectedSceneId, selectedTrackId, timerDisplayMode, volume, soundEnabled, durations.work, durations.shortBreak, durations.longBreak, longBreakInterval])
 
   // Record completed work cycles to backend
   useEffect(() => {
