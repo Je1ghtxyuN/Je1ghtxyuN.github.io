@@ -46,13 +46,6 @@ export function TimerSettingsWidget() {
             {t('studyRoom.settings.timerTitle', {}, 'Pomodoro engine')}
           </h3>
         </div>
-        <p className="floating-widget__meta">
-          {t(
-            'studyRoom.settings.timerIntro',
-            {},
-            'Automatic rollover stays active while the durations and cadence stay user-configurable.',
-          )}
-        </p>
       </div>
 
       <form className="settings-form" onSubmit={handleSubmit}>
@@ -124,20 +117,7 @@ export function TimerSettingsWidget() {
 
         <div className="settings-row">
           <div>
-            <strong>
-              {t(
-                'studyRoom.settings.completionBellTitle',
-                {},
-                'Completion bell',
-              )}
-            </strong>
-            <p className="floating-widget__meta">
-              {t(
-                'studyRoom.settings.completionBellCopy',
-                {},
-                'Plays only when the timer naturally rolls into the next Pomodoro phase.',
-              )}
-            </p>
+            {t('studyRoom.settings.completionBellTitle', {}, 'Completion bell')}
           </div>
           <button
             type="button"

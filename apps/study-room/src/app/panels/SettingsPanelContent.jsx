@@ -16,15 +16,15 @@ const DISPLAY_OPTIONS = [
 export function SettingsPanelContent() {
   const { preferences } = useStudyRoomState()
   const { setPreference } = useStudyRoomActions()
-  const { locale, setLocale, supportedLocales } = useStudyRoomLocale()
+  const { locale, setLocale, supportedLocales, t } = useStudyRoomLocale()
 
   return (
     <div className="panel-stack">
       <section className="floating-widget">
-        <h3 className="floating-widget__title">Preferences</h3>
+        <h3 className="floating-widget__title">{t('studyRoom.settings.title', {}, 'Preferences')}</h3>
 
         <div className="settings-group">
-          <h4 className="floating-widget__title">Language</h4>
+          <h4 className="floating-widget__title">{t('studyRoom.settings.languageTitle', {}, 'Language')}</h4>
           <div className="settings-choice-grid">
             {supportedLocales.map((item) => (
               <button
@@ -40,7 +40,7 @@ export function SettingsPanelContent() {
         </div>
 
         <div className="settings-group">
-          <h4 className="floating-widget__title">Scene</h4>
+          <h4 className="floating-widget__title">{t('studyRoom.settings.sceneTitle', {}, 'Scene')}</h4>
           <div className="scene-selector">
             {STUDY_SCENES.map((scene) => (
               <button
@@ -49,14 +49,14 @@ export function SettingsPanelContent() {
                 className={`scene-selector__option${preferences.selectedSceneId === scene.id ? ' scene-selector__option--active' : ''}`}
                 onClick={() => setPreference('selectedSceneId', scene.id)}
               >
-                <span className="scene-selector__label">{scene.name}</span>
+                <span className="scene-selector__label">{t(`studyRoom.scenes.${scene.localeKey}.name`, {}, scene.name)}</span>
               </button>
             ))}
           </div>
         </div>
 
         <div className="settings-group">
-          <h4 className="floating-widget__title">Timer Display</h4>
+          <h4 className="floating-widget__title">{t('studyRoom.settings.displayTitle', {}, 'Timer Display')}</h4>
           <div className="settings-choice-grid">
             {DISPLAY_OPTIONS.map((opt) => (
               <button

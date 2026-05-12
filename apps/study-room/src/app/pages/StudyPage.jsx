@@ -22,19 +22,19 @@ export function StudyPage() {
   const activeScene = getStudyScene(preferences.selectedSceneId)
   const panelDefinitions = {
     todo: {
-      title: 'Tasks',
+      title: t('studyRoom.panels.todo.title', {}, 'Tasks'),
       render: () => <TodoPanel />,
     },
     music: {
-      title: 'Music',
+      title: t('studyRoom.panels.music.title', {}, 'Music'),
       render: () => <AmbientMusicPanel />,
     },
     statistics: {
-      title: 'Statistics',
+      title: t('studyRoom.panels.statistics.title', {}, 'Statistics'),
       render: () => <StudyStatisticsPanel />,
     },
     settings: {
-      title: 'Settings',
+      title: t('studyRoom.panels.settings.title', {}, 'Settings'),
       render: () => <SettingsPanelContent />,
     },
   }
