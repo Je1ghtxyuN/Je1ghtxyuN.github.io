@@ -53,6 +53,40 @@ studySessions.get('/stats', async (c) => {
   return c.json({ total, today, thisWeek, totalMinutes: totalMinutes._sum.workDuration || 0 })
 })
 
+// GET /study-sessions/daily — daily study minutes for contribution calendar
+studySessions.get('/daily', async (c) => {
+  const days = Math.min(365, Math.max(7, Number(c.req.query('days')) || 84))
+  const userId = await resolveUserId(c)
+  const userFilter = userId ? { userId } : {}
+
+  const since = new Date()
+  since.setDate(since.getDate() - days)
+  since.setHours(0, 0, 0, 0)
+
+  const sessions = await prisma.studySession.findMany({
+    where: { ...userFilter, completedAt: { gte: since } },
+    select: { workDuration: true, completedAt: true },
+  })
+
+  // Aggregate by date
+  const daily = {}
+  sessions.forEach((s) => {
+    const d = s.completedAt.toISOString().slice(0, 10)
+    daily[d] = (daily[d] || 0) + s.workDuration
+  })
+
+  // Fill in all days in range
+  const result = []
+  for (let i = days; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const key = d.toISOString().slice(0, 10)
+    result.push({ date: key, minutes: daily[key] || 0 })
+  }
+
+  return c.json({ daily: result })
+})
+
 // GET /study-sessions — recent sessions
 studySessions.get('/', async (c) => {
   const limit = Math.min(50, Math.max(1, Number(c.req.query('limit')) || 20))

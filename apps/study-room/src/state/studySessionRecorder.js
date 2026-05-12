@@ -13,6 +13,16 @@ export async function recordPomodoro(workDuration) {
   }
 }
 
+export async function fetchDailyStats(days = 84) {
+  try {
+    const res = await fetch(`${API_BASE}/study-sessions/daily?days=${days}`, { credentials: 'include' })
+    if (!res.ok) return { daily: [] }
+    return await res.json()
+  } catch {
+    return { daily: [] }
+  }
+}
+
 export async function fetchStats() {
   try {
     const res = await fetch(`${API_BASE}/study-sessions/stats`, { credentials: 'include' })

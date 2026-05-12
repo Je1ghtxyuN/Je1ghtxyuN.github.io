@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useStudyRoomState } from '../../state/useStudyRoom.js'
-import { fetchStats, fetchCurrentUser, loginUser, registerUser, logoutUser, getGitHubOAuthUrl, githubCallback } from '../../state/studySessionRecorder.js'
+import { fetchStats, fetchDailyStats, fetchCurrentUser, loginUser, registerUser, logoutUser, githubCallback } from '../../state/studySessionRecorder.js'
 
 const GITHUB_CLIENT_ID = 'Ov23liu6udKTVF2eWygV'
 const DEV = import.meta.env.DEV
@@ -11,6 +11,7 @@ export function StudyStatisticsPanel() {
   const { timer } = useStudyRoomState()
   const { t } = useStudyRoomLocale()
   const [stats, setStats] = useState({ total: 0, today: 0, thisWeek: 0, totalMinutes: 0 })
+  const [daily, setDaily] = useState([])
   const [user, setUser] = useState(null)
   const [loginMode, setLoginMode] = useState(null) // null, 'login', 'register'
   const [loginEmail, setLoginEmail] = useState('')
@@ -55,6 +56,7 @@ export function StudyStatisticsPanel() {
 
   useEffect(() => {
     fetchStats().then(setStats)
+    fetchDailyStats().then((d) => setDaily(d.daily || []))
   }, [timer.completedWorkCycles])
 
   const handleLogin = async (e) => {
@@ -133,20 +135,47 @@ export function StudyStatisticsPanel() {
 
       <div className="widget-metrics">
         <div className="widget-metric">
-          <span className="widget-metric__value">{timer.completedWorkCycles}</span>
-          <span className="widget-metric__label">{t('studyRoom.statistics.sessionPomodoros', {}, 'This session')}</span>
-        </div>
-        <div className="widget-metric">
           <span className="widget-metric__value">{stats.today}</span>
-          <span className="widget-metric__label">{t('studyRoom.statistics.todayPomodoros', {}, 'Today')}</span>
+          <span className="widget-metric__label">Today</span>
         </div>
         <div className="widget-metric">
           <span className="widget-metric__value">{stats.total}</span>
-          <span className="widget-metric__label">{t('studyRoom.statistics.totalPomodoros', {}, 'All time')}</span>
+          <span className="widget-metric__label">Total</span>
+        </div>
+        <div className="widget-metric">
+          <span className="widget-metric__value">{totalTime}</span>
+          <span className="widget-metric__label">Focus time</span>
         </div>
       </div>
 
-      <p className="floating-widget__meta">{t('studyRoom.statistics.totalTime', {}, `Total focus time: ${totalTime}`)}</p>
+      {/* Contribution heatmap */}
+      {daily.length > 0 && (
+        <div className="stats-heatmap">
+          <div className="stats-heatmap__header">
+            <span className="stats-heatmap__label">Study Activity</span>
+            <span className="stats-heatmap__legend">
+              <span className="stats-heatmap__legend-label">Less</span>
+              {[0, 15, 30, 60, 120].map((v) => (
+                <span key={v} className="stats-heatmap__cell stats-heatmap__cell--lvl{Math.min(4, v === 0 ? 0 : Math.ceil(v / 30))}" />
+              ))}
+              <span className="stats-heatmap__legend-label">More</span>
+            </span>
+          </div>
+          <div className="stats-heatmap__grid">
+            {daily.map((d) => {
+              const mins = d.minutes || 0
+              const level = mins === 0 ? 0 : mins <= 15 ? 1 : mins <= 30 ? 2 : mins <= 60 ? 3 : 4
+              return (
+                <span
+                  key={d.date}
+                  className={`stats-heatmap__cell stats-heatmap__cell--lvl${level}`}
+                  title={`${d.date}: ${mins} min`}
+                />
+              )
+            })}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

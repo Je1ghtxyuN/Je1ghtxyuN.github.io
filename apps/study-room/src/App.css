@@ -1436,3 +1436,43 @@ code {
   background: rgba(255,255,255,0.06) !important;
   border-color: rgba(255,255,255,0.12) !important;
 }
+
+/* Contribution heatmap */
+.stats-heatmap {
+  margin-top: 0.5rem;
+}
+.stats-heatmap__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.stats-heatmap__label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+.stats-heatmap__legend {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.stats-heatmap__legend-label {
+  font-size: 0.65rem;
+  opacity: 0.5;
+}
+.stats-heatmap__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.stats-heatmap__cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.04);
+}
+.stats-heatmap__cell--lvl0 { background: rgba(255,255,255,0.04); }
+.stats-heatmap__cell--lvl1 { background: rgba(88,166,255,0.15); }
+.stats-heatmap__cell--lvl2 { background: rgba(88,166,255,0.35); }
+.stats-heatmap__cell--lvl3 { background: rgba(88,166,255,0.55); }
+.stats-heatmap__cell--lvl4 { background: rgba(88,166,255,0.80); }
