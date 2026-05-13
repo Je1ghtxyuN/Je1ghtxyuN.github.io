@@ -26,6 +26,9 @@ export function AmbientMusicPanel() {
     doSendSms,
     doSmsLogin,
     switchToPlaylist,
+    playMode,
+    playModeIcon,
+    cyclePlayMode,
   } = useAmbientMusicController()
   const currentTrackTitle = currentTrack.title || t('studyRoom.music.noTrack', {}, 'No track')
   const artists = currentTrack.artists || ''
@@ -173,14 +176,22 @@ export function AmbientMusicPanel() {
       </div>
 
       <div className="music-widget__controls">
-        <button type="button" className="button button--ghost" onClick={previousTrack}>
-          {t('common.previous', {}, 'Previous')}
+        <button type="button" className="button button--ghost music-widget__icon-btn" onClick={previousTrack} title={t('common.previous', {}, 'Previous')}>
+          ◀
         </button>
-        <button type="button" className="button button--primary" onClick={togglePlayback} disabled={!soundEnabled}>
-          {playbackState === 'playing' ? t('common.pause', {}, 'Pause') : t('common.play', {}, 'Play')}
+        <button type="button" className="button button--primary music-widget__icon-btn" onClick={togglePlayback} disabled={!soundEnabled} title={playbackState === 'playing' ? t('common.pause', {}, 'Pause') : t('common.play', {}, 'Play')}>
+          {playbackState === 'playing' ? '❚❚' : '▶'}
         </button>
-        <button type="button" className="button button--ghost" onClick={nextTrack}>
-          {t('common.next', {}, 'Next')}
+        <button type="button" className="button button--ghost music-widget__icon-btn" onClick={nextTrack} title={t('common.next', {}, 'Next')}>
+          ▶
+        </button>
+        <button
+          type="button"
+          className={`music-widget__play-mode${playMode === 'shuffle' ? ' music-widget__play-mode--shuffle' : ''}`}
+          onClick={cyclePlayMode}
+          title={playMode}
+        >
+          {playModeIcon}
         </button>
       </div>
 

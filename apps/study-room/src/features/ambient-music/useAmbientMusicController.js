@@ -7,6 +7,9 @@ import {
 import { getAmbientTrackSource, MUSIC_SOURCE_TYPES } from './musicSources.js'
 import { loginNetEase, loginNetEasePhone, sendSmsCode, verifySmsCode, fetchUserPlaylists } from './neteaseSource.js'
 
+const PLAY_MODES = ['loop', 'sequential', 'shuffle']
+const PLAY_MODE_ICONS = { loop: '↻', sequential: '→', shuffle: '⇄' }
+
 const getTrackIndex = (tracks, trackId) => {
   const index = tracks.findIndex((track) => track.id === trackId)
   return index >= 0 ? index : 0
@@ -28,6 +31,7 @@ export function useAmbientMusicController() {
   const { setPreference } = useStudyRoomActions()
   const { t } = useStudyRoomLocale()
   const nextTrackRef = useRef(null)
+  const wasPlayingRef = useRef(false)
   const [playbackState, setPlaybackState] = useState(getGlobalAudio().paused ? 'idle' : 'playing')
   const [playbackError, setPlaybackError] = useState('')
   const [tracks, setTracks] = useState([])
@@ -36,6 +40,7 @@ export function useAmbientMusicController() {
   const [neteaseUser, setNeteaseUser] = useState(null)
   const [userPlaylists, setUserPlaylists] = useState([])
   const [loginError, setLoginError] = useState('')
+  const [playMode, setPlayMode] = useState('loop')
   const sourceType = MUSIC_SOURCE_TYPES.netease
   const trackSource = getAmbientTrackSource(sourceType)
   const audio = getGlobalAudio()
@@ -58,6 +63,11 @@ export function useAmbientMusicController() {
     })
   }, [])
 
+  // Track user play intent — audio.paused is unreliable after track ends
+  useEffect(() => {
+    wasPlayingRef.current = playbackState === 'playing'
+  }, [playbackState])
+
   // Fetch song URL when track changes
   useEffect(() => {
     if (sourceType !== MUSIC_SOURCE_TYPES.netease) return
@@ -79,11 +89,11 @@ export function useAmbientMusicController() {
   // Switch track
   useEffect(() => {
     if (!currentTrack.src) return
-    const wasPlaying = !audio.paused
+    const shouldPlay = wasPlayingRef.current
     audio.pause()
     audio.src = currentTrack.src
     audio.load()
-    if (wasPlaying) {
+    if (shouldPlay) {
       void audio.play().catch(() => {
         setPlaybackState('paused')
       })
@@ -127,7 +137,20 @@ export function useAmbientMusicController() {
   }, [selectedTrackIndex, tracks, selectTrack])
 
   // Store nextTrack function in ref so ended listener always has latest
-  nextTrackRef.current = () => goToTrack(1)
+  nextTrackRef.current = () => {
+    if (playMode === 'shuffle' && tracks.length > 1) {
+      let randomIndex
+      do {
+        randomIndex = Math.floor(Math.random() * tracks.length)
+      } while (randomIndex === selectedTrackIndex)
+      selectTrack(tracks[randomIndex]?.id)
+    } else if (playMode === 'sequential' && selectedTrackIndex >= tracks.length - 1) {
+      // Stop at end of playlist in sequential mode
+      pause()
+    } else {
+      goToTrack(1)
+    }
+  }
 
   // Auto-advance to next track when current ends
   useEffect(() => {
@@ -192,6 +215,13 @@ export function useAmbientMusicController() {
     localStorage.removeItem('netease_user')
   }, [])
 
+  const cyclePlayMode = useCallback(() => {
+    setPlayMode((prev) => {
+      const nextIndex = (PLAY_MODES.indexOf(prev) + 1) % PLAY_MODES.length
+      return PLAY_MODES[nextIndex]
+    })
+  }, [])
+
   const switchToPlaylist = useCallback(async (playlistId) => {
     setLoading(true)
     try {
@@ -253,6 +283,9 @@ export function useAmbientMusicController() {
     nextTrack() { goToTrack(1) },
     previousTrack() { goToTrack(-1) },
     setVolume(value) { setPreference('volume', value) },
+    playMode,
+    playModeIcon: PLAY_MODE_ICONS[playMode],
+    cyclePlayMode,
     // NetEase login
     neteaseUser,
     userPlaylists,

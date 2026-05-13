@@ -58,7 +58,9 @@ export function StudyStatisticsPanel() {
 
   const hours = Math.floor(stats.totalMinutes / 60)
   const mins = stats.totalMinutes % 60
-  const totalTime = hours > 0 ? `${hours}h ${mins}m` : '—'
+  const totalTime = stats.totalMinutes > 0
+    ? (hours > 0 ? `${hours}h ${mins}m` : `${mins}m`)
+    : '—'
 
   return (
     <section className="floating-widget">

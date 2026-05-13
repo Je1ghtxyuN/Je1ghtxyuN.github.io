@@ -213,9 +213,10 @@ export async function rebuildPortal() {
       cwd: portalRoot,
       timeout: 60000,
     })
-    // Fix ownership and restart nginx to refresh bind mount
+    // Fix ownership so nginx can read (runs as root in Docker, nginx needs read)
     await execFileAsync('chown', ['-R', '1000:1000', join(portalRoot, 'public')], { timeout: 10000 }).catch(() => {})
-    await execFileAsync('docker', ['compose', '-f', '/home/je1ght/docker/je1ght-platform/docker-compose.yml', 'restart', 'nginx'], { timeout: 15000 }).catch(() => {})
+    // Touch nginx HTML dir to refresh bind mount without downtime
+    await execFileAsync('touch', [join(portalRoot, 'public', '.nginx-refresh')], { timeout: 5000 }).catch(() => {})
     return { ok: true, postsGenerated: posts.length, hexoOutput: stdout, hexoErrors: stderr || null }
   } catch (err) {
     try {

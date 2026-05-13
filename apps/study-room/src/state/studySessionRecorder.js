@@ -6,6 +6,7 @@ export async function recordPomodoro(workDuration) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
+      keepalive: true,
       body: JSON.stringify({ workDuration }),
     })
   } catch {

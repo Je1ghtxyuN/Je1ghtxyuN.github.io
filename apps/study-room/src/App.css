@@ -1279,6 +1279,46 @@ code {
   }
 }
 
+/* Music player icon buttons */
+.music-widget__icon-btn {
+  min-width: 2.8rem;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+/* Music play mode toggle */
+.music-widget__play-mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border: 1px solid rgba(142, 183, 255, 0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(142, 183, 255, 0.7);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.music-widget__play-mode:hover {
+  background: rgba(142, 183, 255, 0.12);
+  color: rgba(142, 183, 255, 1);
+}
+
+.music-widget__play-mode--shuffle {
+  color: rgba(255, 183, 107, 0.9);
+  border-color: rgba(255, 183, 107, 0.25);
+}
+
+.music-widget__play-mode--shuffle:hover {
+  background: rgba(255, 183, 107, 0.12);
+  color: rgba(255, 183, 107, 1);
+}
+
 /* NetEase login */
 .music-widget__netease {
   padding-top: 0.2rem;
