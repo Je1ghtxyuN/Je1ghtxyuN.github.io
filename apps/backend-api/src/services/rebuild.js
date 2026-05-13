@@ -215,12 +215,18 @@ export async function rebuildPortal() {
     })
     // Fix ownership so nginx can read (runs as root in Docker, nginx needs read)
     await execFileAsync('chown', ['-R', '1000:1000', join(portalRoot, 'public')], { timeout: 10000 }).catch(() => {})
+    // Bust Cloudflare cache: replace BUILD_VER placeholder with Unix timestamp
+    const buildVer = String(Math.floor(Date.now() / 1000))
+    await execFileAsync('find', [join(portalRoot, 'public'), '-name', '*.html', '-exec', 'sed', '-i', `s/BUILD_VER/${buildVer}/g`, '{}', '+'], { timeout: 10000 }).catch(() => {})
     // Touch nginx HTML dir to refresh bind mount without downtime
     await execFileAsync('touch', [join(portalRoot, 'public', '.nginx-refresh')], { timeout: 5000 }).catch(() => {})
-    return { ok: true, postsGenerated: posts.length, hexoOutput: stdout, hexoErrors: stderr || null }
+    return { ok: true, postsGenerated: posts.length, hexoOutput: stdout, hexoErrors: stderr || null, cacheVersion: buildVer }
   } catch (err) {
     try {
       await execFileAsync('npx', ['hexo', 'generate'], { cwd: portalRoot, timeout: 60000 })
+      // Cache bust in fallback path too
+      const fbVer = String(Math.floor(Date.now() / 1000))
+      await execFileAsync('find', [join(portalRoot, 'public'), '-name', '*.html', '-exec', 'sed', '-i', `s/BUILD_VER/${fbVer}/g`, '{}', '+'], { timeout: 10000 }).catch(() => {})
       return { ok: true, postsGenerated: posts.length }
     } catch (err2) {
       return { ok: false, postsGenerated: posts.length, error: err.message, hexoOutput: err.stdout || '', hexoErrors: err.stderr || '' }

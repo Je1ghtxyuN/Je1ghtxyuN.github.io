@@ -188,6 +188,6 @@ structured_data:
 
 inject:
   head:
-    - <link rel="stylesheet" href="/css/portal-custom.css?v=3">
+    - <link rel="stylesheet" href="/css/portal-custom.css?v=BUILD_VER">
   bottom:
-    - <script src="/js/portal-hero.js?v=2" defer></script>
+    - <script src="/js/portal-hero.js?v=BUILD_VER" defer></script>

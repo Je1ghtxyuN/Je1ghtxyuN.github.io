@@ -30,6 +30,11 @@ echo "[4/7] Building Portal..."
 cd "$REPO_ROOT/apps/blog-portal"
 ./node_modules/.bin/hexo generate 2>&1 | tail -1
 
+# Bust Cloudflare cache by replacing BUILD_VER placeholder with Unix timestamp
+BUILD_VER=$(date +%s)
+echo "       Cache-bust version: $BUILD_VER"
+find "$REPO_ROOT/apps/blog-portal/public" -name '*.html' -exec sed -i '' "s/BUILD_VER/$BUILD_VER/g" {} +
+
 # --- Prepare self-contained portal for server ---
 # Server has no packages/ directory, so copy deps into portal before syncing.
 # Save and restore the local shared-assets symlink.
