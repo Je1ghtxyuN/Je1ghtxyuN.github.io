@@ -30,7 +30,7 @@ function yamlEscape(value) {
   if (value === null || value === undefined) return 'null'
   if (typeof value === 'number' || typeof value === 'boolean') return String(value)
   const str = String(value)
-  if (str.includes('\n') || str.includes(':') || str.includes('#') || str.includes('"')) {
+  if (str.includes('\n') || str.includes(':') || str.includes('#') || str.includes('"') || str.includes(',')) {
     return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
   }
   return str
@@ -171,9 +171,9 @@ export async function rebuildPortal() {
     const portfolioData = {
       section: {
         title: 'Portfolio',
-        intro: 'Projects and builds that define the platform direction.',
+        intro: '',
         home_preview_title: 'Selected Projects',
-        home_preview_intro: 'Active workstreams rendered from the portfolio data model.',
+        home_preview_intro: '',
         page_link_label: 'View Project',
       },
       cards: portfolioItems.map((item) => ({

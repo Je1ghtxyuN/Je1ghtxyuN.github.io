@@ -71,11 +71,9 @@
   header.appendChild(scrollHint)
 
   // Typewriter effect
-  var phrases = [
-    'Code, Anime, Games, and Coffee.',
-    'Elegant technical blog and portfolio foundation.',
-    'Building a calm, long-term personal platform.'
-  ]
+  var phrases = (data.hero_phrases && data.hero_phrases.length > 0)
+    ? data.hero_phrases
+    : ['Code, Anime, Games, and Coffee.', 'VR, HCI, and game dev.', "Writing things down so I don't forget."]
   var phraseIndex = 0
   var charIndex = 0
   var isDeleting = false

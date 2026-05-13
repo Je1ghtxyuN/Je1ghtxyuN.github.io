@@ -4,58 +4,52 @@ home:
   shortcuts_title: Quick Entry
   recent_posts_title: Recent Writing
   portfolio_preview_title: Featured Work
-  recent_posts_empty_text: No posts are published yet. The portal structure is ready for the first articles.
+  recent_posts_empty_text: No posts yet.
 about:
   skills: [Virtual Reality Prototyping, Human-Computer Interaction, Game Development, Frontend Engineering, Platform Architecture]
   experience:
     - title: Computer Science Student
       period: Current
-      description: Studying computer science at Southeast University with sustained focus on VR, HCI, interactive systems, and the craft of building durable software foundations.
+      description: 
     - title: Game And Interactive Prototype Builder
       period: Ongoing
-      description: Exploring playable concepts, visual experiments, and small-scale systems that can later mature into documented portfolio case studies and stronger product thinking.
+      description: 
   intro_title: About Me
   skills_title: Skills
-  intro_summary: I am building a long-term personal platform that combines technical writing, project documentation, and an independent Study Room into one coherent system.
+  intro_summary: 
   experience_title: Experience
 intro:
-  long: Computer science student at Southeast University with a strong interest in VR, HCI, and game development. I enjoy turning scattered ideas into systems that are calm to use, easy to maintain, and worth growing for years. This platform is where technical notes, project write-ups, and interactive experiments start becoming a coherent long-term home. 
-  short: Personal flagship portal for technical writing, portfolio case studies, and the future Study Room experience.
+  long: 
+  short: 
 owner:
   full_name: Kyoka
   display_name: Je1ghtxyuN
 contact:
-  email: hello@je1ghtxyun.dev
+  email: honorxyun@gmail.com
   location: Nanjing, Jiangsu, China
   availability_note: Best for project discussions, collaboration ideas, and technical conversations. Response times may slow down during busy academic weeks.
   formspree_endpoint: "https://formspree.io/f/your-form-id"
-subtitle: Static-first writing, interactive experiments, and long-term platform design.
+subtitle: 
 icon_path: /shared-assets/images/icon.png
 study_room:
   title: Study Room
-  summary: A flagship focus application for deep work, immersive ambience, and long-session study flow.
-  cta_note: The Study Room opens at `/study-app/` as a standalone experience while still sharing the same brand, assets, and future backend contract as the main portal. 
-  features: [Scene-first immersive focus timer, Todo capture for lightweight study planning, Ambient music and atmosphere controls, Future login and study statistics sync]
+  summary: 
+  cta_note: 
+  features: []
   cta_label: Enter Study Room
-  description: "The Study Room is now treated as a first-class product inside the platform family: an independent application with scene-based focus sessions, Pomodoro guidance, ambient playback, lightweight task capture, and future account-linked study data. "
+  description: 
 avatar_path: /shared-assets/images/profile.jpg
-footer_note: Static-first portal under active construction for writing, project documentation, and future interactive modules.
+footer_note: 
 social_links:
   - url: "https://github.com/Je1ghtxyuN"
     icon: fab fa-github
-    color: "#24292e"
     label: GitHub
-    placeholder: true
-  - url: "https://x.com/je1ghtxyun_dev"
+  - url: "https://x.com/je1ghtxyun"
     icon: fab fa-x-twitter
-    color: "#0f1419"
     label: X
-    placeholder: true
-  - url: "https://space.bilibili.com/10000427"
+  - url: "https://space.bilibili.com/174526439?spm_id_from=333.1007.0.0"
     icon: fas fa-circle-play
-    color: "#00a1d6"
     label: Bilibili
-    placeholder: true
 site_started_date: 2025-06-25
 site_started_year: 2025
 hero_background_path: /shared-assets/images/background.jpg

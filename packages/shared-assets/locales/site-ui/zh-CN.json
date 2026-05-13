@@ -4,9 +4,9 @@
   },
   "brand": {
     "name": "Je1ghtxyuN",
-    "portalTagline": "以静态优先写作、交互实验与长期平台建设为核心的个人站点。",
+    "portalTagline": "写作、项目和专注空间，一站搞定。",
     "studyRoomName": "Study Room",
-    "studyRoomShortDescription": "一个围绕番茄钟流程、场景氛围与低干扰学习工具构建的沉浸式专注空间。",
+    "studyRoomShortDescription": "专注空间，带计时器、场景氛围和任务记录。",
     "contactEmailLabel": "邮箱",
     "contactLocationLabel": "位置"
   },
@@ -31,7 +31,15 @@
     "done": "完成",
     "undo": "撤销",
     "comingSoon": "即将推出",
-    "resumeFocus": "继续专注"
+    "resumeFocus": "继续专注",
+    "loading": "加载中...",
+    "login": "登录",
+    "logout": "退出登录",
+    "register": "注册",
+    "cancel": "取消",
+    "password": "密码",
+    "email": "邮箱",
+    "guest": "访客"
   },
   "portal": {
     "languageSelectorLabel": "语言",
@@ -47,29 +55,29 @@
     "shortcuts": {
       "blog": {
         "label": "博客",
-        "description": "浏览文章索引并快速进入最新内容。"
+        "description": "读文章和项目笔记。"
       },
       "portfolio": {
         "label": "作品集",
-        "description": "查看项目卡片与长期案例研究雏形。"
+        "description": "我做过的东西。"
       },
       "studyRoom": {
         "label": "Study Room",
-        "description": "直接进入已整合的旗舰专注应用。"
+        "description": "打开专注空间。"
       },
       "contact": {
         "label": "联系",
-        "description": "通过门户联系页面发起交流。"
+        "description": "联系我。"
       }
     },
     "home": {
-      "shortcutsTitle": "探索门户",
-      "shortcutsDescription": "快速进入写作、项目展示、已整合的 Study Room 与联系入口。",
+      "shortcutsTitle": "探索",
+      "shortcutsDescription": "",
       "recentPostsTitle": "最近写作",
-      "recentPostsIntro": "来自门户发布面的最新内容。",
+      "recentPostsIntro": "",
       "portfolioPreviewTitle": "精选项目",
       "footerTitle": "保持联系",
-      "footerIntro": "让门户公开信息与共享资料都能在一个地方统一维护。"
+      "footerIntro": ""
     },
     "footer": {
       "socialLinks": "社交链接",
@@ -78,9 +86,9 @@
     "about": {
       "title": "关于我",
       "skillsTitle": "技能",
-      "skillsIntro": "该结构已预留，后续可继续通过数据文件细化。",
+      "skillsIntro": "",
       "experienceTitle": "经历",
-      "experienceIntro": "经历时间线目前由 site_profile.yml 提供初始内容。",
+      "experienceIntro": "",
       "emptySkills": "暂未配置技能项。",
       "emptyExperience": "暂未配置经历项。"
     },
@@ -91,9 +99,9 @@
     "studyRoom": {
       "title": "Study Room",
       "ctaLabel": "进入 Study Room",
-      "ctaNote": "Study Room 现在通过 /study-app/ 作为独立应用打开，但仍属于同一产品体系。",
+      "ctaNote": "",
       "featuresTitle": "整合能力",
-      "featuresIntro": "这个独立专注应用现在已经被纳入与门户一致的公开站点契约中。",
+      "featuresIntro": "",
       "empty": "暂未配置 Study Room 功能项。"
     },
     "contact": {
@@ -118,15 +126,9 @@
       "emailPlaceholder": "you@example.com",
       "topicPlaceholder": "项目、合作，或者只是打个招呼",
       "messagePlaceholder": "简单介绍一下自己并写下你的消息",
-      "sendButton": "发送消息",
-      "notesTitle": "说明",
-      "notes": {
-        "formspreeReady": "当前表单结构已经为 Formspree 风格的提交做好准备，只差最终端点。",
-        "placeholderEndpoint": "端点仍然是占位符，公开上线前必须替换。",
-        "futureBackend": "长期来看，这个流程可能会迁移到自托管后端，而不是继续停留在 Formspree。"
-      }
+      "sendButton": "发送消息"
     },
-    "searchPlaceholder": "搜索文章、页面与项目笔记..."
+    "searchPlaceholder": "搜索..."
   },
   "studyRoom": {
     "chrome": {
@@ -140,19 +142,19 @@
     "panels": {
       "todo": {
         "title": "任务面板",
-        "description": "小任务记录以覆盖层方式存在，不再长期占据主界面。"
+        "description": "浮动在场景上的快捷任务列表。"
       },
       "music": {
         "title": "音乐面板",
-        "description": "环境音播放保持可用，但不会挤占主要专注场景。"
+        "description": "背景音乐控制。"
       },
       "statistics": {
         "title": "统计面板",
-        "description": "会话计数与未来进度视图现在位于独立覆盖层中。"
+        "description": "学习统计一览。"
       },
       "settings": {
         "title": "设置面板",
-        "description": "计时器配置与共享偏好通过浮动面板打开，而不是单独的仪表盘页面。"
+        "description": "计时器、场景和显示选项。"
       }
     },
     "timer": {
@@ -163,7 +165,7 @@
       "longBreakChip": "长休息",
       "longBreakNext": "下一次即长休息",
       "longBreakIn": "还有 {count} 次进入长休息",
-      "automaticReturn": "将自动回到工作",
+      "automaticReturn": "即将回到工作",
       "completedPomodoros": "已完成番茄钟 {count}",
       "longBreakEvery": "每 {count} 次进入长休息",
       "status": {
@@ -175,27 +177,27 @@
         "shortBreak": {
           "idle": "准备短休息",
           "paused": "休息已暂停",
-          "running": "轻柔恢复中"
+          "running": "短休息"
         },
         "longBreak": {
           "idle": "准备长休息",
-          "paused": "恢复已暂停",
-          "running": "深度恢复中"
+          "paused": "长休息已暂停",
+          "running": "长休息"
         }
       },
       "hint": {
         "work": "当前正在专注会话",
-        "shortBreak": "进入轻松休息时间",
-        "longBreak": "进入长时恢复间隔"
+        "shortBreak": "短休息",
+        "longBreak": "长休息"
       },
       "metadataTone": {
-        "work": "深度工作窗口",
-        "shortBreak": "柔和恢复窗口",
-        "longBreak": "平静重置窗口"
+        "work": "专注",
+        "shortBreak": "短休息",
+        "longBreak": "长休息"
       }
     },
     "cues": {
-      "eyebrow": "氛围切换",
+      "eyebrow": "",
       "focusComplete": "专注完成",
       "shortBreak": "短休息",
       "longBreak": "长休息",
@@ -205,45 +207,45 @@
     "settings": {
       "titleEyebrow": "Study Room 偏好",
       "title": "显示与行为",
-      "intro": "这个设置中心用于控制场景、计时器与本地学习运行时的表现，而不会影响底层番茄钟引擎。",
+      "intro": "",
       "languageEyebrow": "语言设置",
       "languageTitle": "界面语言",
-      "languageIntro": "这个选择会更新 Study Room 以及未来联动界面的共享 UI 文案。",
+      "languageIntro": "",
       "sceneEyebrow": "场景设置",
       "sceneTitle": "学习环境",
-      "sceneIntro": "现在可切换当前场景。自定义上传将在后续阶段接入这里。",
+      "sceneIntro": "",
       "customUploadsTitle": "自定义上传",
-      "customUploadsCopy": "未来的自托管场景上传会在这里管理，而不替换当前的视频场景注册表。",
+      "customUploadsCopy": "",
       "displayEyebrow": "计时器显示设置",
       "displayTitle": "呈现方式",
-      "displayIntro": "改变计时器在学习场景中的位置和存在感，但不影响计时进度与引擎逻辑。",
+      "displayIntro": "",
       "displayModes": {
         "center_focus": {
           "label": "中心专注",
-          "description": "沉浸式居中计时器仍然作为主要专注表面。"
+          "description": "场景上的大号居中计时器。"
         },
         "minimal_overlay": {
           "label": "极简覆盖",
-          "description": "更小的覆盖层能显示计时器，同时让场景保持主角地位。"
+          "description": "小浮层，场景为主。"
         },
         "corner_embed": {
           "label": "角落嵌入",
-          "description": "低打扰角落计时器仅保留最必要的学习控制。"
+          "description": "角落迷你计时器。"
         }
       },
       "timerEyebrow": "计时行为设置",
       "timerTitle": "番茄钟引擎",
-      "timerIntro": "自动轮转保持启用，同时会话时长与节奏仍然允许用户调整。",
+      "timerIntro": "",
       "workMinutes": "工作时长",
       "shortBreakMinutes": "短休息时长",
       "longBreakMinutes": "长休息时长",
       "longBreakInterval": "每隔几次进入长休息",
       "completionBellTitle": "完成提示铃",
-      "completionBellCopy": "仅在计时器自然进入下一阶段时播放。",
+      "completionBellCopy": "",
       "saveTimer": "保存计时设置",
-      "audioEyebrow": "音频架构占位",
-      "audioTitle": "云音乐集成即将到来",
-      "audioCopy": "当前环境音仍通过本地音源提供。未来的云端提供方将接入音乐源抽象，而不会替换现有播放控制器。"
+      "audioEyebrow": "",
+      "audioTitle": "云音乐",
+      "audioCopy": ""
     },
     "music": {
       "eyebrow": "环境音乐",
@@ -255,48 +257,68 @@
       },
       "source": {
         "localLabel": "本地曲库",
-        "localDescription": "内置本地环境音让当前 Study Room 保持自包含并具备离线可用性。",
-        "cloudFutureLabel": "云音乐",
-        "cloudFutureDescription": "云音乐集成即将到来。"
+        "localDescription": "",
+        "neteaseLabel": "云音乐",
+        "neteaseDescription": ""
       },
       "tracks": {
         "deep-focus-placeholder": {
-          "title": "深度专注占位曲目",
-          "note": "静音本地占位资源，用于验证音频控制器流程。"
+          "title": "深度专注",
+          "note": ""
         },
         "late-night-placeholder": {
-          "title": "深夜占位曲目",
-          "note": "未来用于打包本地环境音的预留位置。"
+          "title": "深夜",
+          "note": ""
         }
       },
       "errors": {
         "blocked": "浏览器尚未接收到用户手势前，播放可能会被阻止。",
         "enableSound": "请先开启声音，再启动环境播放。"
-      }
+      },
+      "noTrack": "未选择曲目",
+      "loginNetEase": "登录网易云",
+      "myPlaylists": "我的歌单",
+      "sendCode": "发送验证码",
+      "resend": "重新发送",
+      "verifyAndLogin": "验证并登录",
+      "emailOrPhonePlaceholder": "邮箱或手机号",
+      "phonePlaceholder": "手机号",
+      "smsCodePlaceholder": "验证码"
     },
     "todo": {
       "eyebrow": "任务记录",
       "title": "当前待办",
       "intro": "面向当前学习会话的轻量本地任务列表。",
       "inputPlaceholder": "添加一个小的学习任务",
-      "empty": "还没有任务。"
+      "empty": "还没有任务。",
+      "loginToSync": "登录后可跨设备同步任务。"
     },
     "statistics": {
       "eyebrow": "统计",
       "title": "会话计数",
-      "intro": "Reducer 已经在追踪完成会话，因此这个功能具备稳定的未来持久化与分析接口。",
+      "editNickname": "修改昵称",
+      "nicknamePlaceholder": "输入你的显示名称",
+      "nicknameUpdated": "昵称已更新",
+      "intro": "",
       "completedPomodoros": "已完成番茄钟",
       "completedBreaks": "已完成休息",
-      "futureCopy": "未来后端同步可以存储会话历史、连续记录与按用户维度聚合的学习摘要，而不需要改动计时器的完成上报方式。"
+      "pomodorosToday": "今日番茄钟",
+      "totalCompleted": "累计完成",
+      "focusTime": "专注时间",
+      "last12Weeks": "最近 12 周",
+      "less": "少",
+      "more": "多",
+      "nicknameOptional": "昵称（可选）",
+      "futureCopy": ""
     },
     "auth": {
-      "eyebrow": "认证占位",
-      "title": "未来账号层",
-      "intro": "保留这个位置是为了以后加入账号关联的 Study Room 状态，而不必重塑核心页面结构。",
+      "eyebrow": "账号",
+      "title": "登录",
+      "intro": "",
       "sessionHandoff": "会话交接",
       "protectedPresets": "受保护预设",
       "tokenStorage": "后端令牌存储",
-      "futureCopy": "未来后端服务将接管登录、会话校验与用户关联学习数据。这里不会依赖 Firebase 时代的浏览器直连认证。"
+      "futureCopy": ""
     },
     "scenes": {
       "coastalCafe": {

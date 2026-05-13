@@ -15,7 +15,7 @@ module.exports = function createPortalRenderer(hexo) {
     HOMEPAGE_POST_LIMIT: 3,
     PORTFOLIO_PREVIEW_LIMIT: 3,
     DEFAULT_TITLE: 'Untitled Entry',
-    DEFAULT_DESCRIPTION: 'Details for this section are still being prepared.',
+    DEFAULT_DESCRIPTION: '',
     DEFAULT_IMAGE_PATH: '/shared-assets/images/background.jpg',
     DEFAULT_AVATAR_PATH: '/shared-assets/images/profile.jpg',
     STUDY_ROOM_APP_URL: studyRoomPublicUrl,
@@ -565,7 +565,7 @@ module.exports = function createPortalRenderer(hexo) {
                 escapeHtml(
                   fallbackText(
                     home.recent_posts_empty_text,
-                    'No posts are published yet. The portal structure is ready for the first articles.'
+                    'No posts yet.'
                   )
                 )
               )
@@ -712,6 +712,9 @@ module.exports = function createPortalRenderer(hexo) {
       avatar_path: fallbackText(profile.avatar_path, '/shared-assets/images/profile.jpg'),
       intro_short: fallbackText(profile.intro?.short, ''),
       intro_long: fallbackText(profile.intro?.long, ''),
+      hero_phrases: Array.isArray(profile.hero_phrases) && profile.hero_phrases.length > 0
+        ? profile.hero_phrases
+        : ['Code, Anime, Games, and Coffee.', 'VR, HCI, and game dev.', "Writing things down so I don't forget."],
     }
     const heroDataJson = JSON.stringify(heroData)
     // Direct output to avoid HTML escaping JSON
@@ -1079,12 +1082,8 @@ module.exports = function createPortalRenderer(hexo) {
           )
         )}${renderTag(
           'div',
-          { class: 'portal-card portal-copy-card' },
+          { class: 'portal-card portal-copy-card portal-contact-info' },
           `${renderTag(
-            'h2',
-            withI18nAttr({}, 'portal.contact.channelsTitle', 'Contact Channels'),
-            escapeHtml(getLocaleText('portal.contact.channelsTitle', 'Contact Channels'))
-          )}${renderTag(
             'ul',
             { class: 'portal-meta-list' },
             `${renderTag(
@@ -1112,226 +1111,101 @@ module.exports = function createPortalRenderer(hexo) {
                 `${escapeHtml(getLocaleText('portal.contact.bestForLabel', 'Best for'))}:`
               )} ${escapeHtml(contact.availability_note || PORTAL_CONFIG.DEFAULT_DESCRIPTION)}`
             )}`
-          )}`
-        )}`
-      )}${renderTag(
-        'section',
-        { class: 'portal-section' },
-        `${renderTag(
-          'div',
-          { class: 'portal-section-heading' },
-          `${renderTag(
-            'h2',
-            withI18nAttr({}, 'portal.contact.messageChecklistTitle', 'What To Include In Your Message'),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.messageChecklistTitle',
-                'What To Include In Your Message'
-              )
-            )
           )}${renderTag(
             'p',
-            withI18nAttr(
-              {},
-              'portal.contact.messageChecklistIntro',
-              'The clearest messages usually include:'
-            ),
-            escapeHtml(
+            { class: 'portal-contact-checklist-hint' },
+            `${escapeHtml(
               getLocaleText(
                 'portal.contact.messageChecklistIntro',
                 'The clearest messages usually include:'
               )
-            )
-          )}`
-        )}${renderTag(
-          'ol',
-          { class: 'portal-meta-list' },
-          `${renderTag(
-            'li',
-            withI18nAttr({}, 'portal.contact.checklist.who', 'who you are'),
-            escapeHtml(getLocaleText('portal.contact.checklist.who', 'who you are'))
-          )}${renderTag(
-            'li',
-            withI18nAttr({}, 'portal.contact.checklist.topic', 'what you are reaching out about'),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.checklist.topic',
-                'what you are reaching out about'
-              )
-            )
-          )}${renderTag(
-            'li',
-            withI18nAttr({}, 'portal.contact.checklist.context', 'useful links or context'),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.checklist.context',
-                'useful links or context'
-              )
-            )
-          )}${renderTag(
-            'li',
-            withI18nAttr({}, 'portal.contact.checklist.reply', 'how you would like me to reply'),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.checklist.reply',
-                'how you would like me to reply'
-              )
-            )
+            )} ${escapeHtml(getLocaleText('portal.contact.checklist.who', 'who you are'))}, ${escapeHtml(getLocaleText('portal.contact.checklist.topic', 'what you are reaching out about'))}, ${escapeHtml(getLocaleText('portal.contact.checklist.context', 'useful links or context'))}, ${escapeHtml(getLocaleText('portal.contact.checklist.reply', 'how you would like me to reply'))}.`
           )}`
         )}`
       )}${renderTag(
         'section',
         { class: 'portal-section' },
-        `${renderTag(
-          'div',
-          { class: 'portal-section-heading' },
-          renderTag(
-            'h2',
-            withI18nAttr({}, 'portal.contact.formTitle', 'Contact Form'),
-            escapeHtml(getLocaleText('portal.contact.formTitle', 'Contact Form'))
-          )
-        )}${renderTag(
+        renderTag(
           'div',
           { class: 'portal-card portal-copy-card' },
-          `<form action="${escapeHtml(
+          `<form class="portal-contact-form" action="${escapeHtml(
             contact.formspree_endpoint || 'https://formspree.io/f/your-form-id'
           )}" method="POST">
-            <fieldset>
-              <legend data-i18n="portal.contact.formLegend" data-i18n-fallback="${escapeHtml(
-                getLocaleText('portal.contact.formLegend', 'Send a message')
-              )}">${escapeHtml(getLocaleText('portal.contact.formLegend', 'Send a message'))}</legend>
-              ${renderVoidTag('input', {
-                type: 'hidden',
-                name: '_subject',
-                value: 'Portal Contact Message',
-              })}
-              <p>
-                <label>
-                  <span data-i18n="portal.contact.nameLabel" data-i18n-fallback="${escapeHtml(
-                    getLocaleText('portal.contact.nameLabel', 'Name')
-                  )}">${escapeHtml(getLocaleText('portal.contact.nameLabel', 'Name'))}</span><br>
-                  ${renderVoidTag('input', {
-                    type: 'text',
-                    name: 'name',
-                    placeholder: getLocaleText('portal.contact.namePlaceholder', 'Your name'),
-                    'data-i18n-placeholder': 'portal.contact.namePlaceholder',
-                  })}
-                </label>
-              </p>
-              <p>
-                <label>
-                  <span data-i18n="portal.contact.emailLabel" data-i18n-fallback="${escapeHtml(
-                    getLocaleText('portal.contact.emailLabel', 'Email')
-                  )}">${escapeHtml(getLocaleText('portal.contact.emailLabel', 'Email'))}</span><br>
-                  ${renderVoidTag('input', {
-                    type: 'email',
-                    name: 'email',
-                    placeholder: getLocaleText('portal.contact.emailPlaceholder', 'you@example.com'),
-                    'data-i18n-placeholder': 'portal.contact.emailPlaceholder',
-                  })}
-                </label>
-              </p>
-              <p>
-                <label>
-                  <span data-i18n="portal.contact.topicLabel" data-i18n-fallback="${escapeHtml(
-                    getLocaleText('portal.contact.topicLabel', 'Topic')
-                  )}">${escapeHtml(getLocaleText('portal.contact.topicLabel', 'Topic'))}</span><br>
-                  ${renderVoidTag('input', {
-                    type: 'text',
-                    name: 'topic',
-                    placeholder: getLocaleText(
-                      'portal.contact.topicPlaceholder',
-                      'Project, collaboration, or a quick hello'
-                    ),
-                    'data-i18n-placeholder': 'portal.contact.topicPlaceholder',
-                  })}
-                </label>
-              </p>
-              <p>
-                <label>
-                  <span data-i18n="portal.contact.messageLabel" data-i18n-fallback="${escapeHtml(
-                    getLocaleText('portal.contact.messageLabel', 'Message')
-                  )}">${escapeHtml(getLocaleText('portal.contact.messageLabel', 'Message'))}</span><br>
-                  <textarea
-                    name="message"
-                    rows="6"
-                    placeholder="${escapeHtml(
-                      getLocaleText(
-                        'portal.contact.messagePlaceholder',
-                        'A short introduction and your message'
-                      )
-                    )}"
-                    data-i18n-placeholder="portal.contact.messagePlaceholder"
-                  ></textarea>
-                </label>
-              </p>
-              <p>
-                <button
-                  type="submit"
-                  data-i18n="portal.contact.sendButton"
-                  data-i18n-fallback="${escapeHtml(
-                    getLocaleText('portal.contact.sendButton', 'Send Message')
+            ${renderVoidTag('input', {
+              type: 'hidden',
+              name: '_subject',
+              value: 'Portal Contact Message',
+            })}
+            <div class="portal-contact-field">
+              <label>
+                <span data-i18n="portal.contact.nameLabel" data-i18n-fallback="${escapeHtml(
+                  getLocaleText('portal.contact.nameLabel', 'Name')
+                )}">${escapeHtml(getLocaleText('portal.contact.nameLabel', 'Name'))}</span>
+                ${renderVoidTag('input', {
+                  type: 'text',
+                  name: 'name',
+                  placeholder: getLocaleText('portal.contact.namePlaceholder', 'Your name'),
+                  'data-i18n-placeholder': 'portal.contact.namePlaceholder',
+                })}
+              </label>
+            </div>
+            <div class="portal-contact-field">
+              <label>
+                <span data-i18n="portal.contact.emailLabel" data-i18n-fallback="${escapeHtml(
+                  getLocaleText('portal.contact.emailLabel', 'Email')
+                )}">${escapeHtml(getLocaleText('portal.contact.emailLabel', 'Email'))}</span>
+                ${renderVoidTag('input', {
+                  type: 'email',
+                  name: 'email',
+                  placeholder: getLocaleText('portal.contact.emailPlaceholder', 'you@example.com'),
+                  'data-i18n-placeholder': 'portal.contact.emailPlaceholder',
+                })}
+              </label>
+            </div>
+            <div class="portal-contact-field">
+              <label>
+                <span data-i18n="portal.contact.topicLabel" data-i18n-fallback="${escapeHtml(
+                  getLocaleText('portal.contact.topicLabel', 'Topic')
+                )}">${escapeHtml(getLocaleText('portal.contact.topicLabel', 'Topic'))}</span>
+                ${renderVoidTag('input', {
+                  type: 'text',
+                  name: 'topic',
+                  placeholder: getLocaleText(
+                    'portal.contact.topicPlaceholder',
+                    'Project, collaboration, or a quick hello'
+                  ),
+                  'data-i18n-placeholder': 'portal.contact.topicPlaceholder',
+                })}
+              </label>
+            </div>
+            <div class="portal-contact-field">
+              <label>
+                <span data-i18n="portal.contact.messageLabel" data-i18n-fallback="${escapeHtml(
+                  getLocaleText('portal.contact.messageLabel', 'Message')
+                )}">${escapeHtml(getLocaleText('portal.contact.messageLabel', 'Message'))}</span>
+                <textarea
+                  name="message"
+                  rows="6"
+                  placeholder="${escapeHtml(
+                    getLocaleText(
+                      'portal.contact.messagePlaceholder',
+                      'A short introduction and your message'
+                    )
                   )}"
-                >${escapeHtml(getLocaleText('portal.contact.sendButton', 'Send Message'))}</button>
-              </p>
-            </fieldset>
+                  data-i18n-placeholder="portal.contact.messagePlaceholder"
+                ></textarea>
+              </label>
+            </div>
+            <button
+              type="submit"
+              class="portal-button portal-contact-submit"
+              data-i18n="portal.contact.sendButton"
+              data-i18n-fallback="${escapeHtml(
+                getLocaleText('portal.contact.sendButton', 'Send Message')
+              )}"
+            >${escapeHtml(getLocaleText('portal.contact.sendButton', 'Send Message'))}</button>
           </form>`
-        )}`
-      )}${renderTag(
-        'section',
-        { class: 'portal-section' },
-        `${renderTag(
-          'div',
-          { class: 'portal-section-heading' },
-          renderTag(
-            'h2',
-            withI18nAttr({}, 'portal.contact.notesTitle', 'Notes'),
-            escapeHtml(getLocaleText('portal.contact.notesTitle', 'Notes'))
-          )
-        )}${renderTag(
-          'ul',
-          { class: 'portal-meta-list portal-card' },
-          `${renderTag(
-            'li',
-            withI18nAttr(
-              { class: 'portal-card__copy' },
-              'portal.contact.notes.formspreeReady',
-              'This form structure is ready for Formspree-style submission once the final endpoint is added.'
-            ),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.notes.formspreeReady',
-                'This form structure is ready for Formspree-style submission once the final endpoint is added.'
-              )
-            )
-          )}${renderTag(
-            'li',
-            withI18nAttr(
-              { class: 'portal-card__copy' },
-              'portal.contact.notes.placeholderEndpoint',
-              'The endpoint is still a placeholder and must be replaced before public launch.'
-            ),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.notes.placeholderEndpoint',
-                'The endpoint is still a placeholder and must be replaced before public launch.'
-              )
-            )
-          )}${renderTag(
-            'li',
-            withI18nAttr(
-              { class: 'portal-card__copy' },
-              'portal.contact.notes.futureBackend',
-              'In the long term, this flow may move behind the self-hosted backend service instead of staying on Formspree.'
-            ),
-            escapeHtml(
-              getLocaleText(
-                'portal.contact.notes.futureBackend',
-                'In the long term, this flow may move behind the self-hosted backend service instead of staying on Formspree.'
-              )
-            )
-          )}`
-        )}`
+        )
       )}`
     )
   }

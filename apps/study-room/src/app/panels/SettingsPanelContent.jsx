@@ -8,9 +8,9 @@ import {
 } from '../../state/useStudyRoom.js'
 
 const DISPLAY_OPTIONS = [
-  { id: TIMER_DISPLAY_MODES.centerFocus, label: 'Center Focus' },
-  { id: TIMER_DISPLAY_MODES.minimalOverlay, label: 'Minimal Overlay' },
-  { id: TIMER_DISPLAY_MODES.cornerEmbed, label: 'Corner Embed' },
+  { id: TIMER_DISPLAY_MODES.centerFocus, labelKey: 'studyRoom.settings.displayModes.center_focus.label', fallback: 'Center Focus' },
+  { id: TIMER_DISPLAY_MODES.minimalOverlay, labelKey: 'studyRoom.settings.displayModes.minimal_overlay.label', fallback: 'Minimal Overlay' },
+  { id: TIMER_DISPLAY_MODES.cornerEmbed, labelKey: 'studyRoom.settings.displayModes.corner_embed.label', fallback: 'Corner Embed' },
 ]
 
 export function SettingsPanelContent() {
@@ -65,7 +65,7 @@ export function SettingsPanelContent() {
                 className={`settings-choice${preferences.timerDisplayMode === opt.id ? ' settings-choice--active' : ''}`}
                 onClick={() => setPreference('timerDisplayMode', opt.id)}
               >
-                {opt.label}
+                {t(opt.labelKey, {}, opt.fallback)}
               </button>
             ))}
           </div>

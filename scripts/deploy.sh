@@ -20,7 +20,13 @@ npm run build --silent 2>&1 | tail -1
 echo "[2/7] Syncing Study Room to portal source..."
 bash "$REPO_ROOT/scripts/sync-study-app.sh" 2>&1 | tail -1
 
-echo "[3/7] Building Portal..."
+echo "[3/7] Syncing latest content from server..."
+# Pull latest _data/ and _posts/ from server (admin UI edits live in server MySQL,
+# rebuild script writes them to YAML; we need those files before local hexo generate)
+rsync -avz --delete "$SERVER:$SERVER_PORTAL/source/_data/" "$REPO_ROOT/apps/blog-portal/source/_data/" 2>&1 | tail -1
+rsync -avz --delete "$SERVER:$SERVER_PORTAL/source/_posts/" "$REPO_ROOT/apps/blog-portal/source/_posts/" 2>&1 | tail -1
+
+echo "[4/7] Building Portal..."
 cd "$REPO_ROOT/apps/blog-portal"
 ./node_modules/.bin/hexo generate 2>&1 | tail -1
 

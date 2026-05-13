@@ -42,9 +42,9 @@ export function TodoPanel() {
       </form>
 
       {!userId ? (
-        <p className="floating-widget__meta">Login to sync tasks across sessions.</p>
+        <p className="floating-widget__meta">{t('studyRoom.todo.loginToSync', {}, 'Login to sync tasks across sessions.')}</p>
       ) : loading ? (
-        <p className="floating-widget__meta">Loading...</p>
+        <p className="floating-widget__meta">{t('common.loading', {}, 'Loading...')}</p>
       ) : items.length ? (
         <ul className="todo-widget__list">
           {items.map((item) => (
@@ -52,7 +52,7 @@ export function TodoPanel() {
               <p className="floating-widget__copy">{item.label}</p>
               <div className="todo-widget__actions">
                 <button type="button" className="button button--ghost button--sm" onClick={() => toggleTodo(item.id)}>
-                  {item.done ? 'Undo' : 'Done'}
+                  {item.done ? t('common.undo', {}, 'Undo') : t('common.done', {}, 'Done')}
                 </button>
                 {item.done ? (
                   <button type="button" className="button button--ghost button--sm" onClick={() => deleteTodo(item.id)}>✕</button>
@@ -62,7 +62,7 @@ export function TodoPanel() {
           ))}
         </ul>
       ) : (
-        <div className="floating-widget__empty">No tasks yet.</div>
+        <div className="floating-widget__empty">{t('studyRoom.todo.empty', {}, 'No tasks yet.')}</div>
       )}
     </section>
   )

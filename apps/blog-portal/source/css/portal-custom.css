@@ -1,3 +1,16 @@
+/* Theme tokens — NOT defined by Butterfly theme (Stylus vars compile away) */
+:root {
+  --theme-color: #49b1f5;
+  --theme-color-op: rgba(73, 177, 245, 0.15);
+  --card-border: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='dark'] {
+  --theme-color: #3388cc;
+  --theme-color-op: rgba(51, 136, 204, 0.2);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
 /* Fullscreen hero on homepage */
 .type-portal-home #page-header {
   height: 100vh;
@@ -468,6 +481,65 @@
 
 .portal-empty-state {
   padding: 1.2rem;
+}
+
+/* Contact page */
+.portal-contact-info {
+  gap: 1.2rem;
+}
+
+.portal-contact-checklist-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  opacity: 0.75;
+}
+
+.portal-contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.portal-contact-field label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.portal-contact-form input,
+.portal-contact-form textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--font-color);
+  font-size: 0.92rem;
+  font-family: inherit;
+  line-height: 1.6;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.portal-contact-form input:focus,
+.portal-contact-form textarea:focus {
+  outline: none;
+  border-color: var(--theme-color);
+}
+
+.portal-contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.portal-contact-submit {
+  align-self: flex-start;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
 }
 
 @media (max-width: 768px) {

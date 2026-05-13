@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useStudyRoomLocale } from '../../i18n/useStudyRoomLocale.js'
 import { useStudyRoomState } from '../../state/useStudyRoom.js'
-import { fetchStats, fetchDailyStats, fetchCurrentUser, loginUser, registerUser, logoutUser } from '../../state/studySessionRecorder.js'
+import { fetchStats, fetchDailyStats, fetchCurrentUser, loginUser, registerUser, logoutUser, updateNickname } from '../../state/studySessionRecorder.js'
 
 const GITHUB_CLIENT_ID = 'Ov23liu6udKTVF2eWygV'
 const DEV = import.meta.env.DEV
@@ -18,6 +18,9 @@ export function StudyStatisticsPanel() {
   const [loginPassword, setLoginPassword] = useState('')
   const [loginNick, setLoginNick] = useState('')
   const [loginError, setLoginError] = useState('')
+  const [editingNick, setEditingNick] = useState(false)
+  const [editNickValue, setEditNickValue] = useState('')
+  const [editNickError, setEditNickError] = useState('')
 
   useEffect(() => {
     fetchCurrentUser().then(setUser)
@@ -54,6 +57,21 @@ export function StudyStatisticsPanel() {
     setUser(null)
   }
 
+  const startEditNick = () => {
+    setEditNickValue(user.nickname || '')
+    setEditNickError('')
+    setEditingNick(true)
+  }
+
+  const handleSaveNick = async () => {
+    setEditNickError('')
+    try {
+      const result = await updateNickname(editNickValue.trim())
+      setUser(result.user)
+      setEditingNick(false)
+    } catch (err) { setEditNickError(err.message) }
+  }
+
   const githubOAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=user:email`
 
   const hours = Math.floor(stats.totalMinutes / 60)
@@ -69,35 +87,59 @@ export function StudyStatisticsPanel() {
           <p className="floating-widget__eyebrow">{t('studyRoom.statistics.eyebrow', {}, 'Statistics')}</p>
           <h2 className="floating-widget__title">{t('studyRoom.statistics.title', {}, 'Study Stats')}</h2>
         </div>
-        <span className="floating-widget__badge">{user ? user.nickname || user.email : 'Guest'}</span>
+        <span className="floating-widget__badge">{user ? user.nickname || user.email : t('common.guest', {}, 'Guest')}</span>
       </div>
 
       {/* Login / User section */}
       {user ? (
         <div className="stats-user">
-          <span className="stats-user__info">
-            {user.avatarUrl ? <img src={user.avatarUrl} alt="" className="stats-user__avatar" /> : <i className="fas fa-user-circle stats-user__icon" />}
-            <strong>{user.nickname || user.email}</strong>
-          </span>
-          <button type="button" className="button button--ghost button--sm" onClick={handleLogout}>Logout</button>
+          {editingNick ? (
+            <div className="stats-nick-edit">
+              <input
+                className="stats-login-input"
+                type="text"
+                placeholder={t('studyRoom.statistics.nicknamePlaceholder', {}, 'Enter your display name')}
+                value={editNickValue}
+                onChange={(e) => setEditNickValue(e.target.value)}
+                maxLength={30}
+                autoFocus
+              />
+              {editNickError && <p className="floating-widget__hint">{editNickError}</p>}
+              <div className="stats-login-actions">
+                <button type="button" className="button button--primary button--sm" onClick={handleSaveNick}>{t('common.save', {}, 'Save')}</button>
+                <button type="button" className="button button--ghost button--sm" onClick={() => setEditingNick(false)}>{t('common.close', {}, 'Cancel')}</button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <span className="stats-user__info">
+                {user.avatarUrl ? <img src={user.avatarUrl} alt="" className="stats-user__avatar" /> : <i className="fas fa-user-circle stats-user__icon" />}
+                <strong>{user.nickname || user.email}</strong>
+                <button type="button" className="button button--ghost button--xs stats-nick-edit-btn" onClick={startEditNick} title={t('studyRoom.statistics.editNickname', {}, 'Edit nickname')}>
+                  <i className="fas fa-pen" />
+                </button>
+              </span>
+              <button type="button" className="button button--ghost button--sm" onClick={handleLogout}>{t('common.logout', {}, 'Logout')}</button>
+            </>
+          )}
         </div>
       ) : loginMode ? (
         <form className="stats-login-form" onSubmit={loginMode === 'login' ? handleLogin : handleRegister}>
-          <input className="stats-login-input" type="email" placeholder="Email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+          <input className="stats-login-input" type="email" placeholder={t('common.email', {}, 'Email')} value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
           {loginMode === 'register' && (
-            <input className="stats-login-input" type="text" placeholder="Nickname (optional)" value={loginNick} onChange={(e) => setLoginNick(e.target.value)} />
+            <input className="stats-login-input" type="text" placeholder={t('studyRoom.statistics.nicknameOptional', {}, 'Nickname (optional)')} value={loginNick} onChange={(e) => setLoginNick(e.target.value)} />
           )}
-          <input className="stats-login-input" type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required minLength={6} />
+          <input className="stats-login-input" type="password" placeholder={t('common.password', {}, 'Password')} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required minLength={6} />
           {loginError && <p className="floating-widget__hint">{loginError}</p>}
           <div className="stats-login-actions">
-            <button type="submit" className="button button--primary button--sm">{loginMode === 'login' ? 'Login' : 'Register'}</button>
-            <button type="button" className="button button--ghost button--sm" onClick={() => setLoginMode(null)}>Cancel</button>
+            <button type="submit" className="button button--primary button--sm">{loginMode === 'login' ? t('common.login', {}, 'Login') : t('common.register', {}, 'Register')}</button>
+            <button type="button" className="button button--ghost button--sm" onClick={() => setLoginMode(null)}>{t('common.cancel', {}, 'Cancel')}</button>
           </div>
         </form>
       ) : (
         <div className="stats-login-actions">
-          <button type="button" className="button button--primary button--sm" onClick={() => setLoginMode('login')}>Login</button>
-          <button type="button" className="button button--ghost button--sm" onClick={() => setLoginMode('register')}>Register</button>
+          <button type="button" className="button button--primary button--sm" onClick={() => setLoginMode('login')}>{t('common.login', {}, 'Login')}</button>
+          <button type="button" className="button button--ghost button--sm" onClick={() => setLoginMode('register')}>{t('common.register', {}, 'Register')}</button>
           <a href={githubOAuthUrl} className="button button--ghost button--sm stats-gh-btn">
             <i className="fab fa-github" /> GitHub
           </a>
@@ -107,21 +149,21 @@ export function StudyStatisticsPanel() {
       <div className="stats-metrics-row">
         <div className="stats-metric-card">
           <span className="stats-metric-card__value">{stats.today || '—'}</span>
-          <span className="stats-metric-card__label">Pomodoros today</span>
+          <span className="stats-metric-card__label">{t('studyRoom.statistics.pomodorosToday', {}, 'Pomodoros today')}</span>
         </div>
         <div className="stats-metric-card">
           <span className="stats-metric-card__value">{stats.total || '—'}</span>
-          <span className="stats-metric-card__label">Total completed</span>
+          <span className="stats-metric-card__label">{t('studyRoom.statistics.totalCompleted', {}, 'Total completed')}</span>
         </div>
         <div className="stats-metric-card">
           <span className="stats-metric-card__value">{totalTime}</span>
-          <span className="stats-metric-card__label">Focus time</span>
+          <span className="stats-metric-card__label">{t('studyRoom.statistics.focusTime', {}, 'Focus time')}</span>
         </div>
       </div>
 
       {daily.length > 0 && (
         <div className="stats-heatmap">
-          <span className="stats-heatmap__label">Last 12 weeks</span>
+          <span className="stats-heatmap__label">{t('studyRoom.statistics.last12Weeks', {}, 'Last 12 weeks')}</span>
           <div className="stats-heatmap__grid">
             {daily.map((d) => {
               const mins = d.minutes || 0
@@ -130,9 +172,9 @@ export function StudyStatisticsPanel() {
             })}
           </div>
           <div className="stats-heatmap__legend">
-            <span>Less</span>
+            <span>{t('studyRoom.statistics.less', {}, 'Less')}</span>
             {[0, 1, 2, 3, 4].map((lvl) => <span key={lvl} className={'stats-heatmap__cell stats-heatmap__cell--lvl' + lvl} />)}
-            <span>More</span>
+            <span>{t('studyRoom.statistics.more', {}, 'More')}</span>
           </div>
         </div>
       )}

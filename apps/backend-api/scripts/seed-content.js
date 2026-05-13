@@ -22,12 +22,13 @@ async function seedSiteProfile() {
   const data = yaml.load(content)
 
   console.log('[seed] Importing site profile...')
-  await prisma.siteProfile.upsert({
-    where: { id: 'default' },
-    update: { data },
-    create: { id: 'default', data },
-  })
-  console.log('[seed] Site profile imported.')
+  const existing = await prisma.siteProfile.findUnique({ where: { id: 'default' } })
+  if (existing) {
+    console.log('[seed] Site profile already exists — skipping (use admin UI to update).')
+  } else {
+    await prisma.siteProfile.create({ data: { id: 'default', data } })
+    console.log('[seed] Site profile created.')
+  }
 }
 
 async function seedPortfolio() {

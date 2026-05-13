@@ -95,6 +95,24 @@ userAuth.put('/prefs', async (c) => {
   return c.json({ ok: true })
 })
 
+// PUT /user/nickname — update display name
+userAuth.put('/nickname', async (c) => {
+  const sessionId = c.req.header('Cookie')?.match(/study_session=([^;]+)/)?.[1]
+  if (!sessionId) return c.json({ error: 'Not logged in' }, 401)
+  const session = await prisma.session.findUnique({ where: { id: sessionId } })
+  if (!session || session.expiresAt < new Date()) return c.json({ error: 'Not logged in' }, 401)
+  let body
+  try { body = await c.req.json() } catch { return c.json({ error: 'Invalid JSON' }, 400) }
+  const nickname = body.nickname?.trim()
+  if (!nickname) return c.json({ error: 'Nickname is required' }, 400)
+  if (nickname.length > 30) return c.json({ error: 'Nickname must be 30 characters or fewer' }, 400)
+  const user = await prisma.studyUser.update({
+    where: { id: session.userId },
+    data: { nickname },
+  })
+  return c.json({ user: { id: user.id, email: user.email, nickname: user.nickname, avatarUrl: user.avatarUrl } })
+})
+
 // POST /user/logout
 userAuth.post('/logout', async (c) => {
   const sessionId = c.req.header('Cookie')?.match(/study_session=([^;]+)/)?.[1]

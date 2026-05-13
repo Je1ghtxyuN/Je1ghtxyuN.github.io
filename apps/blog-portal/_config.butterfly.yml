@@ -48,8 +48,8 @@ subtitle:
   loop: true
   sub:
     - Code, Anime, Games, and Coffee.
-    - Elegant technical blog and portfolio foundation.
-    - Building a calm, long-term personal platform.
+    - VR, HCI, and game dev.
+    - Writing things down so I don't forget.
 
 index_layout: 4
 
@@ -134,7 +134,7 @@ busuanzi:
 
 search:
   use: local_search
-  placeholder: Search articles, pages, and project notes...
+  placeholder: Search...
   local_search:
     preload: false
     top_n_per_article: 2
@@ -188,6 +188,6 @@ structured_data:
 
 inject:
   head:
-    - <link rel="stylesheet" href="/css/portal-custom.css">
+    - <link rel="stylesheet" href="/css/portal-custom.css?v=3">
   bottom:
-    - <script src="/js/portal-hero.js" defer></script>
+    - <script src="/js/portal-hero.js?v=2" defer></script>

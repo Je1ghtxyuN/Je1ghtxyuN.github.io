@@ -358,6 +358,7 @@ async function loadProfile() {
   setVal('pf-avatar', getVal(p, 'avatar_path'))
   setVal('pf-icon', getVal(p, 'icon_path'))
   setVal('pf-hero-bg', getVal(p, 'hero_background_path'))
+  setVal('pf-hero-phrases', (p.hero_phrases || []).join('\n'))
   setVal('pf-started-date', getVal(p, 'site_started_date'))
   setVal('pf-started-year', getVal(p, 'site_started_year'))
 
@@ -376,6 +377,7 @@ async function loadProfile() {
   setVal('pf-contact-email', getVal(p, 'contact.email'))
   setVal('pf-contact-location', getVal(p, 'contact.location'))
   setVal('pf-contact-note', getVal(p, 'contact.availability_note'))
+  setVal('pf-contact-formspree', getVal(p, 'contact.formspree_endpoint'))
 
   // About
   setVal('pf-about-title', getVal(p, 'about.intro_title', 'About Me'))
@@ -413,6 +415,7 @@ async function saveProfile() {
     avatar_path: readVal('pf-avatar'),
     icon_path: readVal('pf-icon'),
     hero_background_path: readVal('pf-hero-bg'),
+    hero_phrases: readVal('pf-hero-phrases').split('\n').map((s) => s.trim()).filter(Boolean),
     site_started_date: readVal('pf-started-date'),
     site_started_year: parseInt(readVal('pf-started-year')) || new Date().getFullYear(),
     intro: {
@@ -428,7 +431,7 @@ async function saveProfile() {
       email: readVal('pf-contact-email'),
       location: readVal('pf-contact-location'),
       availability_note: readVal('pf-contact-note'),
-      formspree_endpoint: 'https://formspree.io/f/your-form-id',
+      formspree_endpoint: readVal('pf-contact-formspree') || '',
     },
     about: {
       intro_title: readVal('pf-about-title'),

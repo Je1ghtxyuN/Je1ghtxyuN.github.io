@@ -29,27 +29,27 @@ items:
     icon: fas fa-id-card
     external: false
 home_shortcuts:
-  title: Explore The Portal
-  description: Fast paths into writing, project showcases, the integrated Study Room, and contact entry.
+  title: Explore
+  description: ""
   items:
     - label: Blog
       path: /blog/
       icon: fas fa-feather-pointed
       external: false
-      description: Browse the generated post index and jump into the latest articles.
+      description: ""
     - label: Portfolio
       path: /portfolio/
       icon: fas fa-laptop-code
       external: false
-      description: Browse project cards and long-term case study seeds.
+      description: ""
     - label: Study Room
       path: /study-app/
       icon: fas fa-book-open
       external: false
-      description: Enter the integrated flagship focus application directly.
+      description: ""
     - label: Contact
       path: /contact/
       icon: fas fa-envelope
       external: false
-      description: Reach out through the portal contact surface.
+      description: ""
 source_of_truth_note: Keep this file as the human-editable navigation source. The Butterfly menu can be synchronized from it during generation.

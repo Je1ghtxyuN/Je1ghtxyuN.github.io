@@ -17,11 +17,18 @@ const getTrackIndex = (tracks, trackId) => {
 
 // Shared audio ref — survives panel mount/unmount
 let globalAudio = null
+// Track ID currently loaded in the audio element — survives panel mount/unmount
+let lastSetTrackId = null
+// Module-level callback for auto-advance — survives panel mount/unmount
+let onTrackEnded = null
 
 function getGlobalAudio() {
   if (!globalAudio) {
     globalAudio = new Audio()
     globalAudio.preload = 'auto'
+    globalAudio.addEventListener('ended', () => {
+      onTrackEnded?.()
+    })
   }
   return globalAudio
 }
@@ -72,13 +79,21 @@ export function useAmbientMusicController() {
   useEffect(() => {
     if (sourceType !== MUSIC_SOURCE_TYPES.netease) return
     if (!currentTrack.id) return
+    let cancelled = false
     trackSource.getTrackUrl(currentTrack.id).then((url) => {
+      if (cancelled) return
       if (url) {
         setTracks((prev) =>
           prev.map((t) => (t.id === currentTrack.id ? { ...t, src: url } : t)),
         )
+      } else {
+        // URL fetch failed — skip to next track if we were playing
+        if (wasPlayingRef.current && tracks.length > 1) {
+          nextTrackRef.current?.()
+        }
       }
     })
+    return () => { cancelled = true }
   }, [currentTrack.id, sourceType])
 
   // Sync volume
@@ -86,13 +101,24 @@ export function useAmbientMusicController() {
     audio.volume = preferences.volume
   }, [preferences.volume])
 
-  // Switch track
+  // Switch track — skip if audio already has this track loaded
   useEffect(() => {
     if (!currentTrack.src) return
+    if (lastSetTrackId === currentTrack.id) {
+      const ended = audio.paused && audio.currentTime >= (audio.duration || Infinity) - 0.5
+      if (ended && wasPlayingRef.current) {
+        // Track ended (e.g. single-track playlist loop) — restart
+        audio.currentTime = 0
+        void audio.play().catch(() => {})
+      }
+      setPlaybackState(audio.paused ? 'paused' : 'playing')
+      return
+    }
     const shouldPlay = wasPlayingRef.current
     audio.pause()
     audio.src = currentTrack.src
     audio.load()
+    lastSetTrackId = currentTrack.id
     if (shouldPlay) {
       void audio.play().catch(() => {
         setPlaybackState('paused')
@@ -152,11 +178,12 @@ export function useAmbientMusicController() {
     }
   }
 
-  // Auto-advance to next track when current ends
+  // Auto-advance to next track when current ends (module-level so it survives panel unmount)
   useEffect(() => {
-    const handleEnded = () => { nextTrackRef.current?.() }
-    audio.addEventListener('ended', handleEnded)
-    return () => audio.removeEventListener('ended', handleEnded)
+    onTrackEnded = () => { nextTrackRef.current?.() }
+    return () => {
+      onTrackEnded = null
+    }
   }, [])
 
   const doNetEaseLogin = useCallback(async (account, password) => {

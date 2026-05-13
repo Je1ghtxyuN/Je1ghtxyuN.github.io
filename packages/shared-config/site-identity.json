@@ -2,7 +2,7 @@
   "brand": {
     "name": "Je1ghtxyuN",
     "ownerDisplayName": "Kyoka",
-    "portalTagline": "Static-first writing, interactive experiments, and long-term platform design."
+    "portalTagline": "Writing, projects, and a focus workspace — all in one place."
   },
   "routes": {
     "portalHomePath": "/",
@@ -12,7 +12,7 @@
   },
   "studyRoom": {
     "name": "Study Room",
-    "shortDescription": "Immersive focus environment with Pomodoro flow, ambient scenes, and low-friction session tools."
+    "shortDescription": "A focus workspace with timer, ambient scenes, and task capture."
   },
   "contact": {
     "emailLabel": "Email",

@@ -169,3 +169,25 @@ Project commands live in `.claude/commands/`. When the work context matches a sk
 | Before any commit touching backend API, auth, or data handling | `/project:security-insecure-defaults` (quick scan) |
 
 When invoking a skill automatically, briefly note which skill you're using and why — e.g., "Running security-insecure-defaults scan on the new auth route."
+
+## Superpowers Workflow (REQUIRED)
+
+The superpowers plugin provides process-enforcing skills. These are **mandatory** for non-trivial tasks — do not skip them.
+
+| Phase | Skill | When To Use |
+|-------|-------|-------------|
+| Before creative work | `superpowers:brainstorming` | Creating features, building components, designing UI — anything that requires exploring ideas before coding |
+| Before implementation | `superpowers:writing-plans` | Multi-step tasks that need a written plan before touching code |
+| During implementation | `superpowers:test-driven-development` | Implementing any feature or bugfix — write failing tests first |
+| When stuck | `superpowers:systematic-debugging` | Any bug, test failure, or unexpected behavior — before proposing a fix |
+| Before claiming done | `superpowers:verification-before-completion` | Before saying "it works", "fixed", or "passing" — verify with actual evidence |
+
+**Execution order for typical feature work:**
+1. `brainstorming` → explore the problem space and possible approaches
+2. `writing-plans` → produce a concrete implementation plan
+3. `tdd-red` → write failing tests that define the expected behavior
+4. Implementation code
+5. `tdd-green` → make tests pass with minimal code
+6. `verification-before-completion` → confirm everything actually works
+
+Do NOT rationalize skipping these skills. Even if a task feels simple, invoke the relevant skill — it will determine whether its full workflow is needed or can be abbreviated.

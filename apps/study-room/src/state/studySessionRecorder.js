@@ -73,6 +73,20 @@ export async function registerUser(email, password, nickname) {
   return res.json()
 }
 
+export async function updateNickname(nickname) {
+  const res = await fetch(`${API_BASE}/user/nickname`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ nickname }),
+  })
+  if (!res.ok) {
+    const data = await res.json()
+    throw new Error(data.error || 'Update failed')
+  }
+  return res.json()
+}
+
 export async function logoutUser() {
   await fetch(`${API_BASE}/user/logout`, {
     method: 'POST',

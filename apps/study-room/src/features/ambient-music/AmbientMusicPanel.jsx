@@ -69,7 +69,7 @@ export function AmbientMusicPanel() {
           {artists ? <p className="floating-widget__meta">{artists}</p> : null}
         </div>
         <span className="floating-widget__badge">
-          {loading ? 'Loading...' : t('studyRoom.music.playback.' + playbackState, {}, playbackState)}
+          {loading ? t('common.loading', {}, 'Loading...') : t('studyRoom.music.playback.' + playbackState, {}, playbackState)}
         </span>
       </div>
 
@@ -81,19 +81,19 @@ export function AmbientMusicPanel() {
               <i className="fas fa-user-circle" /> {neteaseUser.nickname}
             </span>
             <button type="button" className="button button--ghost button--sm" onClick={doNetEaseLogout}>
-              Logout
+              {t('common.logout', {}, 'Logout')}
             </button>
           </div>
         ) : (
           <div className="netease-login">
             {!showLogin ? (
               <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(true)}>
-                <i className="fas fa-music" /> Login NetEase
+                <i className="fas fa-music" /> {t('studyRoom.music.loginNetEase', {}, 'Login NetEase')}
               </button>
             ) : (
               <div className="netease-login__form">
                 <div className="netease-login__tabs">
-                  <button type="button" className={`netease-login__tab${loginTab === 'password' ? ' netease-login__tab--active' : ''}`} onClick={() => setLoginTab('password')}>Password</button>
+                  <button type="button" className={`netease-login__tab${loginTab === 'password' ? ' netease-login__tab--active' : ''}`} onClick={() => setLoginTab('password')}>{t('common.password', {}, 'Password')}</button>
                   <button type="button" className={`netease-login__tab${loginTab === 'sms' ? ' netease-login__tab--active' : ''}`} onClick={() => setLoginTab('sms')}>SMS</button>
                 </div>
 
@@ -101,38 +101,38 @@ export function AmbientMusicPanel() {
                   <form onSubmit={handleLogin}>
                     <div className="netease-login__field">
                       <i className="fas fa-user netease-login__icon" />
-                      <input className="netease-login__input" type="text" placeholder="Email or phone number" value={loginAccount} onChange={(e) => setLoginAccount(e.target.value)} />
+                      <input className="netease-login__input" type="text" placeholder={t('studyRoom.music.emailOrPhonePlaceholder', {}, 'Email or phone number')} value={loginAccount} onChange={(e) => setLoginAccount(e.target.value)} />
                     </div>
                     <div className="netease-login__field">
                       <i className="fas fa-lock netease-login__icon" />
-                      <input className="netease-login__input" type={showPassword ? 'text' : 'password'} placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+                      <input className="netease-login__input" type={showPassword ? 'text' : 'password'} placeholder={t('common.password', {}, 'Password')} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
                       <button type="button" className="netease-login__eye" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                         <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'} />
                       </button>
                     </div>
                     <div className="netease-login__actions">
-                      <button type="submit" className="button button--primary button--sm">Login</button>
-                      <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>Cancel</button>
+                      <button type="submit" className="button button--primary button--sm">{t('common.login', {}, 'Login')}</button>
+                      <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>{t('common.cancel', {}, 'Cancel')}</button>
                     </div>
                   </form>
                 ) : (
                   <form onSubmit={handleSmsLogin}>
                     <div className="netease-login__field">
                       <i className="fas fa-mobile-alt netease-login__icon" />
-                      <input className="netease-login__input" type="tel" placeholder="Phone number" value={smsPhone} onChange={(e) => setSmsPhone(e.target.value)} />
+                      <input className="netease-login__input" type="tel" placeholder={t('studyRoom.music.phonePlaceholder', {}, 'Phone number')} value={smsPhone} onChange={(e) => setSmsPhone(e.target.value)} />
                       <button type="button" className="netease-login__sms-btn" onClick={handleSendSms} disabled={smsSent}>
-                        {smsSent ? 'Resend' : 'Send Code'}
+                        {smsSent ? t('studyRoom.music.resend', {}, 'Resend') : t('studyRoom.music.sendCode', {}, 'Send Code')}
                       </button>
                     </div>
                     {smsSent && (
                       <div className="netease-login__field">
                         <i className="fas fa-key netease-login__icon" />
-                        <input className="netease-login__input" type="text" placeholder="SMS code" value={smsCode} onChange={(e) => setSmsCode(e.target.value)} maxLength={6} />
+                        <input className="netease-login__input" type="text" placeholder={t('studyRoom.music.smsCodePlaceholder', {}, 'SMS code')} value={smsCode} onChange={(e) => setSmsCode(e.target.value)} maxLength={6} />
                       </div>
                     )}
                     <div className="netease-login__actions">
-                      <button type="submit" className="button button--primary button--sm" disabled={!smsSent}>Verify & Login</button>
-                      <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>Cancel</button>
+                      <button type="submit" className="button button--primary button--sm" disabled={!smsSent}>{t('studyRoom.music.verifyAndLogin', {}, 'Verify & Login')}</button>
+                      <button type="button" className="button button--ghost button--sm" onClick={() => setShowLogin(false)}>{t('common.cancel', {}, 'Cancel')}</button>
                     </div>
                   </form>
                 )}
@@ -147,7 +147,7 @@ export function AmbientMusicPanel() {
       {/* User playlists */}
       {userPlaylists.length > 0 && (
         <div className="field">
-          <label>My Playlists</label>
+          <label>{t('studyRoom.music.myPlaylists', {}, 'My Playlists')}</label>
           <select className="select" onChange={(e) => { if (e.target.value) switchToPlaylist(e.target.value) }} defaultValue="">
             <option value="">{musicSourceLabel} (default)</option>
             {userPlaylists.map((pl) => (

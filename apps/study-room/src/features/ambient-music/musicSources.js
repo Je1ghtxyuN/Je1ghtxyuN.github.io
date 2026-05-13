@@ -8,22 +8,17 @@ export const MUSIC_SOURCE_TYPES = Object.freeze({
 
 const LOCAL_TRACK_SOURCE = Object.freeze({
   type: MUSIC_SOURCE_TYPES.local,
-  label: 'Local Library',
-  description:
-    'Bundled local ambience keeps the current Study Room self-contained and offline-safe.',
   getTracks() {
     return LOCAL_AMBIENT_TRACKS
   },
 })
 
 let neteaseTracks = LOCAL_AMBIENT_TRACKS
-let neteasePlaylistName = 'Cloud Music'
+let neteasePlaylistName = ''
 let neteaseLoaded = false
 
 const NETEASE_TRACK_SOURCE = Object.freeze({
   type: MUSIC_SOURCE_TYPES.netease,
-  label: 'Cloud Music',
-  description: 'NetEase Cloud Music',
   getTracks() {
     return neteaseTracks
   },
@@ -39,7 +34,7 @@ const NETEASE_TRACK_SOURCE = Object.freeze({
       neteaseLoaded = true
       return { tracks, name: playlist.name }
     } catch {
-      return { tracks: LOCAL_AMBIENT_TRACKS, name: 'Offline (fallback)' }
+      return { tracks: LOCAL_AMBIENT_TRACKS, name: '' }
     }
   },
   async getTrackUrl(trackId) {

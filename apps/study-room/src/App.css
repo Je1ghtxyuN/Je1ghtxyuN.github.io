@@ -1466,6 +1466,21 @@ code {
   font-size: 1.2rem;
   opacity: 0.6;
 }
+.stats-nick-edit-btn {
+  padding: 0.15rem 0.3rem;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+.stats-nick-edit-btn:hover {
+  opacity: 1;
+}
+.stats-nick-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
 .stats-login-form {
   display: flex;
   flex-direction: column;
