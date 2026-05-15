@@ -11,17 +11,13 @@ import { blog } from './routes/blog.js'
 import { portfolio } from './routes/portfolio.js'
 import { siteProfile } from './routes/site-profile.js'
 import { rebuild } from './routes/rebuild.js'
-import { music } from './routes/music.js'
-import { userAuth } from './routes/user-auth.js'
-import { studySessions } from './routes/study-sessions.js'
-import { todos } from './routes/todos.js'
 
 export function createApp() {
   const app = new Hono()
 
   app.use('*', logger())
   app.use('*', cors({
-    origin: ['http://localhost:4000', 'http://localhost:5173'],
+    origin: ['http://localhost:4000'],
     credentials: true,
   }))
   app.use('*', errorHandler())
@@ -37,10 +33,6 @@ export function createApp() {
   app.route('/portfolio', portfolio)
   app.route('/site-profile', siteProfile)
   app.route('/admin/rebuild', rebuild)
-  app.route('/music', music)
-  app.route('/user', userAuth)
-  app.route('/study-sessions', studySessions)
-  app.route('/todos', todos)
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404))
 
