@@ -2,17 +2,11 @@
   "brand": {
     "name": "Je1ghtxyuN",
     "ownerDisplayName": "Kyoka",
-    "portalTagline": "Writing, projects, and a focus workspace — all in one place."
+    "portalTagline": "Writing, projects, and more — all in one place."
   },
   "routes": {
     "portalHomePath": "/",
-    "studyRoomLandingPath": "/study-room/",
-    "studyRoomAppPath": "/study-app/",
     "backendApiHostPlaceholder": "api.yourdomain.com"
-  },
-  "studyRoom": {
-    "name": "Study Room",
-    "shortDescription": "A focus workspace with timer, ambient scenes, and task capture."
   },
   "contact": {
     "emailLabel": "Email",
