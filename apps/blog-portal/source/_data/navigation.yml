@@ -15,11 +15,6 @@ items:
     path: /portfolio/
     icon: fas fa-laptop-code
     external: false
-  - label: Study Room
-    path: /study-app/
-    icon: fas fa-book-open
-    external: false
-    note: Direct application entry for the integrated Study Room. The optional explanatory landing page remains available at /study-room/.
   - label: Contact
     path: /contact/
     icon: fas fa-envelope
@@ -40,11 +35,6 @@ home_shortcuts:
     - label: Portfolio
       path: /portfolio/
       icon: fas fa-laptop-code
-      external: false
-      description: ""
-    - label: Study Room
-      path: /study-app/
-      icon: fas fa-book-open
       external: false
       description: ""
     - label: Contact

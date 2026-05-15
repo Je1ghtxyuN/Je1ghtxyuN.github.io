@@ -3,10 +3,7 @@ const {
   getDefaultLocaleText,
   localeBasePath,
   siteIdentity,
-  studyRoomAppPath,
-  studyRoomLandingPath,
   supportedLocales,
-  resolveStudyRoomPublicUrl,
 } = require('./portal-shared-config')
 
 hexo.extend.filter.register('before_generate', () => {
@@ -14,7 +11,6 @@ hexo.extend.filter.register('before_generate', () => {
   const profile = data.site_profile || {}
   const navigation = data.navigation || {}
   const themeConfig = hexo.theme.config || {}
-  const studyRoomPublicUrl = resolveStudyRoomPublicUrl(hexo)
   const portalI18nConfig = JSON.stringify({
     defaultLocale,
     storageKey: 'site-locale',
@@ -25,8 +21,6 @@ hexo.extend.filter.register('before_generate', () => {
       '/archives/': 'portal.nav.archives',
       '/categories/': 'portal.nav.categories',
       '/portfolio/': 'portal.nav.portfolio',
-      [studyRoomPublicUrl]: 'portal.nav.studyRoom',
-      [studyRoomLandingPath]: 'portal.nav.studyRoom',
       '/contact/': 'portal.nav.contact',
       '/about/': 'portal.nav.about',
     },
@@ -92,9 +86,7 @@ hexo.extend.filter.register('before_generate', () => {
     const syncedMenu = {}
     navigation.items.forEach((item) => {
       if (!item || !item.label || !item.path) return
-      const itemPath =
-        item.path === studyRoomAppPath ? studyRoomPublicUrl : item.path
-      syncedMenu[item.label] = `${itemPath} || ${item.icon || 'fas fa-link'}`
+      syncedMenu[item.label] = `${item.path} || ${item.icon || 'fas fa-link'}`
     })
     themeConfig.menu = syncedMenu
   }

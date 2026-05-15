@@ -160,7 +160,18 @@
     Object.entries(navMap).forEach(([href, key]) => {
       document
         .querySelectorAll(`a[href="${href}"]`)
-        .forEach((anchor) => setTextContent(anchor, translate(bundle, fallbackBundle, key, anchor.textContent || '')))
+        .forEach((anchor) => {
+          const translated = translate(bundle, fallbackBundle, key, anchor.textContent || '')
+          const icon = anchor.querySelector('i')
+          if (icon) {
+            // Preserve Font Awesome icon, only replace text
+            anchor.textContent = ''
+            anchor.appendChild(icon)
+            anchor.appendChild(document.createTextNode(' ' + translated))
+          } else {
+            setTextContent(anchor, translated)
+          }
+        })
     })
   }
 

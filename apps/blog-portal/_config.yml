@@ -5,7 +5,6 @@ keywords:
   - personal website
   - technical blog
   - portfolio
-  - study room
   - VR
   - HCI
   - game development
@@ -31,8 +30,7 @@ archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
-skip_render:
-  - study-app/**
+skip_render: []
 
 new_post_name: :title.md
 default_layout: post

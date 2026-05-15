@@ -31,13 +31,6 @@ contact:
   formspree_endpoint: "https://formspree.io/f/your-form-id"
 subtitle: 
 icon_path: /shared-assets/images/icon.png
-study_room:
-  title: Study Room
-  summary: 
-  cta_note: 
-  features: []
-  cta_label: Enter Study Room
-  description: 
 avatar_path: /shared-assets/images/profile.jpg
 footer_note: 
 social_links:

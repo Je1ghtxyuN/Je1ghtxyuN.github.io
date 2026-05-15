@@ -200,7 +200,6 @@
 .type-portal-home #page,
 .type-portal-about #page,
 .type-portal-portfolio #page,
-.type-portal-study-room #page,
 .type-portal-contact #page {
   background: transparent;
   box-shadow: none;
@@ -209,7 +208,6 @@
 .type-portal-home #page .page-title,
 .type-portal-about #page .page-title,
 .type-portal-portfolio #page .page-title,
-.type-portal-study-room #page .page-title,
 .type-portal-contact #page .page-title {
   display: none;
 }
@@ -217,7 +215,6 @@
 .type-portal-home #article-container,
 .type-portal-about #article-container,
 .type-portal-portfolio #article-container,
-.type-portal-study-room #article-container,
 .type-portal-contact #article-container {
   margin: 0;
   padding: 0;
