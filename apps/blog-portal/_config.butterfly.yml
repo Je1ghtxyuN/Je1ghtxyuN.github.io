@@ -192,4 +192,6 @@ inject:
     - <script src="/js/portal-hero.js?v=BUILD_VER" defer></script>
 
 CDN:
-  third_party_provider: cdnjs
+  third_party_provider: jsdelivr
+  option:
+    fontawesome: https://gcore.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css

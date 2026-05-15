@@ -16,9 +16,9 @@
   var avatarPath = data.avatar_path || '/shared-assets/images/profile.jpg'
   var introText = data.intro_short || ''
 
-  // Hide Butterfly's default "Home" title in the header
+  // Replace "HOME" with "Je1ghtxyuN" in the header (no translation)
   var siteTitle = document.getElementById('site-title')
-  if (siteTitle) siteTitle.style.display = 'none'
+  if (siteTitle) siteTitle.textContent = 'Je1ghtxyuN'
 
   // Create hero info container
   var heroInfo = document.createElement('div')

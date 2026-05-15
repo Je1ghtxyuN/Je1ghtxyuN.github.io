@@ -441,16 +441,6 @@ module.exports = function createPortalRenderer(hexo) {
                     )
                   : { class: 'portal-card__title' },
                 escapeHtml(fallbackText(item.label, PORTAL_CONFIG.DEFAULT_TITLE))
-              )}${renderTag(
-                'p',
-                shortcutKey
-                  ? withI18nAttr(
-                      { class: 'portal-card__copy' },
-                      `portal.shortcuts.${shortcutKey}.description`,
-                      fallbackText(item.description, PORTAL_CONFIG.DEFAULT_DESCRIPTION)
-                    )
-                  : { class: 'portal-card__copy' },
-                escapeHtml(fallbackText(item.description, PORTAL_CONFIG.DEFAULT_DESCRIPTION))
               )}`
             )
           })

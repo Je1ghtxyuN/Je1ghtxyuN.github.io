@@ -21,6 +21,8 @@
   position: relative;
 }
 
+/* Page title on homepage replaced with "Je1ghtxyuN" by portal-hero.js */
+
 .type-portal-home #page-header::before {
   content: '';
   position: absolute;

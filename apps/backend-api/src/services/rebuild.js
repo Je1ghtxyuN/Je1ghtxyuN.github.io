@@ -194,8 +194,14 @@ export async function rebuildPortal() {
     await writeFile(join(dataDir, 'portfolio.yml'), yamlContent, 'utf-8')
   }
 
-  // 4. Run hexo clean + generate
+  // 4. Run hexo generate
   const portalRoot = getPortalRoot()
+
+  // Clear hexo cache to ensure source changes are picked up
+  try {
+    const dbPath = join(portalRoot, 'db.json')
+    await import('node:fs/promises').then((fs) => fs.unlink(dbPath))
+  } catch { /* db.json may not exist */ }
 
   // Temporarily disable conflicting generator (uses source/index.md + tag instead)
   const genPath = join(portalRoot, 'scripts', 'portal-home-generator.js')
@@ -218,6 +224,8 @@ export async function rebuildPortal() {
     // Bust Cloudflare cache: replace BUILD_VER placeholder with Unix timestamp
     const buildVer = String(Math.floor(Date.now() / 1000))
     await execFileAsync('find', [join(portalRoot, 'public'), '-name', '*.html', '-exec', 'sed', '-i', `s/BUILD_VER/${buildVer}/g`, '{}', '+'], { timeout: 10000 }).catch(() => {})
+    // Also replace any stale cached version (in case hexo cached a previous buildVer)
+    await execFileAsync('find', [join(portalRoot, 'public'), '-name', '*.html', '-exec', 'sed', '-i', `s/v=\\\\d\\\\+/v=${buildVer}/g`, '{}', '+'], { timeout: 10000 }).catch(() => {})
     // Touch nginx HTML dir to refresh bind mount without downtime
     await execFileAsync('touch', [join(portalRoot, 'public', '.nginx-refresh')], { timeout: 5000 }).catch(() => {})
     return { ok: true, postsGenerated: posts.length, hexoOutput: stdout, hexoErrors: stderr || null, cacheVersion: buildVer }
