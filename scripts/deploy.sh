@@ -13,20 +13,13 @@ echo "========================================="
 # --- Local build ---
 
 echo ""
-echo "[1/7] Building Study Room..."
-cd "$REPO_ROOT/apps/study-room"
-npm run build --silent 2>&1 | tail -1
-
-echo "[2/7] Syncing Study Room to portal source..."
-bash "$REPO_ROOT/scripts/sync-study-app.sh" 2>&1 | tail -1
-
-echo "[3/7] Syncing latest content from server..."
+echo "[1/5] Syncing latest content from server..."
 # Pull latest _data/ and _posts/ from server (admin UI edits live in server MySQL,
 # rebuild script writes them to YAML; we need those files before local hexo generate)
 rsync -avz --delete "$SERVER:$SERVER_PORTAL/source/_data/" "$REPO_ROOT/apps/blog-portal/source/_data/" 2>&1 | tail -1
 rsync -avz --delete "$SERVER:$SERVER_PORTAL/source/_posts/" "$REPO_ROOT/apps/blog-portal/source/_posts/" 2>&1 | tail -1
 
-echo "[4/7] Building Portal..."
+echo "[2/5] Building Portal..."
 cd "$REPO_ROOT/apps/blog-portal"
 ./node_modules/.bin/hexo generate 2>&1 | tail -1
 
@@ -39,7 +32,7 @@ find "$REPO_ROOT/apps/blog-portal/public" -name '*.html' -exec sed -i '' "s/BUIL
 # Server has no packages/ directory, so copy deps into portal before syncing.
 # Save and restore the local shared-assets symlink.
 
-echo "[4/7] Preparing portal for deployment..."
+echo "[3/5] Preparing portal for deployment..."
 PORTAL_DIR="$REPO_ROOT/apps/blog-portal"
 
 # Save symlink target before we clobber it
@@ -54,7 +47,7 @@ cp -r "$REPO_ROOT/packages/shared-assets" "$PORTAL_DIR/source/shared-assets"
 
 # --- Sync to server ---
 
-echo "[5/7] Syncing to server..."
+echo "[4/5] Syncing to server..."
 rsync -avz --delete \
   --exclude='node_modules' \
   --exclude='.git' \
@@ -81,7 +74,7 @@ rm -f "$PORTAL_DIR/site-identity.json"
 
 # --- Docker rebuild on server ---
 
-echo "[6/7] Installing deps & rebuilding Docker..."
+echo "[5/5] Installing deps & rebuilding Docker..."
 ssh "$SERVER" "cd $SERVER_PORTAL && npm install --silent 2>&1 | tail -1"
 rsync -avz "$REPO_ROOT/infra/docker-compose.yml" "$SERVER:$SERVER_DOCKER/" 2>&1 | tail -1
 rsync -avz "$REPO_ROOT/infra/nginx/default.conf" "$SERVER:$SERVER_DOCKER/nginx/" 2>&1 | tail -1
@@ -95,7 +88,6 @@ ssh "$SERVER" "cd $SERVER_DOCKER && docker compose build backend-api 2>&1 | tail
 
 # --- Sync admin credentials ---
 
-echo "[7/7] Syncing admin credentials..."
 "$REPO_ROOT/scripts/sync-admin.sh" 2>/dev/null || true
 
 echo ""
