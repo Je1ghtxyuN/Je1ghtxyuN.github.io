@@ -394,13 +394,6 @@ async function loadProfile() {
   setVal('pf-home-footer', getVal(p, 'home.footer_title'))
   setVal('pf-home-empty', getVal(p, 'home.recent_posts_empty_text'))
 
-  // Study Room
-  setVal('pf-sr-title', getVal(p, 'study_room.title'))
-  setVal('pf-sr-summary', getVal(p, 'study_room.summary'))
-  setVal('pf-sr-desc', getVal(p, 'study_room.description'))
-  setVal('pf-sr-cta', getVal(p, 'study_room.cta_label'))
-  renderArrayFields('pf-sr-features', p.study_room?.features || [], featureTemplate)
-
   // Footer
   setVal('pf-footer-note', getVal(p, 'footer_note'))
 }
@@ -451,14 +444,6 @@ async function saveProfile() {
       portfolio_preview_title: readVal('pf-home-portfolio'),
       footer_title: readVal('pf-home-footer'),
       recent_posts_empty_text: readVal('pf-home-empty'),
-    },
-    study_room: {
-      title: readVal('pf-sr-title'),
-      summary: readVal('pf-sr-summary'),
-      description: readVal('pf-sr-desc'),
-      cta_label: readVal('pf-sr-cta'),
-      cta_note: 'The Study Room opens at `/study-app/` as a standalone experience.',
-      features: collectArrayFields('pf-sr-features', [{ key: 'value', selector: '.ft-value' }]).map((f) => f.value).filter(Boolean),
     },
     footer_note: readVal('pf-footer-note'),
   }
