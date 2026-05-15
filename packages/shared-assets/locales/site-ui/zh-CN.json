@@ -55,15 +55,11 @@
     "shortcuts": {
       "blog": {
         "label": "博客",
-        "description": "读文章和项目笔记。"
+        "description": "思考、教程与技术写作。"
       },
       "portfolio": {
         "label": "作品集",
-        "description": "我做过的东西。"
-      },
-      "studyRoom": {
-        "label": "Study Room",
-        "description": "打开专注空间。"
+        "description": "精选项目与实验。"
       },
       "contact": {
         "label": "联系",

@@ -55,15 +55,11 @@
     "shortcuts": {
       "blog": {
         "label": "ブログ",
-        "description": "記事やプロジェクトノートを読む。"
+        "description": "思考、チュートリアル、技術記事。"
       },
       "portfolio": {
         "label": "ポートフォリオ",
-        "description": "作ったもの。"
-      },
-      "studyRoom": {
-        "label": "Study Room",
-        "description": "集中スペースを開く。"
+        "description": "精选プロジェクトと実験。"
       },
       "contact": {
         "label": "連絡",

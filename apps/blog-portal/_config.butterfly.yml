@@ -9,7 +9,6 @@ menu:
   Archives: /archives/ || fas fa-box-archive
   Categories: /categories/ || fas fa-folder-open
   Portfolio: /portfolio/ || fas fa-laptop-code
-  Study Room: /study-app/ || fas fa-book-open
   Contact: /contact/ || fas fa-envelope
   About: /about/ || fas fa-id-card
 
@@ -191,3 +190,6 @@ inject:
     - <link rel="stylesheet" href="/css/portal-custom.css?v=BUILD_VER">
   bottom:
     - <script src="/js/portal-hero.js?v=BUILD_VER" defer></script>
+
+CDN:
+  third_party_provider: cdnjs

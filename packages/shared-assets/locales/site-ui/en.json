@@ -55,15 +55,11 @@
     "shortcuts": {
       "blog": {
         "label": "Blog",
-        "description": ""
+        "description": "Thoughts, tutorials, and technical writing."
       },
       "portfolio": {
         "label": "Portfolio",
-        "description": ""
-      },
-      "studyRoom": {
-        "label": "Study Room",
-        "description": "Open the focus workspace."
+        "description": "Selected projects and experiments."
       },
       "contact": {
         "label": "Contact",
