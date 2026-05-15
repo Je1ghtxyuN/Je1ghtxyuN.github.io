@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal website platform (Je1ghtxyuN) mid-migration from a legacy React/Firebase SPA to a modular multi-app architecture. The target stack is: Hexo portal + standalone React SPA (Study Room) + self-hosted Node.js API backend + MySQL via Prisma. Firebase is transitional and planned for full removal.
+Personal website platform (Je1ghtxyuN) — Hexo-based public portal with self-hosted Node.js API backend and MySQL. The Study Room (study-app) has been separated into its own independent repository at `study.je1ght.top`. Firebase is transitional and planned for full removal.
 
 ## Project Decisions & Constraints
 
@@ -21,13 +21,13 @@ These are locked architectural decisions. Do not contradict them unless the user
 - **Comment system**: self-hosted (MySQL), not third-party hosted
 - **Contact form**: backend-owned, replacing Formspree
 
-## Current Project Status (as of 2026-05-08)
+## Current Project Status (as of 2026-05-16)
 
 - Phase 1 (Architecture Memory): done
 - Phase 2 (Hexo Portal): core UI done, content populated, locale sync working
-- Phase 3 (Study Room): immersive scene-first UI, Pomodoro engine, video scenes, ambient music all working
-- Phase 4 (Backend): Hono server bootstrapped, Prisma + MySQL connected, auth foundation (login/session/logout) working
-- Phase 5 (Integration): portal ↔ study-room integrated via sync script, local preview working at localhost:4000
+- Phase 3 (Study Room): **completed and separated** — now independent repo at `study.je1ght.top`
+- Phase 4 (Backend): Hono server bootstrapped, Prisma + MySQL connected, auth working (portal-only routes)
+- Phase 5 (Integration): portal deployed at `je1ght.top`, study-app deployed at `study.je1ght.top`
 - Phase 6 (Optimization): not started
 
 ## Detailed References (read on demand, not every session)
@@ -38,7 +38,7 @@ These files contain full history and detail. Read them only when the task requir
 - `docs/AI_PROJECT_MEMORY/MASTER_ARCHITECTURE.md` — final target architecture, data model, auth strategy, deployment topology
 - `docs/AI_PROJECT_MEMORY/DEVELOPMENT_ROADMAP.md` — 6-phase execution roadmap with checklists
 - `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md` — append-only engineering session log
-- `docs/DEPLOYMENT_CONTRACT.md` — routing contract for portal + study-room + backend
+- `docs/DEPLOYMENT_CONTRACT.md` — routing contract for portal + backend
 - `docs/CONTENT_MAP.md` — where content is stored and how it flows to the homepage
 
 ## Repository Structure
@@ -46,12 +46,12 @@ These files contain full history and detail. Read them only when the task requir
 This is a **manual monorepo** (no workspace tooling — each app has its own `node_modules`).
 
 - `apps/blog-portal/` — Hexo 7 static site with Butterfly theme (the public portal at `/`)
-- `apps/study-room/` — React 19 + Vite 8 SPA (immersive focus app at `/study-app/`)
-- `apps/backend-api/` — Hono API server with Prisma ORM (MySQL target, not yet production-integrated)
+- `apps/backend-api/` — Hono API server with Prisma ORM (portal backend, admin, comments, contact)
 - `packages/shared-config/site-identity.json` — single source of truth for brand, routes, and i18n locale list
-- `packages/shared-assets/` — shared images, music, videos, locales, sound effects
 - `src/` — legacy React SPA (frozen reference, not the active development target)
 - `docs/AI_PROJECT_MEMORY/` — architecture decisions, roadmap, and persistent engineering worklog
+
+**Note:** The Study Room (study-app) was separated into its own repository on 2026-05-16. It lives at `/Users/je1ghtxyun/code/personal-website/study-app/` and deploys independently to `study.je1ght.top`.
 
 ## Commands
 
@@ -71,14 +71,6 @@ npm run clean        # hexo clean
 npm run deploy       # hexo deploy
 ```
 
-### Study Room (`apps/study-room/`)
-```
-npm run dev          # Vite dev server
-npm run build        # Vite production build
-npm run lint         # ESLint flat config
-npm run preview      # Preview production build
-```
-
 ### Backend API (`apps/backend-api/`)
 ```
 npm run dev          # Hono server with --watch (port 3001)
@@ -88,33 +80,19 @@ npm run prisma:migrate:dev # prisma migrate dev (not yet installed)
 npm run prisma:studio      # prisma studio GUI (not yet installed)
 ```
 
-### Cross-app sync
-```
-bash scripts/sync-study-app.sh   # Builds study-room, copies dist/ into blog-portal/source/study-app/
-```
-
 ## Architecture: How The Apps Connect
 
 **Routing contract** (defined in `docs/DEPLOYMENT_CONTRACT.md`):
 - `/` → blog portal static output
-- `/study-room/` → portal-owned informational landing page
-- `/study-app/` → Study Room SPA static output
-- `api.yourdomain.com` → backend API (placeholder, not yet deployed)
+- `je1ght.top` → portal (Hexo)
+- `study.je1ght.top` → study-app (independent React + Hono + MySQL stack)
 
-**Local dev routing**: Study Room CTAs always link to `/study-app/` in all modes (dev and production). The Hexo dev server does NOT host the Vite app — during local dev, `/study-app/` resolves from `blog-portal/source/study-app/` (synced via `scripts/sync-study-app.sh`). The Vite dev server at `localhost:5173` is only for standalone Study Room component development.
-
-**Shared config**: Both apps consume `packages/shared-config/site-identity.json` for brand identity, route paths, and i18n locale definitions. The blog portal also uses it via its portal scripts; the study-room imports it directly in its Vite config.
-
-**Shared i18n**: Both apps share the same `localStorage` key (`site-locale`) for locale preference. Locale files live in `packages/shared-assets/locales/site-ui/`. Supported: `en`, `zh-CN`, `zh-TW`, `ja`.
-
-**Asset symlink**: `apps/blog-portal/source/shared-assets` is a symlink to `packages/shared-assets`.
+**Shared config**: The portal consumes `packages/shared-config/site-identity.json` for brand identity, route paths, and i18n locale definitions.
 
 ## Key Integration Points
 
-- `apps/blog-portal/scripts/portal-renderer.js` — generates portal HTML pages, controls Study Room CTA URLs
+- `apps/blog-portal/scripts/portal-renderer.js` — generates portal HTML pages
 - `apps/blog-portal/scripts/portal-data-sync.js` — syncs data for portal generation
-- `apps/study-room/vite.config.js` — sets dynamic `base` path from shared-config, controls build output paths
-- `apps/study-room/src/i18n/config.js` — i18n provider that reads from shared locale files
 
 ## Deployment Sync Rule (CRITICAL)
 
@@ -141,7 +119,6 @@ When any change touches the server-side build pipeline, you MUST update ALL THRE
 - Each app is independently deployable — do not create cross-app runtime dependencies
 - Keep shared product wording in `site-identity.json` and shared locale dictionaries, not duplicated in both apps
 - Never hardcode `http://localhost:5173` in production-facing portal content
-- The Study Room uses `BrowserRouter` — its hosting must serve `index.html` as SPA fallback for nested routes
 - The engineering worklog at `docs/AI_PROJECT_MEMORY/CODEX_WORKLOG.md` is append-only — new sessions are appended, not overwritten
 
 ## Output Style

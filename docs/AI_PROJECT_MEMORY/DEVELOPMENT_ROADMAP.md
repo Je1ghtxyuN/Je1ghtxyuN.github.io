@@ -1,6 +1,6 @@
 # Development Roadmap
 
-Last updated: 2026-04-27
+Last updated: 2026-05-16
 Status: long-term phased execution roadmap
 
 ## Roadmap Use
@@ -60,13 +60,11 @@ This roadmap is intended to guide gradual execution across many future sessions.
 - can begin before the backend is fully built if dynamic pieces are stubbed or temporarily disabled
 - should not depend on preserving the old SPA routing model
 
-## Phase 3 — Study Room Web App Construction
+## Phase 3 — Study Room Web App Construction — COMPLETED (2026-05-16)
 
-### Objectives
+**Status: Completed and separated into independent repository.** The Study Room is now a standalone app at `study.je1ght.top` with its own React frontend, Hono backend, MySQL database, and Docker Compose stack. See `/Users/je1ghtxyun/code/personal-website/study-app/` for the codebase.
 
-- build the Study Room as an independent web application
-- create a focused interactive experience without coupling it to Hexo internals
-- prepare the app to share platform identity while remaining operationally separate
+### Objectives (historical)
 
 ### Detailed Checklist
 

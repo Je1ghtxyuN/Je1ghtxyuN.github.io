@@ -1,6 +1,6 @@
 # Master Architecture
 
-Last updated: 2026-04-27
+Last updated: 2026-05-16
 Status: long-term target architecture memory
 
 ## Purpose
@@ -45,30 +45,22 @@ Expected public responsibility boundary:
 - about/profile presentation
 - works/project pages
 - photo/gallery pages
-- navigation hub to the Study Room application
 
-### 2. Study Room Interactive Web Application
+### 2. Study Room Interactive Web Application — SEPARATED
 
-Primary role:
+**Status: Completed and separated into independent repository (2026-05-16)**
 
-- independent sub-application
-- interactive study/focus environment inspired by StudyWithMiku-like product qualities
-- not embedded as a simple page inside the blog theme
+The Study Room now lives in its own independent repo at `/Users/je1ghtxyun/code/personal-website/study-app/` and deploys to `study.je1ght.top`.
 
-Core characteristics:
+It has its own:
+- React 19 + Vite 8 frontend
+- Hono + Prisma backend (port 3002)
+- MySQL database (`study_app_db`)
+- Docker Compose stack (backend + nginx + mysql)
+- Cloudflare Tunnel for public access
+- Independent deploy script (`scripts/deploy.sh`)
 
-- separate frontend runtime and deployment unit
-- can share brand, assets, and account/session system with the rest of the platform
-- optimized for long-lived browser sessions, media controls, timers, and interactive state
-- can evolve faster than the Hexo portal without destabilizing the main website
-
-Expected responsibility boundary:
-
-- focus timer workflows
-- ambient visual/audio environment
-- user preferences and study presets
-- optional session history or lightweight personal productivity records
-- future real-time or shared-room features if later approved
+The portal no longer hosts, syncs, or links to the study-app subpath. The two systems are fully decoupled.
 
 ### 3. Admin/API Backend Service
 
@@ -168,6 +160,13 @@ The reverse proxy layer on Ubuntu should:
 Initial orchestration target:
 
 - Docker Compose is sufficient for the early self-hosted production phase
+
+Current production deployment:
+
+- Portal: `je1ght.top` — Hexo static + Hono backend + MySQL (`je1ght_space`)
+- Study App: `study.je1ght.top` — React SPA + Hono backend + MySQL (`study_app_db`)
+- Both stacks use Docker Compose on the same Ubuntu server
+- Portal uses host-level Cloudflare Tunnel; study-app uses its own tunnel
 
 Operational expectations:
 

@@ -1,6 +1,6 @@
 # Project Context
 
-Last updated: 2026-04-27
+Last updated: 2026-05-16
 Status: permanent project identity and context memory
 
 ## Purpose
@@ -12,8 +12,8 @@ Unless there is an explicit high-level architecture decision recorded later, the
 ## Core Project Identity
 
 - project goal: build a long-term personal flagship website platform, not just a simple SPA homepage
-- current repository status: legacy React/Vite/Firebase browser-heavy app
-- architectural direction: gradually rebuild into a modular self-hosted platform
+- current repository status: Hexo portal + Hono backend (legacy React SPA frozen, Study Room separated to independent repo)
+- architectural direction: modular self-hosted platform — portal at `je1ght.top`, study-app at `study.je1ght.top`
 - migration rule: preserve useful content, assets, locale resources, and schema/domain knowledge from the old codebase, but do not treat the old SPA as the final product shape
 
 ## Fixed Visual and Product Reference
@@ -37,8 +37,10 @@ Interpretation rule:
 
 ### Study Room Module
 
-- a StudyWithMiku-like study room module will be integrated
-- it must be built as an independent sub-application, not as a small widget hidden inside the blog portal
+- a StudyWithMiku-like study room module — **completed and separated** (2026-05-16)
+- now lives in its own independent repository at `/Users/je1ghtxyun/code/personal-website/study-app/`
+- deployed independently to `study.je1ght.top` with its own React frontend, Hono backend, MySQL database, and Docker Compose stack
+- portal no longer hosts or syncs the study-app
 
 ### Backend/Admin Platform
 
@@ -69,18 +71,13 @@ These are not minor preferences. They are long-term architecture anchors unless 
 
 ## Current Repository Reality
 
-As of 2026-04-27, this repository is:
+As of 2026-05-16, this repository is:
 
-- a React 19 + Vite single-page app
-- deployed historically as static frontend output
-- using Firebase directly from the browser for auth and Firestore data access
-- lacking a real backend API boundary
-- carrying significant monolithic SPA and documentation debt
-
-Important interpretation:
-
-- current codebase state explains the migration workload
-- it does not redefine the future product direction
+- a Hexo 7 portal (`apps/blog-portal/`) + Hono backend (`apps/backend-api/`) serving `je1ght.top`
+- the legacy React SPA (`src/`) is frozen, not the active development target
+- the Study Room has been fully separated into its own independent repo and deploys to `study.je1ght.top`
+- Firebase is transitional and being phased out
+- the backend serves portal-only routes: admin auth, comments, contact form, site rebuild
 
 ## Migration Principles
 
