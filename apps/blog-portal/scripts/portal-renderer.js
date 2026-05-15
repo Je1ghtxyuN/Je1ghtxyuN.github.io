@@ -1,13 +1,10 @@
 const { url_for: urlFor } = require('hexo-util')
 const {
   getDefaultLocaleText,
-  studyRoomAppPath,
-  resolveStudyRoomPublicUrl,
 } = require('./portal-shared-config')
 
 module.exports = function createPortalRenderer(hexo) {
   const resolveInternalUrl = urlFor.bind(hexo)
-  const studyRoomPublicUrl = resolveStudyRoomPublicUrl(hexo)
 
   // Keep homepage behavior in code rather than data files so build output stays
   // deterministic across CMS edits and future content migrations.
@@ -18,7 +15,6 @@ module.exports = function createPortalRenderer(hexo) {
     DEFAULT_DESCRIPTION: '',
     DEFAULT_IMAGE_PATH: '/shared-assets/images/background.jpg',
     DEFAULT_AVATAR_PATH: '/shared-assets/images/profile.jpg',
-    STUDY_ROOM_APP_URL: studyRoomPublicUrl,
   })
 
   const escapeHtml = (value = '') =>
@@ -110,13 +106,6 @@ module.exports = function createPortalRenderer(hexo) {
     return isExternalPath(path, explicitExternal) ? path : resolveInternalUrl(path)
   }
 
-  const resolveStudyRoomEntryPath = (path) =>
-    path === studyRoomAppPath ? PORTAL_CONFIG.STUDY_ROOM_APP_URL : path
-
-  const shouldOpenInNewTab = (path, explicitExternal = false) =>
-    isExternalPath(path, explicitExternal) &&
-    path !== PORTAL_CONFIG.STUDY_ROOM_APP_URL
-
   const getLocaleText = (keyPath, fallback = '') =>
     getDefaultLocaleText(keyPath, fallback)
 
@@ -173,20 +162,12 @@ module.exports = function createPortalRenderer(hexo) {
       { label: 'Article', url: links.article },
     ]
       .filter((item) => item.url)
-      .map((item) => {
-        const resolvedUrl = resolveStudyRoomEntryPath(item.url)
-        return {
-          ...item,
-          url: resolvedUrl,
-          external: isExternalPath(resolvedUrl),
-          newTab: shouldOpenInNewTab(resolvedUrl),
-        }
-      })
+      .map((item) => ({
+        ...item,
+        external: isExternalPath(item.url),
+        newTab: isExternalPath(item.url),
+      }))
   }
-
-  // The portal now links to the shared mounted Study Room path directly so the
-  // public integration contract is stable across local previews and production.
-  const getStudyRoomAppUrl = () => PORTAL_CONFIG.STUDY_ROOM_APP_URL
 
   const renderSocialLinks = (links = []) => {
     if (!links.length) {
@@ -428,28 +409,25 @@ module.exports = function createPortalRenderer(hexo) {
         { class: 'portal-card-grid portal-card-grid--shortcuts' },
         shortcutItems
           .map((item) => {
-            const resolvedPath = resolveStudyRoomEntryPath(item.path)
             const shortcutKey =
               item.path === '/blog/'
                 ? 'blog'
                 : item.path === '/portfolio/'
                   ? 'portfolio'
-                  : item.path === studyRoomAppPath
-                    ? 'studyRoom'
-                    : item.path === '/contact/'
-                      ? 'contact'
-                      : null
+                  : item.path === '/contact/'
+                    ? 'contact'
+                    : null
 
             return renderTag(
               'a',
               {
                 class: 'portal-card portal-shortcut-card',
-                href: resolveHref(resolvedPath, item.external),
-                'data-portal-shortcut-path': resolvedPath,
-                target: shouldOpenInNewTab(resolvedPath, item.external)
+                href: resolveHref(item.path, item.external),
+                'data-portal-shortcut-path': item.path,
+                target: isExternalPath(item.path, item.external)
                   ? '_blank'
                   : null,
-                rel: shouldOpenInNewTab(resolvedPath, item.external)
+                rel: isExternalPath(item.path, item.external)
                   ? 'noopener noreferrer'
                   : null,
               },
@@ -938,130 +916,6 @@ module.exports = function createPortalRenderer(hexo) {
     )
   }
 
-  const renderStudyRoom = ({ siteLocals } = {}) => {
-    const { profile } = getPortalData(siteLocals)
-    const studyRoom = profile.study_room || {}
-    const featureList = fallbackArray(studyRoom.features)
-    const appUrl = getStudyRoomAppUrl()
-
-    const features = featureList.length
-      ? renderTag(
-          'div',
-          { class: 'portal-chip-grid' },
-          featureList.map((item) => renderTag('span', { class: 'portal-chip' }, escapeHtml(item))).join('')
-        )
-      : renderTag(
-          'div',
-          { class: 'portal-empty-state' },
-          renderTag(
-            'p',
-            withI18nAttr({}, 'portal.studyRoom.empty', 'No Study Room features configured yet.'),
-            escapeHtml(getLocaleText('portal.studyRoom.empty', 'No Study Room features configured yet.'))
-          )
-        )
-
-    return renderTag(
-      'div',
-      { class: 'portal-page portal-study-room' },
-      `${renderTag(
-        'section',
-        { class: 'portal-section portal-study-room-panel' },
-        `${renderTag(
-          'div',
-          { class: 'portal-section-heading' },
-          `${renderTag(
-            'h1',
-            withI18nAttr(
-              {},
-              'portal.studyRoom.title',
-              fallbackText(studyRoom.title, 'Study Room')
-            ),
-            escapeHtml(fallbackText(studyRoom.title, 'Study Room'))
-          )}${renderTag(
-            'p',
-            withI18nAttr(
-              {},
-              'brand.studyRoomShortDescription',
-              fallbackText(studyRoom.summary, PORTAL_CONFIG.DEFAULT_DESCRIPTION)
-            ),
-            escapeHtml(fallbackText(studyRoom.summary, PORTAL_CONFIG.DEFAULT_DESCRIPTION))
-          )}`
-        )}${renderTag(
-          'div',
-          { class: 'portal-card portal-copy-card' },
-          renderTag(
-            'p',
-            { class: 'portal-lead' },
-            escapeHtml(fallbackText(studyRoom.description, PORTAL_CONFIG.DEFAULT_DESCRIPTION))
-          )
-        )}${renderTag(
-          'div',
-          { class: 'portal-card portal-cta-card' },
-          `${renderTag(
-            'a',
-            {
-              class: 'portal-button portal-button--primary',
-              href: resolveHref(appUrl, isExternalPath(appUrl)),
-              'data-study-room-entry': appUrl,
-              target: shouldOpenInNewTab(appUrl) ? '_blank' : null,
-              rel: shouldOpenInNewTab(appUrl) ? 'noopener noreferrer' : null,
-            },
-            escapeHtml(
-              fallbackText(
-                studyRoom.cta_label,
-                getLocaleText('portal.studyRoom.ctaLabel', 'Enter Study Room')
-              )
-            )
-          )}${renderTag(
-            'p',
-            withI18nAttr(
-              { class: 'portal-card__copy' },
-              'portal.studyRoom.ctaNote',
-              fallbackText(
-                studyRoom.cta_note,
-                'The standalone Study Room app is not connected yet.'
-              )
-            ),
-            escapeHtml(
-              fallbackText(
-                studyRoom.cta_note,
-                getLocaleText(
-                  'portal.studyRoom.ctaNote',
-                  'The standalone Study Room app is not connected yet.'
-                )
-              )
-            )
-          )}`
-        )}`
-      )}${renderTag(
-        'section',
-        { class: 'portal-section' },
-        `${renderTag(
-          'div',
-          { class: 'portal-section-heading' },
-          `${renderTag(
-            'h2',
-            withI18nAttr({}, 'portal.studyRoom.featuresTitle', 'Planned Features'),
-            escapeHtml(getLocaleText('portal.studyRoom.featuresTitle', 'Planned Features'))
-          )}${renderTag(
-            'p',
-            withI18nAttr(
-              {},
-              'portal.studyRoom.featuresIntro',
-              'The dedicated application will expand beyond the portal when the separate Study Room app is integrated.'
-            ),
-            escapeHtml(
-              getLocaleText(
-                'portal.studyRoom.featuresIntro',
-                'The dedicated application will expand beyond the portal when the separate Study Room app is integrated.'
-              )
-            )
-          )}`
-        )}${features}`
-      )}`
-    )
-  }
-
   const renderContact = ({ siteLocals } = {}) => {
     const { profile } = getPortalData(siteLocals)
     const contact = profile.contact || {}
@@ -1212,7 +1066,6 @@ module.exports = function createPortalRenderer(hexo) {
 
   return {
     PORTAL_CONFIG,
-    getStudyRoomAppUrl,
     renderHero,
     renderRecentPosts,
     renderPortfolioPreview,
@@ -1220,7 +1073,6 @@ module.exports = function createPortalRenderer(hexo) {
     renderHome,
     renderPortfolio,
     renderAbout,
-    renderStudyRoom,
     renderContact,
   }
 }
