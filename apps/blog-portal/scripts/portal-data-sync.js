@@ -121,7 +121,7 @@ hexo.extend.filter.register('before_generate', () => {
       bottomInject,
       `<script id="portal-i18n-config" type="application/json">${portalI18nConfig}</script>`,
     ),
-    '<script src="/js/portal-i18n.js" defer></script>',
+    '<script src="/js/portal-i18n.js?v=BUILD_VER" defer></script>',
   )
 
   hexo.theme.config = themeConfig

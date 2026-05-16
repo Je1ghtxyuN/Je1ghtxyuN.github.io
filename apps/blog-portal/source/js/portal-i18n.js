@@ -159,7 +159,7 @@
   function applyNavigationTranslations(bundle, fallbackBundle) {
     Object.entries(navMap).forEach(([href, key]) => {
       document
-        .querySelectorAll(`a[href="${href}"]`)
+        .querySelectorAll(`a[href="${href}"]:not(.nav-site-title)`)
         .forEach((anchor) => {
           const translated = translate(bundle, fallbackBundle, key, anchor.textContent || '')
           const icon = anchor.querySelector('i')

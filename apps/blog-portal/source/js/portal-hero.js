@@ -16,9 +16,13 @@
   var avatarPath = data.avatar_path || '/shared-assets/images/profile.jpg'
   var introText = data.intro_short || ''
 
-  // Replace "HOME" with "Je1ghtxyuN" in the header (no translation)
+  // Hide Butterfly's default page title in the hero (we have our own hero info)
   var siteTitle = document.getElementById('site-title')
-  if (siteTitle) siteTitle.textContent = 'Je1ghtxyuN'
+  if (siteTitle) siteTitle.style.display = 'none'
+
+  // Replace "Home" with "Je1ghtxyuN" in the nav bar top-left (no translation)
+  var navSiteTitle = document.querySelector('#blog-info .nav-site-title')
+  if (navSiteTitle) navSiteTitle.textContent = 'Je1ghtxyuN'
 
   // Create hero info container
   var heroInfo = document.createElement('div')

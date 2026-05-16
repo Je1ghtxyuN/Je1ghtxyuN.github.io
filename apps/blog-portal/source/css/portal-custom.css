@@ -21,7 +21,10 @@
   position: relative;
 }
 
-/* Page title on homepage replaced with "Je1ghtxyuN" by portal-hero.js */
+/* Hide Butterfly's default page title on homepage (portal-hero.js replaces it) */
+.type-portal-home #page-site-info {
+  display: none;
+}
 
 .type-portal-home #page-header::before {
   content: '';
