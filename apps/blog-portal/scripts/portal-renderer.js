@@ -973,7 +973,7 @@ module.exports = function createPortalRenderer(hexo) {
           'div',
           { class: 'portal-card portal-copy-card' },
           `<form class="portal-contact-form" action="${escapeHtml(
-            contact.formspree_endpoint || 'https://formspree.io/f/your-form-id'
+            contact.formspree_endpoint || 'https://formspree.io/f/mkgbpnbb'
           )}" method="POST">
             ${renderVoidTag('input', {
               type: 'hidden',
