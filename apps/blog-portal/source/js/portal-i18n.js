@@ -158,8 +158,9 @@
 
   function applyNavigationTranslations(bundle, fallbackBundle) {
     Object.entries(navMap).forEach(([href, key]) => {
+      // Only target nav menus (desktop + sidebar), not shortcut cards or other page content
       document
-        .querySelectorAll(`a[href="${href}"]:not(.nav-site-title)`)
+        .querySelectorAll(`#nav a[href="${href}"]:not(.nav-site-title), #sidebar-menus a[href="${href}"]:not(.nav-site-title)`)
         .forEach((anchor) => {
           const translated = translate(bundle, fallbackBundle, key, anchor.textContent || '')
           const icon = anchor.querySelector('i')
