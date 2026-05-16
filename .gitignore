@@ -41,3 +41,6 @@ credentials.json
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Development screenshots (not needed in remote)
+screenshots/
