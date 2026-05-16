@@ -33,6 +33,7 @@ subtitle:
 icon_path: /shared-assets/images/icon.png
 avatar_path: /shared-assets/images/profile.jpg
 footer_note: 
+hero_phrases: [落花人独立，微雨燕双飞]
 social_links:
   - url: "https://github.com/Je1ghtxyuN"
     icon: fab fa-github
